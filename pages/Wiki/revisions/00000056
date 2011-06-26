@@ -1,0 +1,37 @@
+MoinMoin学习
+
+*概述
+ *wiki就是一网页系统
+*搜索
+ *页面头的wikiName可以用于搜索所有的引用
+*链接
+ *内部
+  *用wikiName
+ *外部
+  *链接到别的wiki用interWiki
+*问题
+ *如何使一个页属于多个分类之中
+ *如何链接一个本地的资源
+  *比如要用来作资料管理
+  *还有用来分析源码 
+------
+MoinMoin学习计划
+*正向 
+ *常用的编辑功能
+ *开发MoinMoin
+ *wiki的开发
+*逆向
+------
+MoinMoin学习资源
+ ＊HelpForUsers
+ ＊HelpContents
+ ＊各MoinMoin页面
+ ＊用MoinMoin的网站
+  *MoinMoinWiki(上面有一堆)
+  *[[http://www.woodpecker.org.cn/share/doc/SKSIG/DriveIntoMoinPub/| 一份MoinMoin介绍资料]]
+  *http://simonw.cnblogs.com/category/77486.html 另一份MoinMoin相关资料
+MoinMoin学习方法
+ ＊看描述
+ ＊看已有的页面
+------
+mediawiki学习(这个先不做了解)

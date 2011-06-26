@@ -1,0 +1,16 @@
+= FileZilla 源代码 =
+ *界面使用WxWindows
+ *主要目录
+  *engine 后台 逻辑引擎
+  *Interface 接口
+   *resources 资源文件
+   *settings 设置接口
+  *putty 使用putty文件改的用于生产 fzputtygen.exe fzsftp.exe
+  *fzshellext 用于Window的shell扩展用 实现拖放支持功能
+  *dbus 用于Linux下的dbus工具库
+  *tinyxml 用于解析xml的工具库
+ *Windows版本要用mingw来构造
+ *WxWindows和MFC非常相像
+ *engine的入口在FileZillaEngine.cpp 中
+ *engine可能使用了线程的技术
+ *CLogging实现日志功能

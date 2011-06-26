@@ -1,0 +1,124 @@
+== 学习内容 ==
+ *参考
+  *[[http://www.cnblogs.com/zzsbest/archive/2008/07/21/1247426.html]]
+ *操作
+  *安装系统
+  *硬件安装和维护
+  *用户管理
+  *磁盘管理
+  *检测系统状态
+  *安全
+  *备份与恢复
+  *网络管理
+  *日志分析
+  *系统管理
+   *命令
+   *配置文件
+   *脚本文件
+  *安装X windows
+  *使用编辑器
+   *emacs
+   *vi
+  *Bochs的安装和使用 [[http://osfromscratch.org/bookscn/7-achapter02cn|搭建工作环境]]
+ *服务器
+  *代理服务器，使用的是Linux的iptables功能;
+  *电影服务器，使用的是Linux的samba服务的功能，文件和打印共享服务器
+  *游戏服务器，cs服务器，在Linux系统下使用cs的Linux版本建立的服务器
+  *客户存档服务器，采用的Linux的ftp服务器，常用的有:wu-ftp，pro-ftp软件建立的
+  *-www服务器，使用的是Linux下的apache服务器软件
+  *ftp服务器，下载服务器，使用的是Linux下的wu-ftp，pro-ftp，vs-ftp软件
+  *mail服务器，采用的是Linux下的sendmail，qmail软件
+  *dns服务器，使用的是Linux下的bind软件
+  *数据库服务器，使用的是mysql或者oracle软件
+  *防火墙，软件防火墙服务器，使用的是Linux的iptables功能建立的
+  *路由器，软路由器，使用的是Linux下的routed软件建立的
+  *拨号服务器，vpn服务器等等
+ *应用编程
+  *API
+   *基本API [[Unix/Linux编程实践教程|UULP]]里涉及的那些
+  *Java
+  *C
+  *C++
+  *PHP
+  *Python
+  *Perl
+  *jsp
+  *cgi
+  *脚本
+  *数据库
+   *mysql
+   *oracle
+   *DB2
+  *网络
+  *图形
+  *GUI
+ *工具
+  *Dia gnu画图工具
+  *GanttProject 管理工具
+  *FreeMind
+  *[[grub]]
+  *[[Vim]]
+  *gcc
+  *[[bochs]]
+  *Git Linux内核用的版本同步工具 
+  *gdb
+  *emacs
+  *find
+  *grep
+  *[[subversion]]
+  *man
+  *info
+  *init[[http://hi.baidu.com/yvesliao/blog/item/2e640408093dee960a7b82c1.html]]
+  *docbook
+  *bash
+  *X windows
+  *gimp
+  *firefox
+  *mysql
+  *apache
+  *ifconfig
+  *bind
+  *samba
+  *sed
+  *awk
+  *PostgreSQL
+  *dd
+  *patch
+  *diff
+  *[[make]]
+ *内核
+  *早期 [[Linux内核完全剖析-基于0.12内核|0.12]]
+  *现在
+  *网络
+  *调度
+  *文件系统
+  *驱动
+ *文化
+ *思想
+  *命令行和窗口
+  *和windows的不同
+  *x windows 和 内核的关系
+ *嵌入式
+  *arm
+  *uclinux
+  *手机
+  *网络设备
+ *系统
+  *[[http://www.linuxfromscratch.org/|LFS]]
+ *驱动
+  *char
+  *block
+  *kvm
+ *misc
+  *源代码获得方法
+== 驱动 ==
+ *[[Understanding the Linux Kernel|LDD]]学习
+ *搞懂linux模块
+ *char驱动
+ *实现read, write, ioctl, polling等各种函数的驱动
+ *block驱动
+ *了解内存管理
+ *明白各种memory alloc的函数实现细节。这是linux开发的基本功
+ *学习锁机制的应用，这个不是最难的但是最容易犯错的，涉及到很多同步和并发的问题。
+ *看内核中实际应用的驱动代码。 你会发现最基本的你已经知道了， 大的框架都是一样的， 无非是read, write, ioctl等函数的实现， 但里面包含了很多很多细小的实现细节是之前不知道的。 这时候就要考虑到很多别的问题而不仅仅是基本功能的实现。 推荐您看2.6.20中integrated的一个驱动 kvm， 记得是在driver/lguest下，很好玩的， 就是linux下的虚拟机驱动， 代码不长，但功能强大。有能力的可以自己写一操作系统按照要求做成磁盘镜像加载到虚拟机中， 然后客户机可以有自己的4G虚拟地址空间。
+ *内核学习

@@ -1,0 +1,197 @@
+= Vim =
+ *Vim是vi最好的开源版本
+ *vi的目标 不依赖鼠标
+ *vi有模式: 插入 命令 Ex命令 还真是程序员
+ *插入模式下 也可使用命令
+ *插入模式同样可以构成一条命令 所以可以重复
+ *Ex命令模式 用于高级命令输入
+ *Ctags进行源文件索引
+ *还能用于创建代码
+ *自带最全面的文档
+ *视窗是编辑的单位
+ *可以把ctrl ＋ 一个键 看成一个键
+ *dos用CR LF断行 Linux用LF断行 需要转换
+== 问题 ==
+ *如何在文档中再打开文档
+== 功能 ==
+ *ESC 退出命令
+ *恢复功能
+ *默认配置
+  */etc/vimrc 全部 
+  *~/.vimrc
+ *退出时保持当前编辑状态
+  *~/.viminfo
+ *命令模式
+  *游标移动
+  *删除
+  *剪切
+  *复制
+  *粘贴
+  *切换模式
+  *区域选择
+ *插入模式
+ *Ex命令模式
+  *搜索
+  *存储
+  *离开
+  *设置环境
+  *多文件编辑
+  *多视窗
+== 命令 ==
+ *[[http://vimcdoc.sourceforge.net/doc/help.html]]在线帮助  
+ *:help
+== 配置IDE ==
+ *中文帮助 跳过
+ *编程常用命令
+  *usr_29
+  *usr_30
+ *语法高亮
+  *修改~/.vimrc文件
+  *自己设置 synatx.txt
+ *程序跳转
+  *ctags 运行Ctags -R 产生tags文件 然后Vim中用 set ctags
+  *手动更新ctags文件
+ *高效浏览源码
+  *taglist 脚本 显示代码的关键部位
+  *回车到相应的代码 空格显示相应的行
+  *配置文件夹下解压
+  *配置文件加
+   *let Tlist_Show_One_File=1
+   *let Tlist_Exit_OnlyWindow=1
+ *vim使用
+  *:Tlist
+ *文件浏览器
+  *netrw.vim标准配置
+   *<F1> 	显示帮助
+<cr> 	如果光标下是目录, 则进入该目录; 如果光标下文件, 则打开该文件
+-
+	返回上级目录
+c
+	切换vim 当前工作目录正在浏览的目录
+d
+	创建目录
+D
+	删除目录或文件
+i
+	切换显示方式
+R
+	文件或目录重命名
+s
+	选择排序方式
+x
+	定制浏览方式, 使用你指定的程序打开该文件
+窗口管理器
+ winmanage
+~/.vimrc中增加
+let g:winManagerWindowLayout='FileExplorer|TagList'
+nmap wm :WMToggle<cr>
+normal状态下输入wm
+:help winmanager
+Cscope
+:help if_cscop.txt
+~/vimrc中增加
+:set cscopequickfix=s-,c-,d-,i-,t-,e-
+cscope文件导入到vim中来, 用下面的
+:cs add /home/wooin/vim71/cscope.out /home/wooin/vim71
+要加路径
+cs find c|d|e|f|g|i|s|t name
+0 或 s 	查找本 C 符号(可以跳过注释)
+1 或 g 	查找本定义
+2 或 d 	查找本函数调用的函数
+3 或 c 	查找调用本函数的函数
+4 或 t 	查找本字符串
+6 或 e 	查找本 egrep 模式
+7 或 f 	查找本文件
+8 或 i 	查找包含本文件的文件
+
+设置快捷键
+
+QuickFix 窗口
+
+:help quickfix
+
+:cw
+
+:cn        // 切换到下一个结果
+:cp        // 切换到上一个结果
+如果你经常使用这两个命令, 你还可以给他们设定快捷键, 比如在~/.vimrc中增加:
+nmap <F6> :cn<cr>
+nmap <F7> :cp<cr>
+
+快速浏览和操作Buffer
+
+MiniBufExplorer
+
+vim的帮助:
+:help buffer
+<Tab> 	向前循环切换到每个buffer名上
+<S-Tab> 	向后循环切换到每个buffer名上
+<Enter> 	在打开光标所在的buffer
+d 	删除光标所在的buffer
+
+多种快捷键方式
+
+c/h文件间相互切换
+
+A脚本
+:A 	在新Buffer中切换到c\h文件
+:AS 	横向分割窗口并打开c\h文件
+:AV 	纵向分割窗口并打开c\h文件
+:AT 	新建一个标签页并打开c\h文件
+
+nnoremap <silent> <F12> :A<CR>
+
+:Grep 	按照指定的规则在指定的文件中查找
+:Rgrep 	同上, 但是是递归的grep
+:GrepBuffer 	在所有打开的缓冲区中查找
+:Bgrep 	同上
+:GrepArgs 	在vim的argument filenames (:args)中查找
+:Fgrep 	运行fgrep
+:Rfgrep 	运行递归的fgrep
+:Egrep 	运行egrep
+:Regrep 	运行递归的egrep
+:Agrep 	运行agrep
+:Ragrep 	运行递归的agrep
+
+工程中查找
+
+grep
+
+高亮的书签
+
+VisualMark
+
+自动补全
+new-omni-completion
+
+Ctrl+X Ctrl+O
+
+:make 命令
+
+== 学习 ==
+ *Vim有着一个比较陡峭的 学习曲线。这意味着开始学习的时候可能会进展缓慢，但是一旦掌握一些基本操作之后，能大幅度提高编辑效率。
+ *初学者
+  *Vim教学。vimtutor 命令 加 -g出图形界面 
+ *要想好命令再操作
+ *作一命令表
+ *多编码练习
+ *会建立.名字.swp的文件用于恢复
+== 资源 ==
+
+---- /!\ '''Edit conflict - other version:''' ----
+ *[[http://linux.chinaunix.net/techdoc/develop/2008/03/14/983302.shtml]]Vim配置集成调试
+
+---- /!\ '''Edit conflict - your version:''' ----
+
+---- /!\ '''End of edit conflict''' ----
+ *[[http://blog.chinaunix.net/u/10957/showart_64825.html]]等待搜集
+ *[[http://linux.vbird.org/linux_basic/0310vi.php|鸟哥的linux私房菜 Vim篇]]
+ *[[http://www.vim.org/|Vim官方网站]]
+ *[[http://zh.wikipedia.org/wiki/Vim|Vim中文wiki]] Vim历史 学习安排
+ *[[http://en.wikipedia.org/wiki/Vim_(text_editor)|Vim英文wiki]]
+ *[[http://www.douban.com/group/vim/|Vim豆瓣]] 有书籍的介绍
+ *[[http://blog.csdn.net/wooin/archive/2007/10/31/1858917.aspx|手把手教你把Vim改装成一个IDE编程环境]]
+ *[[http://blog.sina.com.cn/s/blog_46dac66f010005kw.html|普通人的编辑利器——Vim]]
+ *[[http://www.pconline.com.cn/pcedu/soft/gj/photo/0609/877033.html|程序员的编辑器——VIM]]
+ *[[http://vimcdoc.sourceforge.net/]]vim中文文档计划
+ *[[http://code.google.com/p/vimcolorschemetest/]]Vim配色

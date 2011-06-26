@@ -1,0 +1,25 @@
+= SCons User Guide =
+== Preface ==
+ *使用python语言作为脚本
+ *存在功能牺牲正确性来换取速度
+ *man页保证更新
+ *有对个人所做贡献的介绍
+== Building and Installing SCons ==
+ *Python 2.4以后的版本都可以
+ *没有预构建好的包的话就要自己构建
+== Simple Builds ==
+ *会根据文件名进行推断
+ *会根据系统产生合适的文件名(主要是后缀)
+ *builder_method
+  *Program
+  *Object
+ *支持对Java的构建
+ *-c 和 --clean删除生成的文件 不用自定义目标
+ *SConstruct Files 是 Python Scripts
+ *顺序无关 
+ *calling a builder method 和 actually building the program 是无关的
+ *-Q非构建信息取消
+== Less Simple Things to Do With Builds ==
+ *使用如 Program('new_hello', 'hello.c') 指定程序名
+ *使用如 Program(['prog.c', 'file1.c', 'file2.c']) 指定多文件程序
+ *使用如 Program('program', ['prog.c', 'file1.c', 'file2.c']) 指定文件名和多文件

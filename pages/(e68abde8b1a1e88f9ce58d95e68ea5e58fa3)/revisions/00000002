@@ -1,0 +1,15 @@
+= 抽象菜单接口 =
+ *CMenu类
+ *CMenu分成三类 Popup Separator Item
+ *Item才有ID
+ *[[http://blog.csdn.net/gavingey/archive/2008/03/24/2214086.aspx|MFC动态菜单全攻略]] 介绍动态创建Menu的方法 没有另外一场描述
+ *对于动态创建的菜单要调用pCmdUI->Enable(TRUE);
+ *[[http://www.prof-uis.com/prof-uis/tech-support/feature-articles/constructing-menus-dynamically-at-run-time.aspx]]是Prof-uis库的解决方法
+ *[[http://dohkoos.name/wxwidgets-xrc-and-dynamic-sub-menu.html]]WxWidgets使用配置文件产生动态菜单
+ *[[http://www.excelguru.ca/blog/2007/01/09/creating-a-dynamic-menu-an-example/]]在office下
+ *[[http://www.codeproject.com/KB/menus/dynitems.aspx]]主要参考
+ *[[http://msdn.microsoft.com/en-us/library/s765c671%28VS.80%29.aspx]]微软的DYNAMENU Sample: Dynamically Updates Menus
+ *[[http://yj10864.javaeye.com/blog/743384]]未知
+ *[[http://www.pudn.com/downloads148/sourcecode/windows/control/menu/detail638804.html]]未知
+ *[[http://www.myfaq.com.cn/A/2001-10-10/1318.html]]利用MFC的消息映像实现动态菜单
+ *[[http://www.comprg.com.cn/detail.asp?hw_id=7059]]如何创建和访问MFC嵌入菜单功能的动态链接库

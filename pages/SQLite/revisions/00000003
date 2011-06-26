@@ -1,0 +1,21 @@
+= SQLite =
+ *SQLite是一款轻型的数据库，是遵守ACID的关联式数据库管理系统，它的设计目标是嵌入式的
+ *适合想研究数据库系统开发的专业人士
+ *以文件为数据库记录
+ *编译进程序中 不以独立进程存在
+== 任务 ==
+ *找项目
+ *复习数据库
+ *找管理工具
+ *如何用C来写数据库
+ *配置环境
+ *写一个Demo
+== sqlite ==
+ *命令行工具 和 数据库不同
+== 资源 ==
+ *[[http://www.sqlite.org]]官方网站
+ *[[http://www.sqlite.com.cn]]
+ *[[http://sqlitemanager.sourceforge.net/]]
+ *[[http://en.wikipedia.org/wiki/Sqlite|wiki英文]]
+ *[[http://www.sqlite.org/cvstrac/wiki?p=SqliteUsers]]使用SQLite的程序
+ *[[http://www.sqlite.com.cn/]]

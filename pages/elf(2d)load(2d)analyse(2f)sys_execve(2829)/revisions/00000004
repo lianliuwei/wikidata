@@ -1,0 +1,67 @@
+== sys_execve() ==
+{{{#! cplusplus
+/*
+ * sys_execve() executes a new program.
+ */
+asmlinkage int sys_execve(struct pt_regs regs) 
+{
+	int error;
+	char * filename;
+
+	filename = getname((char __user *) regs.ebx);
+	error = PTR_ERR(filename);
+	if (IS_ERR(filename))
+		goto out;
+	error = do_execve(filename,
+			(char __user * __user *) regs.ecx,
+			(char __user * __user *) regs.edx,
+			&regs);
+	if (error == 0) {
+		current->ptrace &= ~PT_DTRACE;
+		/* Make sure we don't return using sysenter.. */
+		set_thread_flag(TIF_IRET);
+	}
+	putname(filename);
+out:
+	return error;
+}
+}}}
+== sys_execve()注释 ==
+{{{#! cplusplus
+/*
+ * sys_execve() executes a new program.
+ */
+asmlinkage int sys_execve(struct pt_regs regs)  
+用户通过寄存器来传递参数 因为内核态和用户态的所用的栈不同 系统调用的参数传递和一般的函数调用不同
+{
+	int error;
+	char * filename;
+
+	filename = getname((char __user *) regs.ebx);
+getname()完成从用户空间拷贝可执行文件的文件名到内核空间,在该函数中会分配 kernel
+space,所以在该函数退出前要"putname(filename)"。
+
+	error = PTR_ERR(filename);
+	if (IS_ERR(filename))
+		goto out;
+	error = do_execve(filename,  文件名
+			(char __user * __user *) regs.ecx, argv
+			(char __user * __user *) regs.edx, envp
+			&regs); 用户的寄存器
+见 do_execve()的分析 真正做事的
+	if (error == 0) {
+成功 execute 该程序 只要调度到就能运行了
+
+		current->ptrace &= ~PT_DTRACE;
+使在单步调试程序创建的进程不是单步的
+		/* Make sure we don't return using sysenter.. */ 
+		set_thread_flag(TIF_IRET); 
+什么用
+	}
+	putname(filename);
+释放内核空间
+out:
+	return error; 
+成功返回程序也没法收到, 因为以及是全新的进程了
+}
+}}}

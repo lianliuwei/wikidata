@@ -1,0 +1,40 @@
+= CFrameWnd研究 =
+ *CFrameWnd在afxwin.h中定义class
+ *CFrameWnd在winfrm.cpp中定义函数
+ *CFrameWnd的继承框架: CObject -> CCmdTarget -> CWnd -> CFrameWnd
+ *CFrameWnd用来代替WndProc函数
+ *CObject在afx.h中定义class
+ *CCmdTarget在afxwin.h中定义class
+ *CWnd在afxwin.h中定义class
+ *afx.h 定义： CObject 异常类 文件类型 CArchive
+ *afxwin.h 定义：CGdiObject CDC CWinThread CDocment CView
+ *IDispatch 和 CCmdTarget 的关系 
+== CObject ==
+ *处理动态类型
+ *处理序列化
+ *重载了new 和 delete 大概就是从这里判断内存申请释放是否异常
+== CCmdTarget ==
+ *显然知道CView和CFrameWnd
+ *有为了支持Ole和COM的方法
+== CWnd ==
+ *包装HWND句柄
+ *设置字体
+ *坐标转换
+ *DC函数
+ *Timer功能
+ *ToolTip功能
+ *Capture功能
+ *Dlg功能
+ *Scorll功能
+ *Clipboard
+ *Caret功能
+ *Icon功能
+ *Context Help功能 ？？？
+ *DDX 功能
+ *Help功能 F1键等
+ *Accessibility功能 使用IAccessibleProxy
+  *定义XAccessible 和 XAccessibleServer
+ *窗口管理功能
+ *一堆On函数响应
+ *Ole支持
+ 定义模板函数EnlargeBufferGetText

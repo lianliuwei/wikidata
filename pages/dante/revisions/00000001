@@ -1,0 +1,6 @@
+= dante =
+ *socks proxy server
+ *使用socks5的协议可以使用远程DNS功能，防止DNS污染
+== dante加SSH加密 ==
+ *[[http://jeff.robbins.ws/reference/dante-socks-proxy-config]]
+ *[[http://blog.edseek.com/~jasonb/articles/dante_tunnel.shtml]]

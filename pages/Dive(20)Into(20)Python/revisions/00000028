@@ -1,0 +1,115 @@
+= Dive Into Python =
+{{{#!wiki
+<<TableOfContents(3)>>
+== Installing Python ==
+== Your First Python Program ==
+ *sys是内置模块 使用C语言写成
+ *万物皆对象
+ *Python 使用硬回车来分割语句，冒号和缩进来分割代码块。C++ 和 Java 使用分号来分割语句，花括号来分割代码块。 
+ *使用 if __name__ 方法来进行单元测试
+== Native Datatypes ==
+ *Dictionary 键值对 无序
+ *List 有序 循环特性 负数索引
+ *tuple创建后不变
+ *例 3.23 介绍字符串格式化
+ *映射 list 可以快速用现有list生成list
+== The Power Of Introspection ==
+ *参数不过是字典
+ *type、str、dir 和其它的 Python 内置函数都归组到了 __builtin__ 模块
+ *Python 在启动时自动执行了from __builtin__ import *
+ *getattr用字符串操作属性 第三参数是缺省返回值
+ *( and [a] or [b])[0] 实现C语言中的 bool ? a : b 功能
+== Objects and Object-Orientation ==
+ *import module 和 from module import 的效果不一样
+ *self不是关键字
+ *不支持类中的函数重载
+ *copy.copy()可以复制所有的对象
+ *专用类方法在特别的情况下由Python调用
+ *交互式窗口使用repr()来获得对象的字符串
+ *双下划线开头为私有 但结束没有下划线
+ *私有化使用重命名的方法隐蔽
+== Exceptions and File Handling ==
+ *file.tell()告诉文件句柄的位置
+ *for循环可以被其他语法部分代替
+ *缺省表达式计算只会在导入时计算一次
+ *os模块中包含了很多的路径相关函数
+ *glob模块可以用通配符来查找目录和文件
+== Regular Expressions ==
+ *文本替换和搜索的最好方法
+ *使用r‘’原始字符串能避免反斜杠灾难
+ *re.VERBOSE选项用来使用松散的正则表达式 可以带注释
+ *用步步逼近的方法来得到想要的正则表达式
+ *多种思路考虑
+== HTML Processing ==
+ *使用sgmllib包里的SGMLParser进行处理
+ *SGMLParser是一个框架 使用的话只要定义适当的回调函数就行了 回调函数使用函数名命名方式做定义(强大的反射功能)
+ *名字空间只是一个 dictionary,名字空间可以像dictionary一样进行访问
+ *locals()实际上没有返回局部名字空间，它返回的是一个拷贝
+ *globals()返回实际的全局名字空间，而不是一个拷贝
+ *有另外一种字符串格式化的形式，它使用 dictionary 而不是值的 tuple
+ *使用dictionary形式字符串格式化可以 减少代码量 增加可读性
+ *在调用 locals 方面有一点性能上的问题，这是由于 locals创建了局部名字空间的一个拷贝引起的
+ *list 是可变的，但字符串是不可变的
+== XML Processing ==
+ *用目录来映射包
+ *包不只是目录，它们是包含一个特殊文件 __init__.py 的目录
+ *sitecustomize.py 是一个特殊的脚本；Python 会在启动的时候导入它，所以在其中的任何代码都将自动运行。
+ *如果你打算在你的 Python 代码中保存非 ASCII 字符串，你需要在每个文件的顶端加入编码声明来指定每个 .py 文件的编码。
+ *文档源编码，编程系统编码，显示设备编码对于正确显示字符都有影响
+ *XML两种解释方法SAX和DOM
+ *DOM解析是将整个XML文档都读到内存进行解析
+ *DOM解析完，整个XML中的元素都是可以搜索的
+== Scripts and Streams ==
+ *将所有对象提供成类文件(file-like)操作支持 可以提供代码的复用程度
+ *StringIO可以用来包装String以来提供类文件接口
+ *print语句可以写入任何类文件
+ *argv提供的是没有解析的命令行
+== HTTP Web Services ==
+ *301 302为重定向
+ *404为找不到页面
+ *304用来作为是否修改的代码
+ *使用最后访问时间和数据hash来实现不重复发送数据功能
+ *urllib2用来处理和网络的交互
+ *request代表用户的请求
+ *HTTPConnection.debuglevel用来开启HTTP调试
+ *urllib2.build_opener()创建开启器 开启器负责处理request 传入事件处理对象可以定义自己的事件处理
+ *HTTP事件handler定义的方法使用命名方式作为约定
+ *可以给服务器指定自己可以接受的压缩方式
+ *urlparse 是一个解析 URL 的便捷的工具模块 将URL拆分为 tuple (scheme (协议), domain (域名), path (路径), params (参数), query 
+string parameters (请求字符串参数), fragment identifier (片段效验符))
+ *这种服务是面向文档的
+== SOAP Web Services ==
+ *SOAP简单对象访问协议 可以实现远程调用
+ *需要另外安装库
+ *WSDL 网络服务描述语言 可以用来描述SOAP服务
+ *利用[[Python]]的自省能力可以动态添加函数 和 获得函数的调用信息
+ *Google API 有一些是SOAP调用
+== Unit Testing ==
+ *测试先行开发
+ *单元测试框架unittest
+ *Test Case
+ *正确什么都不做 错误发出异常
+ *正面测试 负面测试
+== Test-First Programming ==
+ *逐步实现通过测试
+ *failures 断言的情况没有发生或预期的异常没有被引发
+ *errors 测试的代码或单元测试本身发生了某种异常
+ *测试代替不了优秀算法的设计
+ *全面的单元测试能够告诉你的最重要的事情是什么时候停止编写代码。当一个函数的所有单元测试都通过了，停止编写这个函数。一旦整个模块的单元测试通过了，停止编写这个模块
+ *验证罗马数字使用正则表达式的例子
+== Refactoring ==
+ *Bug 是你还没有编写的测试用例
+ *今天的单元测试就是明天的回归测试 (regression test)
+ *单元测试给了你自由去无情地重构
+ *重构是在可运行代码的基础上使之工作得更好的过程
+== Functional Programming ==
+ *使用filter() 也能达到过滤的效果
+ *map() 达到共同调用的效果
+ *数据中心思想
+ *使用__import__()可以用来动态载入模块
+ *unittest模块使用了很多的反射功能
+== Dynamic functions ==
+== Performance Tuning ==
+}}}
+----
+ [[Category Book]]

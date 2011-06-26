@@ -1,0 +1,6 @@
+= tar =
+ *tar cjf dirA.tar.gz dirA 创建包
+ *c 创建包 x提取包
+ *z 代表gzip j代表bzip2
+ *f 代表后面是个文件 
+ *-C 选项代表解压路径

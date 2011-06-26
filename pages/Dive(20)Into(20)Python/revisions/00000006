@@ -1,0 +1,19 @@
+= Dive Into Python =
+== Installing Python ==
+== Your First Python Program ==
+ *sys是内置模块 使用C语言写成
+ *万物皆对象
+ *Python 使用硬回车来分割语句，冒号和缩进来分割代码块。C++ 和 Java 使用分号来分割语句，花括号来分割代码块。 
+ *使用 if __name__ 方法来进行单元测试
+== Native Datatypes ==
+ *Dictionary 键值对 无序
+ *List 有序 循环特性 负数索引
+ *tuple创建后不变
+ *例 3.23 介绍字符串格式化
+ *映射 list 可以快速用现有list生成list
+== The Power Of Introspection ==
+ *参数不过是字典
+ *type、str、dir 和其它的 Python 内置函数都归组到了 __builtin__ 模块
+ * Python 在启动时自动执行了from __builtin__ import *
+----
+ [[Category Book]]

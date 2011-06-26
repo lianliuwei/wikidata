@@ -1,0 +1,62 @@
+= 16进制编辑控件 =
+ *[[http://www.codeproject.com/KB/applications/hexeditor.aspx]]不是控件
+== Hex Edit Control ==
+ *[[http://www.codeguru.com/Cpp/controls/editctrl/article.php/c539|Hex edit control]]
+  *有一些Bug 看网页后面的评论
+  *黏贴后没有改变scrollbar的属性
+  *全部删除会出现错误
+  *按住del键的时候光标有问题
+ *使用了VC6的非标准C++特性
+ *OnPaint()
+  *使用双缓冲技术
+   *双缓冲没有利用MemDC的好特点
+  *可能只绘制了要显示的部分
+  *绘制出选择是使用了三段绘制的方法 每段改变不同的DC属性
+ *OnVScroll()
+  *移动时改变要显示的范围
+  *没有设置滚动条的范围
+ *SetOptions()
+  *设置绘图的模式
+ *OnLButtonDown()
+  *判断光标
+  *处理选择
+ *CalcPos()
+  *处理点击位置到逻辑位置的转变
+  *无效点的坐标使用CPoint(-1, -1)代表 
+  *Address的坐标为CPoint(0, y)
+  *Hex的坐标为CPoint(x, y) 其中x大于0
+ *CreateAddressCaret() CreateEditCaret()
+  *创建光标
+ *OnMouseMove()
+  *上下转动效果
+  *选择效果
+ *UpdateScrollbars()
+  *更新Scroll的信息
+ *使用0xffffffff表示没有设定值
+ *OnChar()响应键盘输入
+  *调用OnEditCopy() OnEditPaste() OnEditCut() OnEditUndo()处理响应的按键
+  *响应backspace键 一般字符输入
+ *OnKeyDown()
+  *响应上下左右 HOME END INSERT DELETE \t
+  *\t 切换到相应的数据上
+ *Move()
+  *处理光标移动
+  *为相对坐标移动
+ *SetSel() 处理选择
+ *RepositionCaret() 设置光标的位置 参数为数据的位置
+ *ScrollIntoView() 将参数表示的数据在View中显示
+ *OnContextMenu() 处理右键菜单
+  *使用ole将数据复制到剪贴板
+ *OnEditCopy() 处理复制
+  *使用ole技术 有2进制 和 字符模式
+ *OnEditCut() 处理剪切
+ *OnEditSelectAll() 处理全选
+ *SelDelete() 选取部分删除
+  *重新申请内存
+ *SelInsert() 添加内容
+  *重新申请内存
+ *SetData() 设置数据
+  *申请内存保存
+ *GetData() 获得数据
+  *申请内存输出
+  

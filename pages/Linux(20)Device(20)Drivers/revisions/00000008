@@ -1,0 +1,221 @@
+= Linux Device Drivers =
+{{{#!wiki
+<<TableOfContents(3)>>
+ *每张背后都有索引
+== An Introduction to Device Drivers ==
+ *3类驱动
+  *字符
+  *块
+   *已经对用户透明
+  *网络 
+   *没有映射为文件系统中的一个文件
+   *不用read 和 write访问
+ *安全
+  *安全由内核定义
+  *驱动也要考虑安全问题
+ *本书内容
+  *可以多回顾一下
+ *写驱动是学习内核的较好入口
+
+ *学习驱动的编写，而不是学习具体的设备
+
+ *机制和策略分开
+
+ *图1.1 内核的划分
+
+ *模块是编写驱动需要了解的
+
+ *设备分类
+
+  *字符设备 Character devices
+
+  *块设备 Block devices
+
+  *网络接口 Network interfaces
+
+  *硬件接口如 USB subsystem
+
+ *安全
+
+  *在内核中就有了最高的权限
+
+ *[[http://lwn.net/Articles/2.6-kernel-api/|兼容性网页]]
+
+ *Joining the Kernel Development Community
+
+ *Overview of the Book
+
+  * 1-11 基础
+
+  *12-18 高级
+== Building and Running Modules ==
+ *需要当前内核的源码
+ *__开头的函数用要特别小心
+
+ *Compiling and Loading
+
+  *Documentation/kbuild 内核编译系统文件夹
+
+  *Documentation/Changes 构建环境要求文件
+
+  *make -C ~/kernel-2.6 M=`pwd` modules 执行语句
+
+  *编译需要当前内核的obj文件
+
+  *加载模块可以传递参数
+
+ *kernel/module.c 实现模块加载
+
+ *只有系统调用以 sys_ 开头
+
+ *内核可以配置为可以强制移除mode
+
+ *查看模组信息 /proc/modules /proc/modules
+
+ *模组会和 vermagic.o 进行链接绑定版本信息
+
+ *模组可能和平台有关
+
+ *modprobe 解决mode依赖问题
+
+ *EXPORT_SYMBOL(name)在全局位置导出符号，通过全局变量来实现
+
+ *#include <linux/init.h> 支持模块初始化和清除
+
+ *moduleparam.h 支持传递参数
+
+ *MODULE_LICENSE MODULE_AUTHOR MODULE_DESCRIPTION MODULE_VERSION MODULE_ALIAS MODULE_DEVICE_TABLE 通常放在文件末尾
+
+ *__init __initdata 初始化后就消除
+
+ *register_注册函数开头
+
+ *__exit只有清除时候可用，其他时候调用出错
+
+ *使用goto处理出错
+
+ *Module-Loading Races
+
+  *可能会立即被调用
+
+ *使用 module_param(,,)来将一个全局变量变为可以被加载时更改的变量
+
+ *模块的传输可以和sysfs整合
+
+ *Doing It in User Space
+
+  *libusb
+
+  *gadgetfs
+
+  *X server
+
+  *SANE
+
+  *cdrecord
+
+  *新驱动开发时
+== Char Drivers ==
+
+ *scull (Simple Character Utility for Loading Localities)
+
+ *The Design of scull
+
+  *scull0 to scull3
+
+  *scullpipe0 to scullpipe3
+
+  *scullsingle
+
+  *scullpriv
+
+  *sculluid
+
+  *scullwuid
+
+ *Major and Minor Numbers
+
+  *主设备用来区别驱动
+
+  *次设备子用于驱动
+
+  *多驱动可以共享主设备号
+
+  *<linux/kdev_t.h> 用于表示主次设备号
+
+  *注册设备
+
+   *int register_chrdev_region(dev_t first, unsigned int count,char *name); 知道主设备号
+
+   *int alloc_chrdev_region(dev_t *dev, unsigned int firstminor,unsigned int count, char *name); 动态分配设备号
+
+   *void unregister_chrdev_region(dev_t first, unsigned int count); 通用注销函数
+
+  *动态使用主设备号可以使用脚本动态确认主设备号来创建节点
+
+  *编程时要两种方式兼顾 看书上例子
+
+ *Some Important Data Structures
+
+  *File Operations
+
+   *struct module *owner
+
+   *loff_t (*llseek) (struct file *, loff_t, int);
+
+   *ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
+
+   *ssize_t (*aio_read)(struct kiocb *, char __user *, size_t, loff_t);
+
+   *ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
+
+   *ssize_t (*aio_write)(struct kiocb *, const char __user *, size_t, loff_t *);
+
+   *int (*readdir) (struct file *, void *, filldir_t);
+
+   *unsigned int (*poll) (struct file *, struct poll_table_struct *);
+
+   *int (*ioctl) (struct inode *, struct file *, unsigned int, unsigned long);
+
+   *int (*mmap) (struct file *, struct vm_area_struct *);
+
+   *int (*open) (struct inode *, struct file *);
+
+   *int (*flush) (struct file *);
+
+   *int (*release) (struct inode *, struct file *);
+
+   *int (*fsync) (struct file *, struct dentry *, int);
+
+   *int (*aio_fsync)(struct kiocb *, int);
+
+   *int (*fasync) (int, struct file *, int);
+
+   *int (*lock) (struct file *, int, struct file_lock *);
+
+   *ssize_t (*readv) (struct file *, const struct iovec *, unsigned long, loff_t *);
+
+   *ssize_t (*writev) (struct file *, const struct iovec *, unsigned long, loff_t *);
+
+   *ssize_t (*sendfile)(struct file *, loff_t *, size_t, read_actor_t, void *);
+
+   *ssize_t (*sendpage) (struct file *, struct page *, int, size_t, loff_t *,int);
+
+   *unsigned long (*get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
+
+   *int (*check_flags)(int);
+
+   *int (*dir_notify)(struct file *, unsigned long);
+== 问题 ==
+ *为什么需要当前内核源码编译内核而不是头文件
+ *为什么printk 的级别信息后没有加 , 
+== 资源 ==
+ *[[http://lwn.net/Kernel/LDD3/]] 官网
+ *[[http://lwn.net/Articles/2.6-kernel-api/]]API 变化
+ *[[ftp://ftp.ora.com/pub/examples/linux/drivers/]] 例子
+ *[[http://www.tux.org/lkml]]Linux 内核邮件列表 FAQ:
+ *[[http://blog.csdn.net/fudan_abc/]] 很多分析
+ *[[http://examples.oreilly.com/linuxdrive3/]]LDD3代码
+}}}
+----
+ [[Category Book]]

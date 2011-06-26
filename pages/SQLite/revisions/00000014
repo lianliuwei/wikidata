@@ -1,0 +1,95 @@
+= SQLite =
+ *SQLite是一款轻型的数据库，是遵守ACID的关联式数据库管理系统，它的设计目标是嵌入式的
+ *适合想研究数据库系统开发的专业人士
+ *以文件为数据库记录
+ *编译进程序中 不以独立进程存在
+ *可以用来代替fopen()
+ *可以用ODBC和网络来连接
+ *用脚本来创建数据库
+ *SQLite设计得和库一模一样.
+== 任务 ==
+ *找项目
+ *复习数据库
+ *找管理工具 用手写模拟
+ *如何用C来写数据库
+ *配置环境
+ *写一个Demo
+ *静态链接
+ *学习接口
+== C/C++接口 ==
+ *[[http://www.sqlite.org/cintro.html]]介绍
+ *[[http://www.sqlite.org/c3ref/intro.html]]索引
+ *150多个API
+ *只有几个简单的有用
+ *SQL引擎的目的是来执行SQL语句 要有两种物体
+  *数据库连接 sqlite3
+  *SQL语句 sqlite_stmt
+ *sqlite_stmt有包装 隐藏起来了
+ *六大核心语句
+  *sqlite3_open() 返回链接对象
+  *sqlite3_prepare() 准备SQL语句 sqlite3_prepare_v2() 新版本
+  *sqlite3_step() 一行一行执行 
+  *sqlite3_column() step返回的行里的列的值 一个家族
+  *sqlite3_finalize() 销毁SQL语句 用完后要用 免得内存溢出
+  *sqlite3_close() 关闭链接
+ *sqlite3_open()可以多次使用，可以打开一数据库文件后在换成另外的文件(使用ATTACH SQL语句)
+ *sqlite3_exec()为核心函数的包装 是在结果的上执行回调函数
+ *sqlite3_get_table()为核心函数的包装 将结果放在内存中
+ *sqlite3_reset()可以重复执行语句,少掉sqlite3_prepare()的使用
+ *在SQL语句中可以使用参数语句 在执行前qlite3_bind()可以绑定数值,但不用在执行sqlite3_prepare()
+ *扩展SQLite
+    * sqlite3_create_collation()
+    * sqlite3_create_function()
+    * sqlite3_create_module()
+ ＊SQLite内建的SQL语句也是用这些接口实现的
+== 从源码编译 ==
+ *./configure --enable-threads
+ *make
+ *make install
+== 环境设置 ==
+ *下sqlite.so.gz 为线程不安全,安全版本要自己编译
+ *和一般的库的配置一样
+== 参考项目 ==
+ *[[http://whm.sourceforge.net/]] c或C++语言的管理系统
+ *[[http://sourceforge.net/projects/cashduck/]]用sqlite的POS系统
+ *[[http://www.pudn.com/downloads42/sourcecode/unix_linux/detail144566.html]] c sqlite pos系统
+ *[[http://code.google.com/p/colligere/]]sqlite的管理系统
+ *[[http://www.docin.com/p-10551343.html]]POS设计
+== 管理工具 ==
+ *使用一合并(amalgamation)来进行发布
+ *使用源代码进行使用
+ *默认包括调试信息 可以去除减小体积
+=== sqlite CLP ===
+ *命令行工具 和 数据库不同
+ *作为管理工具和脚本工具
+ *.命令 是内部命令 命令可以缩写
+ *真正创建数据库文件前可以设置很多属性
+ *.mode col 列表格式
+ *.headers on 显示表的属性名
+ *.table 看表
+ *.indices 表名  看index
+ *.schema 查看所有的表创建语句
+ *可以查询sqlite_master来获得数据库的信息 和 .indices .table .schema 一样的数据
+ *.dump 产生现在数据库的导出sql文件
+ *.output 改变输出文件 stdout为向屏幕输出
+ *.read 输入sql语句格式的文件
+ *.import 输入csv文件到数据表
+ *.show 但前CLP的设置
+ *可以产生多总格式信息
+ *进入命令行的两种模式
+  *SQL语句提供
+  *SQL文件重定向到输入
+ *-init 初始化用的SQL语句文件声明
+ *VACUUM 删除多余的数据
+== SQLite Analyzer ==
+ *分析工具 用于SQLite数据库文件的分析
+== SQLite支持的SQL ==
+ *[[http://www.sqlite.org/lang.html]]
+== 资源 ==
+ *[[http://www.sqlite.org]]官方网站
+ *[[http://www.sqlite.com.cn]]
+ *[[http://sqlitemanager.sourceforge.net/]]
+ *[[http://en.wikipedia.org/wiki/Sqlite|wiki英文]]
+ *[[http://www.sqlite.org/cvstrac/wiki?p=SqliteUsers]]使用SQLite的程序
+ *[[http://www.sqlite.com.cn/]]
+ ＊Inside Sqlite_1st_en.chm SQLite是如何实现的

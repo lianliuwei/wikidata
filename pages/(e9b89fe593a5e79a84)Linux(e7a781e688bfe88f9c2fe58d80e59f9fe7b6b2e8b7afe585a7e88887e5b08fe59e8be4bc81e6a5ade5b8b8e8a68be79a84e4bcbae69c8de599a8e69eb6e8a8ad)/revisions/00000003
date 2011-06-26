@@ -1,0 +1,1055 @@
+=== 區域網路內與小型企業常見的伺服器架設 ===
+
+==== 遠端連線伺服器 Telnet / SSH / VNC / XDMCP / RSH ====
+
+ *要取消 SELinux 才行
+
+ *遠端連線伺服器
+
+  *伺服器類型( Server )
+
+  *工作站類型( Workstation )
+
+  *目前我們通常都希望使用可以將這些在網路上面跑的資料加密的技術，以增加資料在 Internet 上面傳送的安全性啊！
+
+ *Telnet 伺服器
+
+  *telnet，這個套件提供的是 telnet 用戶端的連線程式；
+
+  *telnet-server 套件，這個才是真正的 Telnet server 軟體喔！
+
+  *好用的連線軟體
+
+   *最常見到的應該就是 netterm 這個鼎鼎大名的連線軟體
+
+   *我們是沒有辦法看到中文的！ 除非安裝某些特殊的中文介面才行！比如 JMCCE 之類的咚咚！
+
+   *預設的 telnet 是『不允許』使用 root 這個帳號登入
+
+  *iptables, TCP_Wrappers, 純建議 看书
+
+   *要開放 root 以 telnet 登入 Linux 主機的話，請直接將 /etc/securetty 更改檔名即可, 也可以藉由修改 pam 模組來達成同樣的功能！修改 /etc/pam.d/login 這個檔案
+
+ *SSH 伺服器
+
+  *SSH 是 Secure SHell protocol 的簡寫
+
+  *在預設的狀態中，本身就提供兩個伺服器功能： 
+
+   *類似 telnet 的遠端連線使用 shell 的伺服器，亦即是俗稱的 ssh ； 
+
+   *類似 FTP 服務的 sftp-server ！提供更安全的 FTP 服務。 
+
+  *目前在 SSH 使用上，主要是利用 RSA/DSA/Diffie-Hellman 等機制
+
+  *SSH protocol version 1  看书
+
+  *SSH protocol version 2  看书
+
+  *ssh 用戶端連線
+
+   *Linux Client: ssh 
+
+   *Server Keys 的紀錄資料： ~/.ssh/known_hosts 
+
+    *keys不对錯誤更正 進入家目錄的 ~/.ssh 裡面，編輯一下 known_hosts ，將欲連接的主機名稱的 Key 給他消除，就可以重新連線
+
+   *Linux Client: sftp
+
+   *Linux Client: scp 
+
+   *Windows Client: putty pietty
+
+   *Windows Client: psftp 
+
+   *Windows Client: Fliezilla 也有linux版本的
+
+  *詳細設定 sshd 伺服器
+
+   *設定都放在 /etc/ssh/sshd_config 裡面  看书
+
+  *製作不用密碼可立即登入的 ssh 用戶
+
+   *在 Client 端建立 Public 與 Private Key
+
+   *在 Client 端放置私鑰
+
+   *在 Server 端放置可以登入的公鑰
+
+  *安全設定 看书
+
+   *sshd 之所謂的『安全』其實指的是『 sshd 的資料是加密過的，所以他的資料在 Internet 上面傳遞時是比較安全的。 至於 sshd 這個服務本身就不是那樣安全了！所以說：『非必要，不要將 sshd 對 Internet 開放可登入的權限，盡量侷限在幾個小範圍內的 IP 或主機名稱即可！
+
+ *XDMCP 伺服器
+
+  *XDM 是 X Display Manager 
+
+  * XDMCP (X Display Manager Control Protocol) 就是負責監聽來自網路上面對於 xdm 的要求
+
+  * X11 提供的 display manager 為 xdm 設定檔在 /etc/X11/xdm/xdm-config
+
+  * KDE 的 display manager 管理程序是 kdm 設定檔是 /etc/X11/xdm/kdmrc
+
+  * GNOME 的 display manager 管理程序是 gdm 設定檔是 /etc/X11/gdm/gdm.conf 
+
+  *用戶端登入 看书
+
+   *用戶端是 Windows 主機
+
+     * X-Win32 
+
+ *VNC 伺服器
+
+  * VNC (Virtual Network Computing)
+
+  *VNC 如果想要漂亮的一點的話，也是需要搭配 xdmcp 的
+
+  *其實 VNC Server 會在主機多開一個程序在等待 Client 的登入要求， 等到 Client 登入之後，才去執行 Window manager 的啟動
+
+  *vncpasswd 设定passwd 會在 $(HOME)/.vnc/passwd 這個檔案中記錄了你的密碼
+
+  *个人设定档：$(HOME)/.vnc/xstartup
+
+  *系统设定档：/etc/sysconfig/vncservers
+
+  *记录档： username.hostname.domainname:[port number].log
+
+  *啟動 VNC 的 script 是由 vncserver 這個指令所啟用
+
+  *Windows 客户端[[http://www.realvnc.com/download.html]]
+
+  *與 tty7 的畫面同步 看书
+
+ *RSH 伺服器
+
+  *RSH 被稱為 R Shell 
+
+  *RSH 很少被使用到一般的伺服器上面 卻是操作叢集電腦 (cluster) 裡面最常見的服務之一
+
+  */etc/hosts：主要規範 RSH server/client 的主機名稱與 IP 對應！ 
+
+  */etc/hosts.equiv：規範出哪一部 client 可以連上這部 RSH server； 
+
+  *~user/.rhosts：規範出那個使用者可以不需要輸入密碼即可執行 RSH； 
+
+  */etc/pam.d/rsh：規範 root 能否使用 RSH 的設定檔。
+
+  *其實 R Shell 有很多的工具與啟動的 port ，常見的 R Shell 工具有 rexec, rlogin, rsh 
+
+  *需要有 rsh 及 rsh-server 兩個套件才行
+
+  *讓 root 也可以使用 RSH 看书
+
+  *這個 RSH client 的指令 rsh 預設是不給 root 執行的！所以不要使用 root 來測試！ 另外， RSH Client 最好與 RSH server 具有相同的帳號來執行 rsh 比較不會有問題喔！
+
+  *通常 RSH 可能會搭配後續會繼續談到的 NIS/NFS 等伺服器才是
+
+  *RSH Client
+
+   *rsh [-l 遠端帳號] [遠端主機名] [遠端主機指令]
+
+   *最好將那一整串指令用單引號括起來，可以避免指令下達錯誤的問題
+
+   *利用 rcp 複製
+
+ *以 rsync 進行同步鏡相備份
+
+  *在本機上直接運作，用法就與 cp 幾乎一模一樣，
+
+   *例如：rsync -av /etc /tmp (將 /etc/ 的資料備份到 /tmp/etc 內)
+
+  *透過 rsh 或 ssh 的通道在 server / client 之間進行資料傳輸
+
+   *例如：rsync -av -e ssh user@rsh.server:/etc /tmp (將 rsh.server 的 /etc 備份到本地主機的 /tmp 內)
+
+  *直接透過 rsync 提供的服務 (daemon) 來傳輸，此時 rsync 主機需要啟動 873 port：
+
+   1. 你必須要在 server 端啟動 rsync ， 看 /etc/xinetd.d/rsync 即可；
+
+   2. 你必須編輯 /etc/rsyncd.conf 設定檔；
+
+   3. 你必須設定好 client 端連線的密碼資料；
+
+   4. 在 client 端可以利用：rsync -av user@hostname::/dir/path /local/path
+
+==== NFS 伺服器 ====
+
+ *NFS 的由來與其功能
+
+  *什麼是 NFS (Network FileSystem)
+
+   *最大的功能就是可以透過網路，讓不同的機器、不同的作業系統、可以彼此分享個別的檔案 (share files)
+
+   *遠端主機的目錄就好像是自己的一個磁碟分割槽一樣 (partition)！使用上面相當的便利！
+
+   *要 遠端程序呼叫 (Remote Procedure Call, RPC) 的協定來輔助
+
+  *什麼是 RPC (Remote Procedure Call)
+
+   *RPC 最主要的功能就是在指定每個 NFS 功能所對應的 port number ，並且回報給用戶端，讓用戶端可以連結到正確的埠口上去。
+
+   *當伺服器在啟動 NFS 時會隨機取用數個埠口，並主動的向 RPC 註冊，因此 RPC 可以知道每個埠口對應的 NFS 功能
+
+   *要啟動 NFS 之前，RPC 就要先啟動了，否則 NFS 會無法向 RPC 註冊。 另外，RPC 若重新啟動時，原本註冊的資料會不見，因此 RPC 重新啟動後，他管理的所有程式都需要重新啟動以重新向 RPC 註冊
+
+   *我們稱 NFS 為 RPC server 的一種
+
+  *NFS 啟動的 RPC daemons
+
+   *rpc.nfsd：管理 Client 是否能夠登入主機的權限 登入者的 ID 的判別
+
+   *rpc.mountd：管理 NFS 的檔案系統
+
+   *rpc.lockd (非必要)：這個玩意兒可以用在管理檔案的鎖定 (lock) 用途  必須要同時在用戶端與伺服器端都開啟才行
+
+   *rpc.statd (非必要)：用來檢查檔案的一致性 必須要在伺服器端與用戶端都啟動才會生效
+
+  *NFS 的檔案存取權限
+
+   *因為 NFS 本身的服務並沒有進行身份登入的識別，伺服器端會以用戶端的使用者 UID 與 GID 等身份來嘗試讀取伺服器端的檔案系統。
+
+   *在預設的情況下， root 的身份會被主動的壓縮成為匿名者
+
+   *檔案的可寫入權限
+
+    1. 使用者帳號，亦即 UID 的相關身份
+
+    2. NFS 伺服器允許有寫入的權限
+
+    3. 檔案系統確實具有 w 的權限
+
+   *NFS 通常需要與 NIS 這一個可以確認用戶端與伺服器端身份一致的服務搭配使用，以避免身份的錯亂
+
+ *NFS Server 端的設定
+
+  *所需要的套件
+
+   *nfs-utils 
+
+   *portmap 
+
+  *NFS 的套件結構
+
+   */etc/exports
+
+   */usr/sbin/exportfs
+
+   */usr/sbin/showmount
+
+   */var/lib/nfs/*tab
+
+  */etc/exports 設定檔的語法與參數 看书
+
+   * NFS 會直接使用到核心功能，所以你的核心必須要有支援 NFS 才行
+
+   * NFS 伺服器的架設實在很簡單，你只要編輯好主要設定檔 /etc/exports 之後， 先啟動 portmap ，然後再啟動 nfs ，你的 NFS 就成功了
+
+  *啟動 NFS
+
+   *portmap 根本就不需要設定！只要直接啟動他就可以啦！啟動之後，會出現一個 port 111 的 sunrpc 的服務，那就是 portmap
+
+   *portmap 啟動的 port 在 111； 
+
+   *NFS 啟動的 port 在 2049； 
+
+   *其他 rpc.daemons 啟動的 port 則是隨機產生的，因此需向 port 111 註冊。
+
+   * rpcinfo: 查询 RPC 服務的註冊狀況
+
+  *NFS 的連線觀察
+
+   * showmount: 显示NFS共享
+
+   */var/lib/nfs/etab 目錄權限設定
+
+   *其他用戶端掛載了妳的 NFS 檔案系統時， 那麼該用戶端與檔案系統資訊就會被記錄到 /var/lib/nfs/xtab 裡頭去
+
+   *exportfs: 重新读取 /etc/exports 设置
+
+  *NFS 的安全性 看书
+
+   *NFS 伺服器關機前的注意事項
+
+    *務必先關閉 portmap 與 nfs server ，否則關機無法順利成功
+
+ *NFS 用戶端的設定
+
+  *遠端 NFS 伺服器的掛載
+
+   1. 確認本地端已經啟動了 portmap 服務！ 
+
+   1. 掃瞄 NFS 伺服器分享的目錄有哪些，並瞭解我們是否可以使用 (showmount)； 
+
+   1. 在本地端建立預計要掛載的掛載點目錄 (mkdir)； 
+
+   1. 利用 mount 將遠端主機直接掛載到相關目錄。 
+
+  *用戶端可處理的掛載參數與開機掛載
+
+   *除了 NFS 伺服器需要保護之外，我們取用人家的 NFS 檔案系統也需要自我保護才行
+
+   *關於 NFS 特殊的掛載參數 看书
+
+   *將 NFS 開機即掛載 看书
+
+  *無法掛載的原因分析
+
+   *使用者或用戶端身份權限不符
+
+   *伺服器或用戶端某些服務未啟動
+
+   *被防火牆檔掉了
+
+  *自動掛載 autofs 的使用 看书
+
+   *autofs 主要設定檔為 /etc/auto.master
+
+   *讓用戶端在有使用到 NFS 檔案系統的需求時才掛載
+
+   *並且不需要事先建立掛載點 
+
+   *當 NFS 檔案系統使用完畢後，讓 NFS 自動卸載，以避免可能的 RPC 錯誤？
+
+ *案例演練 看书
+
+==== NIS 伺服器 ====
+
+ *NIS 的由來與功能
+
+  *Network Information Services (NIS server)
+
+  *Network Information Service 最早應該是稱為 Sun Yellow Pages (簡稱 yp)
+
+  *NIS 的運作流程
+
+   * NIS 伺服器可以使用 master/slave (主控/次要伺服器) 架構的
+
+    *NIS Server (master/slave) 的運作程序： 
+
+     *NIS Master 先將本身的帳號密碼相關檔案製作成為資料庫檔案； 
+
+     *NIS Master 可以主動的告知 NIS slave server 來更新； 
+
+     *NIS slave 亦可主動的前往 NIS master server 取得更新後的資料庫檔案； 
+
+     *若有帳號密碼的異動時，需要重新製作 database 與重新同步化 master/slave。 
+
+    *NIS Client 查詢需求時： 
+
+    *NIS client 若有登入需求時，會先查詢其本機的 /etc/passwd, /etc/shadow 等檔案； 
+
+    *若在 NIS Client 本機找不到相關的帳號資料，才開始向整個 NIS 網域的主機廣播查詢； 
+
+    *每部 NIS server (不論 master/slave) 都可以回應，基本上是『先回應者優先』。 
+
+ *NIS Server 端的設定
+
+  *所需要的套件
+
+   *yp-tools ：提供 NIS 相關的查尋指令功能 
+
+   *ypbind   ：提供 NIS Client 端的設定套件 
+
+   *ypserv   ：提供 NIS Server 端的設定套件 
+
+   *portmap  ：就是 RPC 一定需要的資料啊！ 
+
+   *portmap  ：就是 RPC 一定需要的資料啊！ 
+
+  *NIS 的套件結構
+
+   *設定檔方面： 
+
+    */etc/ypserv.conf：這是最主要的設定檔， 可以規範 NIS 用戶端是否可登入的權限。 
+
+    */etc/hosts：非常重要！每一部主機都需要記錄才行！！ 
+
+    */etc/netgroup：設定信任的主機與網域； 
+
+    */var/yp/Makefile：與建立資料庫有關的動作設定檔； 
+
+    */etc/sysconfig/network：可以在這個檔案內指定 NIS 的網域 (nisdomainname)。
+
+   *伺服器提供的主要服務方面： 
+
+    */usr/sbin/ypserv：就是 NIS 伺服器的主要提供服務； 
+
+    */usr/sbin/rpc.ypxfrd：用來作為 master/slave 主機之間傳輸資料庫的服務； 
+
+    */usr/sbin/rpc.yppasswdd：提供額外的 NIS 用戶端之使用者密碼修改服務， 透過這個服務， NIS 用戶端可以直接修改在 NIS 伺服器上的密碼。相關的使用程式則是 yppasswd 指令；
+
+   *與資料庫有關的指令方面： 
+
+    */usr/sbin/yppush：master 主機將資料庫直接送至 slave 的指令； 
+
+    */usr/lib/yp/ypinit：建立資料庫的指令，非常常用； 
+
+    */usr/lib/yp/ypxfr：傳送資料庫的指令，在該目錄下尚有 ypxfr_1perday, ypxfr_1perhour, ypxfr_2perday 等等。
+
+  *一個實作案例 看书
+
+   *NIS master 的設定與啟動
+
+    *設定 NIS 的網域名稱 (NIS domain name) 
+
+    *主要設定檔 /etc/ypserv.conf
+
+    *設定主機名稱 (/etc/hosts) 與建立信任群組 (/etc/netgroup) 
+
+    *啟動所有相關的服務
+
+    *建立資料庫
+
+    *與 slave server 及資料庫有關的一些設定 (optional) 
+
+   *NIS slave 的設定與啟動 (optional)
+
+    * NIS 伺服器預設還是會先搜尋自己的 /etc/passwd, /etc/shadow 等資訊，因此你最好先將 NIS slave 的帳號與密碼資料作個簡單的修訂，讓他保留在比較乾淨的帳號資料
+
+    *設定網域
+
+    *主要設定檔 /etc/ypserv.conf
+
+    */etc/hosts 及 /etc/netgroup
+
+    *啟動所有服務及建立資料庫
+
+    *啟動 ypbind ，讓 slave 也可以查詢帳號/密碼
+
+ *NIS Client 端的設定
+
+  *NIS client 端所需要的套件
+
+   *ypbind 
+
+   *yp-tools
+
+  *設定檔
+
+   */etc/sysconfig/network ：裡頭主要設定了 NIS 領域名稱，讓 ypbind 啟動時可以設定好； 
+
+   */etc/hosts ：很重要吧！至少需要有各個 NIS 伺服器的 IP 與主機名對應； 
+
+   */etc/yp.conf ：這個則是 ypbind 的主要設定檔，裡面主要規範 NIS server ； 
+
+   */etc/sysconfig/authconfig ：規範帳號登入時的允許認證機制； 
+
+   */etc/pam.d/system-auth ：這個最容易忘記！因為帳號通常由 PAM 模組所管理， 所以你必須要在 PAM 模組內加入 NIS 的支援才行！ 
+
+   */etc/nsswitch.conf ：這個檔案重要到不行！可以規範帳號密碼與相關資訊的查詢順序，預設是 /etc/passwd 再 NIS 等等；
+
+  *程式
+
+   */usr/bin/yppasswd ：更改你在 NIS database (NIS Server 所製作的資料庫) 的密碼 
+
+   */usr/bin/ypchsh   ：同上，但是是更改 shell 
+
+   */usr/bin/ypchfn   ：同上，但是是更改一些使用者的訊息！
+
+  *NIS client 的設定與啟動 看书
+
+   *設定好 NIS domain 以及 /etc/hosts 主機名對應
+
+   *啟動 ypbind 來連結至 NIS server
+
+    */etc/nsswitch.conf (修改許多主機驗證功能的順序) 
+
+    */etc/sysconfig/authconfig (CentOS 的認證機制) 
+
+    */etc/pam.d/system-auth (許多登入所需要的 PAM 認證過程) 
+
+    */etc/yp.conf (亦即是 ypbind 的設定檔) 
+
+  *NIS client 端的檢驗： yptest, ypwhich, ypcat
+
+   *利用 yptest 檢驗資料庫之測試
+
+   *利用 ypwhich 檢驗資料庫數量 
+
+   *利用 ypcat 讀取資料庫內容 
+
+  *使用者參數修改： yppasswd, ypchfn, ypchsh
+
+ *NIS 與 NFS 的設定與叢集電腦運用 看书
+
+ *指令對應資料 看书
+
+==== DHCP 伺服器 ====
+
+ *DHCP 運作的原理
+
+  *DHCP (Dynamic Host Configuration Protocol) 
+
+  *自動的將網路參數正確的分配給網域中的每部電腦， 讓用戶端的電腦可以在開機的時候就立即自動的設定好網路的參數值，這些參數值可以包括了 IP、netmask、network、gateway 與 DNS 的位址等等
+
+  *DHCP 通常是用區域網路內的一個通訊協定，他主要藉由用戶端傳送廣播封包給整個物理網段內的所有主機 所以DHCP 伺服器與用戶端是應該要在同一個物理網段內
+
+  *DHCP 的運作方式
+
+   *用戶端利用廣播封包發送 DHCP 需求
+
+   *DHCP 主機回應訊息
+
+    *到伺服器的登錄檔中尋找該用戶之前是否曾經用過某個 IP ，若有且該 IP 目前無人使用，則提供此 IP 給用戶端； 
+
+    *若設定檔針對該 MAC 提供額外的固定 IP (static IP) 時，則給予該 IP 的設定； 
+
+    *若不符合上述兩個條件，則隨機取用目前沒有被使用的 IP 給用戶，並記錄下來
+
+   *用戶端接受 DHCP 伺服器提供的參數並設定本身的網路環境
+
+   *DHCP 伺服器記錄該次租約行為
+
+  *租約何時會到期而被解約 
+
+   *用戶端離線
+
+   *用戶端租約到期
+
+  *DHCP 伺服器給予用戶端的 IP 類型
+
+   *固定 (Static) IP
+
+  *動態 (dynamic) IP
+
+ *DHCP 伺服器端的設定
+
+  *所需套件: dhcp
+
+  *設定檔: /etc/dhcpd.conf
+
+  *執行檔: /usr/sbin/dhcpd
+
+  *DHCP 伺服器端與用戶端租約建立的啟始與到期日記錄檔案: /var/lib/dhcp/dhcpd.leases
+
+  *主要設定檔 /etc/dhcpd.conf 的語法 看书
+
+  *一個區域網路的 DHCP 伺服器設定案例 看书
+
+  *DHCP 伺服器的啟動與觀察 看书
+
+  *內部主機的 IP 對應
+
+ *DHCP 用戶端的設定
+
+  *Linux 用戶端 看书
+
+   *用戶端取得的資料都被記載在 /var/lib/dhcp/dhclient-eth0.leases 裡頭
+
+  *Windows 用戶端
+
+ *伺服器端資料查閱
+
+  *檢查租約檔案
+
+  *使用 ether-wake 實行遠端自動開機 (remote boot)
+
+ *参考
+
+  *[[http://zh.wikipedia.org/wiki/DHCP]]
+
+==== DNS 伺服器 ====
+
+ *什麼是 DNS
+
+  * Domain Name System ( DNS )
+
+  *目前全世界使用最廣泛的領域名稱系統 Berkeley Internet Name Domain, BIND
+
+  *什麼是 Domain Name System
+
+   *Fully Qualified Domain Name ( FQDN )
+
+  *DNS 的查詢過程
+
+   *DNS 的架構
+
+   *DNS 的搜尋流程
+
+    *先查看本身有沒有紀錄
+
+    *向最頂層 ( root )查詢
+
+    *向第二層查詢
+
+    *向下層持續查詢
+
+    *記錄暫存記憶體
+
+   *DNS 使用的 port number
+
+  *關於『授權』的意義
+
+  *網站代管還是自己設定 DNS
+
+  *正解與反解的 Zone 意義
+
+   *由 hostname 去尋找出 IP 的程序稱為『 正解 』
+
+   *至於由 IP 去查詢得到 hostname 那就被稱為反解了
+
+   *一個正解或反解的設定就是一個 zone
+
+   *每一個 zone 都有一個設定檔，而規定這些設定檔檔名的，就交給 /etc/named.conf 這個參數檔來設定
+
+ *DNS 伺服器的套件、種類與 cache only 主機設定
+
+  *架設 DNS 所需要的套件
+
+   *bind-utils
+
+   *bind
+
+   *bind-chroot
+
+  *BIND 的預設路徑設定與 chroot
+
+   */etc/named.conf ：設定檔 
+
+   */etc/sysconfig/named ：是否啟動 chroot 及額外的參數
+
+   */var/named/ ：資料庫檔案預設放置在這個目錄 
+
+   */var/run/named ：named 這支程式執行時預設放置 pid-file 在此目錄內。 
+
+  *DNS 的 master/slave 架構	
+
+   *Master
+
+   *Slave
+
+   *Cache-only
+
+  *單純的 cache-only 與 forwarding DNS 主機設定
+
+   *編輯主要設定檔 /etc/named.conf
+
+   *啟動 named
+
+   *觀察 port 的變化
+
+   *檢查 /var/log/messages 的內容訊息
+
+   *測試
+
+ *DNS 主機的詳細設定 看书
+
+  *一個簡單的案例說明
+
+   */etc/named.conf 設定檔
+
+   *最上層 DNS (root) 資料庫檔案的設定
+
+   *正解資料庫檔案的設定
+
+   *反解資料庫檔案的設定
+
+   *DNS 的啟動與觀察
+
+    *語法設定錯誤
+
+    *邏輯設定錯誤
+
+  *RR (Resource Record) 
+
+  *設定格式: [主機或領域名稱] [TTL] IN [RR] [RR 內容] 
+
+  *加上了 . 表示這個完整的主機名稱，亦即是 "hostname + domain name"
+
+  *資料庫的更新
+
+   1. 先針對要更改的那個 zone 的資料庫檔案去做更新，就是加入 RR 的標誌即是！ 
+
+   2. 更改該 zone file 的序號 (Serial) ，就是那個 SOA 的第一個數字， 因為這個數字會影響到 master/slave 的判定更新與否喔！ 
+
+   3. 重新啟動 named ，或者是讓 named 重新讀取設定檔即可。 
+
+  *測試
+
+   *[[http://www.dnsreport.com/|合法授權DNS檢驗]]
+
+ *Master/Slave 架構的詳細設定
+
+  *master DNS 權限的開放
+
+  *slave DNS 的設定
+
+  *zone目錄的權限必須要是 named 這個使用者可以寫入的狀態
+
+ *Client 端的設定
+
+  *相關設定檔
+
+   */etc/hosts ：剛剛上面就提過了，這個是最早的 hostname 對應 IP 的檔案； 
+
+   */etc/resolv.conf ：這個重要！就是 DNS 主機的 IP； 
+
+   */etc/nsswitch.conf：這個檔案則是在『決定』先要使用 /etc/hosts 還是 /etc/resolv.conf 的設定！ 
+
+   *DNS 主機的 IP 可以設定多個，這可以讓您的個人電腦有備援的功能
+
+  *DNS 的查詢指令： host, nslookup, dig
+
+   *复杂程度host<nslookup<dig
+
+  *Domain 的資訊查詢： whois
+
+ *DNS 伺服器的進階設定
+
+  *子網域授權問題
+
+  *架設一個合法的授權的 DNS 主機
+
+  *LAME Server 的問題
+
+  *利用 RNDC 指令管理 DNS 伺服器
+
+   *rndc 可以很深入的管理你的 DNS 伺服器
+
+   *设定檔案: /etc/rndc.conf
+
+   *架設動態 DNS 主機： 讓你成為 ISP 啦 看书
+
+    *DDNS Server 端的設定
+
+    *Client 端的更新
+
+==== WWW 伺服器 ====
+
+ *WWW 的簡史、資源以及伺服器軟體
+
+  *WWW 的簡史、HTML 與標準制訂 (W3C)
+
+  *WWW 主機與瀏覽器所提供的資源設定
+
+   *URL (Uniform Resource Locator) 
+
+  *WWW 伺服器的類型：WWW 平台、網頁程式語言與資料庫(LAMP)
+
+   *網頁程式語言
+
+   *Apache + MySQL + PHP: LAMP
+
+   *IIS + MSSQL + ASP (.NET)
+
+  *加密的網頁資料 (SSL) 及第三方公正單位
+
+  *用戶端常見的瀏覽器
+
+ *WWW (Apache) 伺服器基本設定
+
+  *LAMP 所需套件與其結構
+
+   *httpd 
+
+   *mysql 
+
+   *mysql-server 
+
+   *php 
+
+   *php-devel (這個與 PHP 加速軟體有關) 
+
+   *php-mysql
+
+  * Apache 2.0.x 相關結構
+
+   */etc/httpd/conf/httpd.conf (主要設定檔)
+
+   */etc/httpd/conf.d/*.conf (很多的額外參數檔，副檔名是 .conf)
+
+   */usr/lib/httpd/modules/支援模組
+
+   */var/www/html/ 預設『首頁』所在目錄
+
+   */var/www/error/
+
+   */var/www/icons/
+
+   */var/www/cgi-bin/
+
+   */var/log/httpd/ Apache 登錄檔
+
+   */usr/sbin/apachectl
+
+   */usr/sbin/httpd 二進位執行檔
+
+   */usr/bin/htpasswd (Apache 密碼保護)
+
+  *MySQL 重要目錄與檔案
+
+   */etc/my.cnf 設定檔
+
+   */var/lib/mysql/ 資料庫放置的所在處
+
+  * PHP 檔案
+
+   */usr/lib/httpd/modules/libphp4.so 提供給 Apache 使用的模組
+
+   */etc/httpd/conf.d/php.conf
+
+   */etc/php.ini 設定檔
+
+   */etc/php.d/mysql.ini, /usr/lib/php4/mysql.so  PHP 支援 MySQL 介面
+
+   */usr/bin/phpize, /usr/include/php/ 加速器軟體用
+  *httpd.conf 的基本設定 看书
+
+   *[[http://dob.tnc.edu.tw/|網站建置百寶箱]]
+
+   *[[http://www.w3c.org]]
+
+   *[[http://httpd.apache.org/docs/2.0/mod/core.html|Apache 2.0 核心文件]]
+
+   */usr/sbin/httpd：使用 prefork 模組； 
+
+   */usr/sbin/httpd.worker：使用 worker 模組。 
+
+   * /etc/sysconfig/httpd 使用模组配置
+
+   *針對主機環境的設定項目
+
+   *針對中文 big5 編碼語系
+
+   *首頁權限相關設定 (DocumentRoot 與 Directory) 
+
+  *PHP 等額外設定檔
+
+  *Apache附加套件
+
+   *httpd-manual：提供 Apache 參考文件的一個套件； 可以使用 http://localhost/manual 來登入 Apache 的使用手冊
+
+   *mrtg：利用類似繪圖軟體自動產生主機流量圖表的套件； 
+
+   *mod_perl：讓你的 WWW 伺服器支援 perl 寫的網頁程式(例如 webmail 程式)； 
+
+   *mod_python：讓你的 WWW 伺服器支援 python 寫的網頁程式。 
+
+   *mod_ssl：讓你的 WWW 可以支援 https 這種加密過後的傳輸模式。
+
+  *Apache 的啟動與 PHP 的測試
+
+   */usr/sbin/apachectl 脚本 控制启动
+
+  *MySQL 資料庫的啟動與測試 看书
+
+   *啟動 MySQL (設定 MySQL root 密碼與新增 MysQL 用戶帳號) 
+
+   *效能調校 /etc/my.cnf 
+
+    *[[http://parus1974.wordpress.com/2005/02/27/mysql再調整|参考]]
+
+   *MysQL root 密碼忘記的緊急處理 
+
+  *開始網頁設計及安裝架站軟體，如 phpBB2 看书
+
+   *[[http://www.phpbb.com/phpBB|官方網站]]
+
+   *[[http://phpbb-tw.net|phpBB 正體中文網站『竹貓星球』]]
+
+   *[[http://linux.vbird.org/apache_packages/|鳥哥的簡易 phpBB2 安裝法]] 
+
+   *[[http://www.lifetype.org.tw/|Lifetype 部落格架設軟體中文支援站]] 
+
+   *[[http://www.lifetype.net/|Lifetype 部落格架設軟體官網]] 
+
+   *[[http://phpnuke.org/|PHP-Nuke 官方網站]] 
+
+   *[[http://www.xoops.org/|xoops 官方網站]]
+
+ *Apache 伺服器的進階設定
+  *啟動用戶的個人網站 (權限是重點)
+
+  *啟動某個目錄的 CGI (perl) 程式執行權限
+
+  *找不到網頁時的顯示訊息通知
+
+   *100-199：一些基本的訊息 
+
+   *200-299：用戶端的要求已成功的達成 
+
+   *300-399：Client 的需求需要其他額外的動作，例如 redirected 等等 
+
+   *400-499：Client 的要求沒有辦法完成(例如找不到網頁) 
+
+   *500-599：主機的設定錯誤問題
+
+  *瀏覽權限的設定動作 (order, limit)
+
+   *可以針對來源 IP 或網域來限制瀏覽
+
+   *限制用戶端能進行的動作的設定
+
+  *.htaccess 與認證網頁設定
+
+    *讓使用者可以輸入帳號/密碼取得瀏覽的權限
+
+    * 建立保護目錄的資料 
+
+    * 以 root 的身份處理 httpd.conf 的設定資料
+
+    * 建立保護目錄下的 .htaccess 檔案：只要有權限建立者即可進行
+
+    * 建立密碼檔案 htpasswd (只要有權限即可執行)
+
+  *虛擬主機的設定
+
+   *可以讓你的多個主機名稱對應到不同的主網頁目錄 (DocumentRoot 參數)， 所以看起來會像有多部實際主機的模樣
+
+  *防火牆與 SELinux
+
+ *登錄檔分析以及 PHP 強化模組等套件說明
+
+  *PHP 強化模組 (eaccelerator) 與 Apache 簡易效能測試
+
+   1. 預先載入這個 PHP 的模組
+
+   2. 修改 php.ini
+
+   3. 建立 eaccelerator 的暫存資料，重點在於權限要設定正確
+
+   * eaccelerator 是根據 PHP 核心所編譯出來, PHP跟新后要重编译
+
+   *網站的效能测试程序：ab [-dSk] [-c number] [-n number] 網頁檔名
+
+  *syslog 與 logrotate
+
+   *Apache 登錄檔
+
+    */var/log/httpd/access_log ：用戶端正常要求的記錄資訊 
+
+    */var/log/httpd/error_log ：使用者錯誤要求的資料，包括主機設定錯誤的資訊等。 
+
+   *要压缩
+
+  *webalizer 看书
+
+  *awstats 看书
+
+ *建立 SSL (https) 網站 看书
+
+  *安裝 mod_ssl 
+
+  *建立自己本機的憑證吧！
+
+   *使用OpenSSL
+
+  *將 http 與 https 的網頁分開 
+
+ *一些安全性管理的網頁
+
+  *讓 SSH 可以使用後門連線
+
+  *防砍站軟體
+
+==== Mail 伺服器 ====
+
+ *郵件伺服器的功能與運作原理
+
+  *Mail server 與 DNS 之間的關係
+
+   *DNS 的反解也很重要
+
+   *需要 DNS 的 MX 及 A 標誌啊！
+
+  *郵件傳輸所需要的元件 (MTA, MUA, MDA) 以及相關協定
+
+   *MUA (Mail User Agent)
+
+   *MTA (Mail Transfer Agent)
+
+   *MDA (Mail Delivery Agent)
+
+   *簡單郵件傳送協定(SMTP)  Simple Mail Transfer Protocol 
+
+   *郵政服務協定 (Post Office Protocol, POP)
+
+   * IMAP (Internet Message Access Protocol)
+
+  *使用者收信時伺服器端所提供的相關協定
+
+  *要架設一部可以使用 MUA 進行收發信件的 MTA 伺服器，你至少也需要啟動 SMTP 以及 POP3 這兩個協定才行！而這兩個協定的啟動程式並不相同
+
+  *Relay 與認證機制的重要性
+
+  *電子郵件的資料內容
+
+   *標頭 (header) 以及內容 (body) 兩部份
+
+  *郵件伺服器架設前提
+
+ *Sendmail 伺服器的簡易架設介紹
+
+  *所需要的套件與套件結構
+
+   *sendmail：提供主要的 sendmail 程式與設定檔； 
+
+   *sendmail-cf：提供 sendmail.cf 這個設定檔的預設整合資料； 
+
+   *m4：輔助將 sendmail-cf 的資料轉成實際可使用的設定檔。
+
+   */etc/mail/sendmail.cf (/usr/sbin/sendmail 的設定檔) 
+
+   */usr/share/sendmail-cf/cf/*.mc
+
+   */etc/mail/sendmail.mc (由 m4 指令轉換)
+
+   */etc/mail/local-host-names
+
+   */etc/mail/access.db (/etc/mail/access, 利用 makemap 處理)
+
+   */etc/aliases.db (/etc/aliases, 利用 newaliases 處理)
+
+   */var/spool/mqueue/ (可用 mailq 觀察)
+
+  *開放 sendmail 的監聽介面與收信主機名稱設定
+
+ *用 Postfix 達成 MTA 功能
+
+  *更快速、 更安全、而且完全相容於 sendmail 的 mail server 軟體
+
+  *開放使用 MTA Relay 權限設定 /etc/mail/access
+
+  *所需要的套件與套件結構
+
+   *設定檔
+
+    */etc/postfix/main.cf
+
+    */etc/postfix/master.cf
+
+    */etc/postfix/access (利用 postmap 處理)
+
+    */etc/aliases (利用 postalias 或 newaliases 均可)
+
+   *執行檔
+
+    */usr/sbin/postconf (查閱 postfix 的設定資料)
+
+    */usr/sbin/postfix (主要的 daemon 指令)
+
+    */usr/sbin/postalias
+
+    */usr/sbin/postcat
+
+    */usr/sbin/postmap
+
+    */usr/sbin/postqueue
+
+  *讓 Postfix 可監聽 Internet 來收發信件 看书
+
+  *信件傳送流程與收信、relay 等重要觀念
+
+  *設定郵件主機使用權限與過濾機制 /etc/postfix/access
+
+  *設定郵件別名
+
+  *郵件轉遞 ~/.forward
+
+  *察看信件佇列資訊
+
+  *設定 relay 的進階功能 smtpd_recipient_restrictions
+
+ *讓你的 MTA 接受 MUA 的讀信要求：POP/IMAP等協定
+
+  * Red Hat 系統)使用的是鴿舍 (dovecot) 軟體套件， 至於 SuSE 則提供 qpopper 這個套件

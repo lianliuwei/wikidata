@@ -1,0 +1,58 @@
+= Learning GNU Emacs =
+== Preface ==
+ *是一个工作环境
+ *GNU Emacs 和 XEmacs
+ *一 二章讲基础
+ *学习内容分类
+ *一点一点增量学
+ *各章概述
+ *meta key 是alt
+ *表示法
+== Emacs Basics ==
+ *学Emacs就是学键盘习惯
+ *每次少量多次复习的方法学
+ *buffer和file要分开
+ *不同的模式对应不同的使用环境
+ *一个buffer对应一种major mode
+ *major mode中可以开启关闭多种minor mode
+ *toolbar和menu是会根据内容进行变化
+ *M-`显示菜单，文本模式的
+ *The Mode Line: encoding scheme  修改标志 buffer名字 位置指示 mode
+ *Minibuffer 用于命令输入和回显状态
+ *表1-4有总结
+== Editing ==
+ *多种方式
+ *Moving the Cursor
+  *Moving a Screen (or More) at a Time
+  *Emacs Commands and Your Keyboard
+  *如图所示
+  *表2-2有总结
+== Deleting Text ==
+ *两个C-k删掉一行
+ *kill ring用于存储删除的文字，会将几次连续删除的合并 单字符删除不放进去 用undo回复
+ *选择的部分叫 region
+ *cursor在字符上 point当前字符和前字符中
+ *mark有一个指针只是看不见
+ *M-w 复制数据到kill ring
+ *重复M-y 检索出历史被放在kill ring的数据
+ *Clipboard的表现在各平台上不一样
+ *clipboard-yank  C-y
+ *Table 2-9 交互功能
+ *Table 2-10 字符大小写功能
+ *取消命令功能 C-g
+ *C-_ or C-x u undo功能 移动鼠标后变redo
+ *使用加~的文件做备份
+ *#text#最近保存更改的文件名
+ *删除大段文字会导致auto-save功能失效
+ *.emacs配置文件 由lisp语言组成
+== Using Buffers, Windows, and Frames ==
+ *GUI windows 叫 frames
+ *C-x C-b 显示buffer  Ctrl+鼠标左键 显示buffer
+ *内部buffer名形式*buffer name*
+ *buffername 和 filename 默认是一样的
+ *C-x 加箭头 轮换buffer
+ *C-x k 关闭缓冲
+ *默认一定会有一个*scratch* buffer
+ *emacs的windows是不能覆盖的
+
+ *emacs在 C:\Documents and Settings\Administrator\Application Data 下

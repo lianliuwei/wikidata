@@ -1,0 +1,17 @@
+= 移植学习计划 =
+
+{{{#!wiki
+<<TableOfContents>>
+
+== 内容 ==
+=== 硬件 ===
+ *CPU
+ *MMU
+ *MTD
+ *总线
+ *中断
+ *时钟
+ *外设
+=== bootloader ===
+=== kernel ===
+}}}

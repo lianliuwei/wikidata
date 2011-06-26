@@ -1,0 +1,8 @@
+= 图形学 =
+ *[[http://compgeom.cs.uiuc.edu/~jeffe/compgeom/code.html|Computational Geometry Code]]
+ *[[http://compgeom.cs.uiuc.edu/~jeffe/compgeom/|Computational Geometry Pages]]
+ *[[http://local.wasp.uwa.edu.au/~pbourke/geometry/|Geometry, Surfaces, Curves, Polyhedra]]
+ *[[http://en.wikipedia.org/wiki/Graphics_library]]
+ *[[http://en.wikipedia.org/wiki/Cairo_%28graphics%29]] 广泛使用的2D引擎
+ *[[http://cairographics.org/]]
+ *[[http://www.google.com/codesearch/p?hl=zh-CN#eIA3-0zkq4Q/ext/line.c&q=Intersection%20line%20rectangle&d=0|line_intersection()]] 2维线段相交的代码

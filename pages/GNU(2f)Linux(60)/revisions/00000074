@@ -1,0 +1,58 @@
+<<TableOfContents(2)>>
+= 项目 =
+ *[[零售系统]]
+
+== 学习方法 ==
+ *看代码 [[Code Reading]]
+ *看书
+ *编程
+ *思考
+ *正向学习
+ *用中学
+ *用中复习
+== msic ==
+ *Initrd = initial RAM disk
+ *.la libtool库文件
+ *rc 代表 run command
+ *.d 代表 daemons
+<<Include(/学习计划,,editlink)>>
+
+<<Include(/学习内容,,editlink)>>
+
+<<Include(/文档,,editlink)>>
+
+= 发行版本 =
+ *[[Ubuntu]]
+ *[[http://www.gnewsense.org/]]
+ *gOS 集成很多的google应用
+= 爱好者 =
+ *陈毅东 精通内核
+ *吴登辉 初学者
+ *李贵林 嵌入式和硬件
+= 信息 =
+ *浙大Linux很强
+= U盘Linux =
+
+ *[[http://www.lucky8k.com/index.php]]veket
+
+ *[[http://www.damnsmalllinux.org/]]DSL
+
+ *Ubuntu
+
+= 浙大Linux =
+
+ *[[http://bbs.freecity.cn/agent/index.do]]论坛
+
+ *[[http://bbs.zju.edu.cn/]]用telnet访问
+
+=  图形 =
+
+ *[[http://blog.csdn.net/hongtao_liu/archive/2009/06/02/4236413.aspx]]
+
+= 嵌入式 =
+
+ *[[http://blog.csdn.net/hongtao_liu]]
+
+ *[[http://blog.csdn.net/hongtao_liu/archive/2009/07/28/4386375.aspx]]学习内容和重要程度
+
+<<Include(/资源,,editlink)>>

@@ -1,0 +1,7 @@
+= Scrathbox =
+ *提供交叉工具的映像
+ *提供ARM下程序的模拟执行
+== init ==
+ *使用 sb2-init ARM /到编译器的路径
+ *会下载libtool并编译
+ *会建立/home/lian/.scratchbox2文件夹 

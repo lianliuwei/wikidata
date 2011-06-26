@@ -1,0 +1,206 @@
+== search_binary_handler() ==
+{{{#! cplusplus
+/*
+ * cycle the list of binary formats handler, until one recognizes the image
+ */
+int search_binary_handler(struct linux_binprm *bprm,struct pt_regs *regs)
+{
+	int try,retval=0;
+	struct linux_binfmt *fmt;
+#ifdef __alpha__
+	/* handle /sbin/loader.. */
+	{
+	    struct exec * eh = (struct exec *) bprm->buf;
+
+	    if (!bprm->loader && eh->fh.f_magic == 0x183 &&
+		(eh->fh.f_flags & 0x3000) == 0x3000)
+	    {
+		struct file * file;
+		unsigned long loader;
+
+		allow_write_access(bprm->file);
+		fput(bprm->file);
+		bprm->file = NULL;
+
+	        loader = PAGE_SIZE*MAX_ARG_PAGES-sizeof(void *);
+
+		file = open_exec("/sbin/loader");
+		retval = PTR_ERR(file);
+		if (IS_ERR(file))
+			return retval;
+
+		/* Remember if the application is TASO.  */
+		bprm->sh_bang = eh->ah.entry < 0x100000000UL;
+
+		bprm->file = file;
+		bprm->loader = loader;
+		retval = prepare_binprm(bprm);
+		if (retval<0)
+			return retval;
+		/* should call search_binary_handler recursively here,
+		   but it does not matter */
+	    }
+	}
+#endif
+	retval = security_bprm_check(bprm);
+	if (retval)
+		return retval;
+
+	/* kernel module loader fixup */
+	/* so we don't try to load run modprobe in kernel space. */
+	set_fs(USER_DS);
+	for (try=0; try<2; try++) {
+		read_lock(&binfmt_lock);
+		for (fmt = formats ; fmt ; fmt = fmt->next) {
+			int (*fn)(struct linux_binprm *, struct pt_regs *) = fmt->load_binary;
+			if (!fn)
+				continue;
+			if (!try_module_get(fmt->module))
+				continue;
+			read_unlock(&binfmt_lock);
+			retval = fn(bprm, regs);
+			if (retval >= 0) {
+				put_binfmt(fmt);
+				allow_write_access(bprm->file);
+				if (bprm->file)
+					fput(bprm->file);
+				bprm->file = NULL;
+				current->did_exec = 1;
+				return retval;
+			}
+			read_lock(&binfmt_lock);
+			put_binfmt(fmt);
+			if (retval != -ENOEXEC || bprm->mm == NULL)
+				break;
+			if (!bprm->file) {
+				read_unlock(&binfmt_lock);
+				return retval;
+			}
+		}
+		read_unlock(&binfmt_lock);
+		if (retval != -ENOEXEC || bprm->mm == NULL) {
+			break;
+#ifdef CONFIG_KMOD
+		}else{
+#define printable(c) (((c)=='\t') || ((c)=='\n') || (0x20<=(c) && (c)<=0x7e))
+			if (printable(bprm->buf[0]) &&
+			    printable(bprm->buf[1]) &&
+			    printable(bprm->buf[2]) &&
+			    printable(bprm->buf[3]))
+				break; /* -ENOEXEC */
+			request_module("binfmt-%04x", *(unsigned short *)(&bprm->buf[2]));
+#endif
+		}
+	}
+	return retval;
+}
+}}}
+== search_binary_handler()注释 ==
+{{{#! cplusplus
+/*
+ * cycle the list of binary formats handler, until one recognizes the image
+ */单向的链表
+int search_binary_handler(struct linux_binprm *bprm,struct pt_regs *regs)
+{
+	int try,retval=0;
+	struct linux_binfmt *fmt;
+#ifdef __alpha__ 这是干什么用的
+	/* handle /sbin/loader.. */
+	{
+	    struct exec * eh = (struct exec *) bprm->buf;
+
+	    if (!bprm->loader && eh->fh.f_magic == 0x183 &&
+		(eh->fh.f_flags & 0x3000) == 0x3000)
+	    {
+		struct file * file;
+		unsigned long loader;
+
+		allow_write_access(bprm->file);
+		fput(bprm->file);
+		bprm->file = NULL;
+
+	        loader = PAGE_SIZE*MAX_ARG_PAGES-sizeof(void *);
+
+		file = open_exec("/sbin/loader");
+		retval = PTR_ERR(file);
+		if (IS_ERR(file))
+			return retval;
+
+		/* Remember if the application is TASO.  */
+		bprm->sh_bang = eh->ah.entry < 0x100000000UL;
+
+		bprm->file = file;
+		bprm->loader = loader; 
+		retval = prepare_binprm(bprm);
+		if (retval<0)
+			return retval;
+		/* should call search_binary_handler recursively here,
+		   but it does not matter */
+	    }
+	}
+#endif
+上面的代码都是为 ALPHA CPU(曾经号称世界上最快的 CPU。我记得,最起码在 20 世纪末的时
+候是这样的)的,忽略。想分析也没办法,我哪来 ALPHA CPU。
+
+	retval = security_bprm_check(bprm); 安全相关的
+	if (retval)
+		return retval;
+
+	/* kernel module loader fixup */
+	/* so we don't try to load run modprobe in kernel space. */modprobe是用于模块加载的命令
+	set_fs(USER_DS); 这是干什么
+#define set_fs(x)  (current_thread_info()->addr_limit = (x))
+#define USER_DS    MAKE_MM_SEG(PAGE_OFFSET)
+#define MAKE_MM_SEG(s) ((mm_segment_t) { (s) })
+化简一下,
+current_thread_info()->addr_limit = 3G
+也就是设置用户空间的范围。
+
+	for (try=0; try<2; try++) {循环两次干嘛
+		read_lock(&binfmt_lock); 加锁干什么 整个 formats 链表被 binfmt_lock 来同步加锁保护。在枚举列表以前,先锁住链表
+		for (fmt = formats ; fmt ; fmt = fmt->next) { formats是全局的吗
+			int (*fn)(struct linux_binprm *, struct pt_regs *) = fmt->load_binary;共有的方法
+			if (!fn)
+				continue;
+			if (!try_module_get(fmt->module))
+				continue;
+			read_unlock(&binfmt_lock);
+			retval = fn(bprm, regs);调用载入器,如果是 ELF 格式可执行文件的话,则调用 load_elf_binary()。
+			if (retval >= 0) {
+				put_binfmt(fmt);对应上面的 try_module_get(fmt->module)调用,递减载入器模块的引用计数。
+				allow_write_access(bprm->file);可执行文件正在被载入时,当然是禁止“写”的;载入好以后,允许。这就是 Linux 的特点,
+正在运行的程序的文件允许被写,允许被删除。
+
+				if (bprm->file)
+					fput(bprm->file);
+				bprm->file = NULL;
+				current->did_exec = 1; 这值是干什么用的
+				return retval;
+			}
+			read_lock(&binfmt_lock);
+			put_binfmt(fmt);
+			if (retval != -ENOEXEC || bprm->mm == NULL)
+				break; 不能载入
+			if (!bprm->file) { 没有文件
+				read_unlock(&binfmt_lock);
+				return retval;
+			}
+		}
+		read_unlock(&binfmt_lock);
+		if (retval != -ENOEXEC || bprm->mm == NULL) {
+			break;
+#ifdef CONFIG_KMOD 只有在编译内核时打开 LKM 支持的情况下才谈得上动态载入对应内核模块
+		}else{
+#define printable(c) (((c)=='\t') || ((c)=='\n') || (0x20<=(c) && (c)<=0x7e))
+			if (printable(bprm->buf[0]) &&
+			    printable(bprm->buf[1]) &&
+			    printable(bprm->buf[2]) &&
+			    printable(bprm->buf[3]))
+				break; /* -ENOEXEC */
+			request_module("binfmt-%04x", *(unsigned short *)(&bprm->buf[2])); 在是输出吧 要求modele
+#endif
+		}
+	}
+	return retval;
+}
+}}}

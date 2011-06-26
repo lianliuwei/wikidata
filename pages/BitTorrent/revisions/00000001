@@ -1,0 +1,8 @@
+= BitTorrent =
+ *代表软件也代表协议
+ *[[http://www.bittorrent.com/]] 已经闭源了最后的开源代码在[[http://download.bittorrent.com/dl/]]
+ *[[http://blog.csdn.net/rstevens/archive/2004/06.aspx|Tracker 服务器源码分析]]
+== 开源相关协议软件 ==
+ *[[http://deluge-torrent.org/]]
+ *[[http://www.transmissionbt.com/]]
+ *[[http://en.wikipedia.org/wiki/Libtorrent]]

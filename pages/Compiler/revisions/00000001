@@ -1,0 +1,11 @@
+= Compiler =
+ *编译和链接工具
+ [[http://en.wikipedia.org/wiki/Category:Compilers]]大类
+== 链接 ==
+ *ld 不直接的调用了 由Gcc来代理
+ *gcc -v显示说有的构造过程
+ *size nm pmap 命令用来了解程序
+== 库 == 
+ *so = share obj
+ *lib*.a 静态
+ *lib*.so 动态

@@ -1,0 +1,14 @@
+= UULP/文件操作 =
+ *命令是程序在 /bin, /usr/bin, /usr/local/bin里
+ *utmp 和 wtmp用来存储登录信息 用二进制存储 和 UNIX的传统不一样 大概是系统信息 不适合手工修改吧
+ *可以用grep来搜索内容
+ *和外界的交流都是通过文件描述符来实现的
+ *文件描述符就是一文件指针数组的索引值 利于实现重定向 0 1 2 分别是 标准输入输出和错误
+ *标准文件操作 open read write close
+ *C语言文件操作 fopen fread fwrite fclose 用STDIN STDOUT STDERR 表示 标准输入输出和错误 就是UNIX的翻版
+== who ==
+ *w命令有相同的功能
+=== 外部观察 ===
+ *可以列出当前登录的人
+=== 分析 ===
+ *使用utmp 和 wtmp文件

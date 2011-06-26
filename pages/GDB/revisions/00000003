@@ -1,0 +1,11 @@
+= GDB =
+ *[[http://sourceware.org/gdb/current/onlinedocs/gdb.html]]入门
+ *[[http://www.dirac.org/linux/gdb/]]入门
+ *[[http://www.gnu.org/software/gdb/]]官网
+ *[[http://www.linuxsir.org/bbs/showthread.php?t=171156]]入门
+== Clewn ==
+ *[[http://clewn.sourceforge.net/]]Clewn
+ *[[http://blog.chinaunix.net/u2/60011/showart_1006565.html]]嵌入式调试使用
+== 原理 ==
+== 多源文件 ==
+ *

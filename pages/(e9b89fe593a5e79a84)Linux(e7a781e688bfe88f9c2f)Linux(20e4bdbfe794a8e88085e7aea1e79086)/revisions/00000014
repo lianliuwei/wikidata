@@ -1,0 +1,340 @@
+=== Linux 使用者管理 ===
+==== Linux 帳號管理與 ACL 權限設定 ====
+ *User ID ，簡稱 UID Group ID ，簡稱 GID
+ *用ID来区别用户和授权事件所对应的用户
+ *用户和组是多对多的关系
+ *记录的都是数字
+ *UID 有幾個限制
+  *0 (系統管理員)
+  *1~499 (系統帳號) 1~99：由 distributions 自行建立的系統帳號 100~499：若使用者有系統帳號需求時，可以使用的帳號 UID
+  *500~2^32-1 (可登入帳號)	
+ */etc/passwd
+  *记录用户帐号信息
+  *对应的密码文件是/etc/shadow
+  */etc/passwd 檔案結構 帳號名稱 密碼 UID GID 使用者資訊說明欄 家目錄 Shell
+  */etc/shadow 檔案結構 帳號名稱 密碼 最近更動密碼的日期 密碼不可被更動的天數 密碼需要重新變更的天數 密碼需要變更期限前的警告天數 密碼過期後的帳號寬限時間(密碼失效日) 帳號失效日期 保留
+  *Linux 日期的時間是以 1970 年 1 月 1 日作為 1 而累加的日期
+ */etc/group
+  *记录组信息
+  *对应的密码文件是/etc/gshadow
+  *有效群組(effective group) 为新建档案记录的组
+  *初始群組(initial group) 为帐号文件中记录的组
+  *groups: 有效與支援群組的觀察
+  *newgrp: 有效群組的切換 产生新的shell
+  */etc/group 檔案結構 群組名稱 群組密碼 GID 此群組支援的帳號名稱
+  */etc/gshadow檔案結構 群組名稱 群組名稱 群組管理員的帳號 該群組的所屬帳號
+  *使用 sudo 之類的工具， 群組管理員的功能已經很少使用了
+ *用户和组信息都是以用户帐号为关键 设计不好
+ *注意
+  *隨意修改系統上某些帳號的 UID 很可能會導致某些程序無法進行
+  */etc/passwd记录了系統正常運作必須的系統帳號
+  *一般用戶的密碼忘記了 利用 root 的身份使用 passwd 指令來處理即可
+  *root 密碼忘記了 重新開機進入單人維護模式 或者 Live CD 開機後掛載根目錄去修改 /etc/shadow
+ * 帳號管理
+  *新增與移除使用者
+   *useradd
+    *参考 /etc/default/useradd 配置
+    */etc/skel 使用者家目錄參考基準目錄
+    *参考 /etc/login.defs
+   *passwd 修改密码
+   *chage 修改密码
+    *可以让使用者在第一次登入時， 強制她們一定要更改密碼後才能夠使用系統資源
+   *usermod  modify用户
+   *userdel delete用户
+  *使用者功能
+   *finger 查閱很多使用者相關的資訊
+   *chfn   change finger的意思
+   *chsh   change shell 的簡寫
+   *id  查詢某人或自己的相關 UID/GID 等等的資訊
+  *新增與移除群組
+   *groupadd
+   *groupmod
+   *groupdel
+   *gpasswd：群組管理員功能
+  *帳號管理實例
+ *主機的細部權限規劃：ACL 的使用
+  *ACL 是 Access Control List 的縮寫
+  *如何啟動 ACL 
+   *使用 ACL 必須要有檔案系統的支援才行 
+   *重新挂载 mount -o remount,acl /
+   *修改 /etc/fstab
+  *ACL 的設定
+   * getfacl：取得某個檔案/目錄的 ACL 設定項目；
+   * setfacl：設定某個目錄/檔案的 ACL 規範。
+   *mask  使用者或群組所設定的權限必須要存在於 mask 的權限設定範圍內才會生效，此即『有效權限 (effective permission)』
+   *ACL 的權限可以設定被次目錄所『繼承？』
+ *使用者身份切換
+  *telnet 程式 ssh 可以設定拒絕 root 登入
+  *su   superuser 身份切換指令
+   *su - 使用 non-login shell 的方式
+   *su - -c "指令串" 僅執行一次 root 的指令
+   *缺點 大家都知道root的密码
+  *sudo
+   *su 需要瞭解新切換的使用者密碼 (常常是需要 root 的密碼)， sudo 的執行則僅需要自己的密碼即可
+   *设定档 /etc/sudoers
+    *使用者帳號  登入者的來源主機名稱=(可切換的身份)  可下達的指令
+    *利用群組以及免密碼的功能處理
+    *有限制的指令操作
+    *透過別名建置
+    *sudo 搭配 su 的使用方式 變成 root 的身份 但 root 密碼不會外流
+   *sh -c "一串指令" 执行一串指令
+ *使用者的特殊 shell 與 PAM 模組
+  *nologin 和 false 作为不能登录的帐号的shell
+  *PAM (Pluggable Authentication Modules, 嵌入式模組) 就是一些共享的代码 封装在so里 用配置文件控制执行的流程
+  * /etc/pam.d/*：每個程式個別的 PAM 設定檔；
+  * /lib/security/*：PAM 模組檔案的實際放置目錄；
+  * /etc/security/*：其他 PAM 環境的設定檔；
+  *格式: 驗證類別 控制標準 PAM 模組與該模組的參數
+  *驗證類別 用于 验证的种类
+  *控制標準 用于 控制流程 编辑流程
+  *模组 用于 执行的可复用的程序
+  */etc/nologin 這個檔案存在時，則所有一般使用者均無法再登入系統
+  *ulimit 配置文档/etc/security/limits.conf 也是PAM的功能的一部分
+  */etc/securetty 用于验证root登录的tty是否安全
+  */var/log/secure, /var/log/messages, var/log/arth.log 用于记录权限相关的日志
+ *Linux 主機上的使用者訊息傳遞
+  *查詢使用者： w, who, last, lastlog
+  *使用者對談： write, mesg, wall
+   *wall : write all
+  *使用者郵件信箱： mail
+   *很少使用了
+  *手動新增使用者
+   *一些檢查工具: pwck grpck
+   *转换工具 convert: pwconv pwunconv grpconv grpunconv
+   *加密用户密码: chpasswd
+  *例子 看书
+   *特殊帳號，如純數字帳號的手工建立
+   *大量建置帳號範本
+   *大量建置帳號的範例(適用於連續數字，如學號)
+==== 磁碟配額(Quota)與進階檔案系統管理 ====
+ *Quota 針對整個 filesystem 的限制 限制各用户所用的资源
+ *需要文件系统和操作系统的支援
+ *设定有 soft, hard, grace time
+ *Quota 是透過分析整個檔案系統中，每個使用者(群組)擁有的檔案總數與總容量， 再將這些資料記錄在該檔案系統的最頂層目錄，然後在該記錄檔中再使用每個帳號(或群組)的限制值去規範磁碟使用量
+ *mount掛載: mount -o remount,usrquota,grpquota /home
+ * quotacheck ：掃瞄檔案系統並建立 Quota 的記錄檔
+ *quotaon ：啟動 quota 的服務
+ *quotaoff ：關閉 quota 的服務
+ *edquota ：編輯帳號/群組的限值與寬限時間 使用vi方式手动更改
+ *setquota ：直接於指令中設定 quota 限額
+ *quota ：單一用戶的 quota 報表
+ *repquota ：針對檔案系統的限額做報表
+ *warnquota ：對超過限額者發出警告信
+  *設定:/etc/warnquota.conf
+ *利用 ln 來建立連結資料 链接到一文件系统来进行限制
+ *軟體磁碟陣列 (Software RAID)
+  *Redundant Arrays of Inexpensive Disks, RAID 』：容錯式廉價磁碟陣列
+  *RAID-0 (等量模式, stripe)：效能最佳
+  *RAID-1 (映射模式, mirror)：完整備份
+  *RAID 0+1，RAID 1+0
+  *RAID 5：效能與資料備份的均衡考量
+  *Spare Disk：預備磁碟的功能
+  *mdadm 這套軟體 以 partition 或 disk 為磁碟的單位 模擬軟體磁碟陣列
+  *状态: /proc/mdstat 
+  *设备: /dev/md*
+  *設定檔: /etc/mdadm.conf
+  *例子
+   *创建 4 個 1GB partition 組成 RAID 5 加 1 個 1GB partition 為 spare disk
+   *格式化與掛載使用 RAID
+   *模擬 RAID 錯誤的救援模式
+   *將出錯的磁碟移除並加入新磁碟
+   *開機自動啟動 RAID 並自動掛載
+   *關閉軟體 RAID
+ *邏輯捲軸管理員 (Logical Volume Manager)
+  *LVM 可以整合多個實體 partition 在一起， 讓這些 partitions 看起來就像是一個磁碟一樣！而且，還可以在未來新增或移除其他的實體 partition 到這個 LVM 管理的磁碟當中。
+  *原理看资料的图
+  *LVM 必需要核心有支援且需要安裝 lvm2 這個軟體
+  *例子
+   *LVM 實作流程(创建过程)
+   *放大 LV 容量
+   *縮小 LV 容量
+   *利用快照區進行各項練習與測試的任務，再以原系統還原快照 (有用)
+   *LVM 的關閉
+ *RAID 與 LVM 配合使用达到加速 硬體備份 彈性調整 filesystem 大小 功能
+==== 例行性工作排程 (crontab) ====
+ *僅執行一次的工作排程
+  */etc/init.d/atd 服务
+  */var/spool/at/ 存储目录
+  */etc/at.allow  /etc/at.deny 可使用用户的黑白名单 不一定都要同时存在
+  *相关命令:at batch atq atm
+  *例子 at now + 5 minutes
+  *到时候 使用 /bin/sh 执行输入的命令
+  *at 的執行與終端機環境無關，而所有 standard output/standard error output 都會傳送到執行者的 mailbox 去
+  *想输出到终端直接写文件
+  *用于離線繼續工作的任務
+  *batch 會在 CPU 工作負載小於 0.8 的時候，才進行你所下達的工作任務啦
+ *循環執行的例行性工作排程
+  *循環執行的例行性工作排程則是由 cron (crond) 這個系統服務來控制
+  */etc/cron.allow 和 /etc/cron.deny 黑白名单
+  */var/spool/cron/ 使用者使用 crontab 指令來建立工作排程的记录目录
+  *crontab 用户自己定义循环工作的指令
+   *启动 vi 来进行编辑
+   *分 時 日 月 週 指令串
+  *系統的設定檔： /etc/crontab
+  * cron 這個服務的最低偵測限制是『分鐘』，所以『 cron 會每分鐘去讀取一次 /etc/crontab 與 /var/spool/cron 裡面的資料內容  』
+  *run-parts 执行目录里所有的可执行文件
+  *注意
+   *資源分配不均的問題
+   *取消不要的輸出項目
+   *週與日月不可同時並存
+  */var/log/cron 记录档案 可用于检测是否有木马 
+ *可喚醒停機期間的工作任務 anacron 用于没有执行的cron任务继续执行
+  *anacron 其實也是透過 crontab 來運作的！因此 anacron 運作的時間通常有兩個，一個是系統開機期間運作，一個是寫入 crontab 的排程中
+  */etc/cron.daily/0anacron 僅進行時間戳記的更新，而沒有進行任何 anacron 的動作
+  */etc/anacrontab 设定档 天數   延遲時間 工作名稱定義   實際要進行的指令串
+  */var/spool/anacron/* 放置时间戳
+==== 程序管理與 SELinux 初探 ====
+ *PID: process ID
+ *程式 (program) 和 程序 (process) 是不同的
+ *PPID: parents process ID
+ *常駐在記憶體當中的程序通常都是負責一些系統所提供的功能以服務使用者各項任務，這些常駐程式稱為：服務 (daemon)
+ *工作管理 (job control)
+  *當我們登入系統取得 bash shell 之後，在單一終端機介面下同時進行多個工作的行為管理
+
+  *限制
+
+   *這些工作所觸發的程序必須來自於你 shell 的子程序(只管理自己的 bash)； 
+
+   *前景：你可以控制與下達指令的這個環境稱為前景的工作 (foreground)； 
+
+   *背景：可以自行運作的工作，你無法使用 [ctrl]+c 終止他，可使用 bg/fg 呼叫該工作； 
+
+   *背景中『執行』的程序不能等待 terminal/shell 的輸入(input)
+
+  *直接將指令丟到背景中『執行』的 &
+
+  *將『目前』的工作丟到背景中『暫停』：[ctrl]-z
+
+  *觀察目前的背景工作狀態： jobs
+
+  *將背景工作拿到前景來處理：fg
+
+  *讓工作在背景下的狀態變成運作中： bg
+
+  *管理背景當中的工作： kill
+
+  *離線管理問題 使用at 或 nohup
+
+  *+ 代表最近被放到背景的工作號碼， - 代表最近最後第二個被放置到背景中的工作號碼
+
+ *工作號碼 (job number) 只與你這個 bash 環境有
+
+ *程序管理
+
+  *程序的觀察
+
+   *ps ：將某個時間點的程序運作情況擷取下來
+
+   *top：動態觀察程序的變化
+
+   *pstree 显示程序树
+
+ *程序的管理
+
+  *kill -signal PID
+
+  *killall -signal 指令名稱
+
+ *關於程序的執行順序
+
+  *Priority 與 Nice 值 共同决定程序的优先级
+
+  *调整nice值
+
+   *nice ：新執行的指令即給予新的 nice 值
+
+   *renice ：已存在程序的 nice 重新調整
+
+ *系統資源的觀察
+
+  *free ：觀察記憶體使用情況
+
+  *uname：查閱系統與核心相關資訊
+
+  *uptime：觀察系統啟動時間與工作負載
+
+  *netstat ：追蹤網路或插槽檔
+
+   *可以查看 unix域 和 tcp/ip域 的socket
+
+  *dmesg ：分析核心產生的訊息
+
+  *vmstat ：偵測系統資源變化
+
+   *与读写有关
+
+ *特殊檔案與程序
+
+  */proc/* 代表的意義 看书
+
+ *查詢已開啟檔案或已執行程序開啟之檔案
+
+  *fuser：藉由檔案(或檔案系統)找出正在使用該檔案的程序
+
+  *lsof ：列出被程序所開啟的檔案檔名 ls open file
+
+  *pidof ：找出某支正在執行的程式的 PID
+
+ *SELinux 初探
+
+  *SELinux: Security Enhanced Linux
+
+  *SELinux 是在進行程序、檔案等細部權限設定依據的一個核心模組 由於啟動網路服務的也是程序，因此剛好也能夠控制網路服務能否存取系統資源的一道關卡
+
+  *傳統的檔案權限與帳號關係：自主式存取控制, DAC: Discretionary Access Control
+
+  *以政策規則訂定特定程序讀取特定檔案：委任式存取控制, MAC: Mandatory Access Control
+
+  *SELinux 的運作模式 看书
+
+  *主要解决程序权限的问题， 不知用户触发程序的控制是否有
+
+  *SELinux 的啟動、關閉與觀察
+
+   *SELinux 三種模式: enforcing, permissive, disabled
+
+   *getenforce 查看状态
+
+   *sestatus 状态
+
+   *SELinux 的啟動與關閉
+
+    *在 SELinux 運作下切換成為強制 (enforcing) 或寬容 (permissive) 模式，不能夠直接關閉 SELinux  同時，由 SELinux 關閉 (disable) 的狀態到開啟的狀態也需要重新開機
+
+    *传给内核的参数对SELinux的启动也有影响  selinux=0 为SELinux关闭
+
+  * -Z 选项表示显示SELinux的安全本文
+
+  *重設 SELinux 安全性本文
+
+   *设置安全本文: chcon
+
+   *使用預設的安全性本文來還原: restorecon
+
+  *SELinux 所需的服務
+
+   *setroubleshoot --> 錯誤訊息寫入 /var/log/messages 使用 sealert 处理错误代码
+
+   *auditd --> 詳細資料寫入 /var/log/audit/audit.log
+
+    *auditd 會將許多的 SELinux 資訊都記錄下來，不只是錯誤訊息 因此登錄檔 /var/log/audit/audit.log 非常的龐大。audit2why 指令來讓查詢錯誤訊息的回報
+
+  *AVC: access vector cache
+
+  *SELinux 的政策與規則管理
+
+   *規則 (Booleans) 里有 av rules
+
+   av rules 格式: allow  主體程序安全性本文類別  目標檔案安全性本文類別
+
+   *seinfo: 政策提供多少相關的規則
+
+   *sesearch: 知道詳細的規則
+
+   *getsebool: 布林值的查詢
+
+   *setsebool: 布林值的修改
+
+   *semanage fcontext 預設目錄的安全性本文查詢與修改
+
+    * 使用正規表示法去指定一個範圍

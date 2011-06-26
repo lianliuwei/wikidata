@@ -1,0 +1,56 @@
+= Linux =
+== 项目 ==
+ *[[零售系统]]
+
+== 学习方法 ==
+ *看代码 [[Code Reading]]
+ *看书
+ *编程
+ *思考
+== msic ==
+ *Initrd = initial RAM disk
+== 链接 ==
+ *[[Linux/学习计划]]
+ *[[Linux/学习内容]]
+ *[[Linux/文档]]
+== 资源 ==
+ *书籍
+  *[[UULP|Understanding Unix/Linux Programming]]
+  *[[APUE]]
+  *[[自己动手写操作系统]]
+  *[[Linux内核完全剖析-基于0.12内核]]
+  *[[UNIX:The Textbook]]
+  *[[鸟哥的Linux私房菜]]
+  *libc manual /doc/libc
+  *Java Application Development on Linux /doc/Java Application Development on Linux.pdf
+  *Linux内核完全注释
+  *[[Linux设备驱动开发详解]] /doc/Linux设备驱动开发详解.pdf
+  *[[Linux Device Drivers]]
+  *[[Essential Linux Device Drivers]]
+  *[[Understanding the Linux Kernel]]
+  *[[The Art of Unix Programming]] UNIX编程艺术 有开发工具的介绍 历史的介绍 哲学的解释 学习的指南 虽然有点旧但有方向性问题时看看不错
+  *[[Advanced Bash-Scripting Guide]]
+  *[[TCP/IP Illustracted]]
+  *[[http://www.china-pub.com/43029&ref=ps|The Linux Programmer's Toolbox ]]有大部分开发工具介绍
+  *[[http://www.china-pub.com/33159&ref=ps]]Linux应用程序开发(java)
+  *[[http://www.china-pub.com/30951&ref=ps]] UNIX Systems Programming: Communication, Concurrency and Threads 
+ *网站
+  *[[http://bbs.chinaunix.net/]]
+  *[[http://linux.vbird.org/]] 鸟哥的Linux私房菜官网
+  *[[http://www.study-area.org/menu2.htm]]很多的资料
+  *[[http://www.kerneltravel.net/]]
+  *[[http://pathname.com/fhs/]]文件目录标准
+  *[[http://ibiblio.org/index.html]]很多百科
+  *[[http://www.kde.org/]]
+  *[[http://www.study-area.org/menu2.htm]]有很多教程
+== 发行版本 ==
+ *[[Ubuntu]]
+ *[[http://www.gnewsense.org/]]
+== 爱好者 ==
+ *陈毅东 精通内核
+ *吴登辉 初学者
+ *李贵林 嵌入式和硬件
+== 信息 ==
+ *浙大Linux很强
+
+ 

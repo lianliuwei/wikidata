@@ -1,0 +1,13 @@
+= Build automation =
+ *自动构造工具
+ *[[http://en.wikipedia.org/wiki/Build_automation]]综述
+ *[[http://en.wikipedia.org/wiki/Category:Build_automation]]工具大全
+== GNU构建过程 ==
+{{{
+./configure
+make
+make install
+}}}
+ *选项enalbe-x disable with without
+== 工具 ==
+ *[[make]]

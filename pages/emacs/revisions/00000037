@@ -1,0 +1,58 @@
+= emacs =
+ *是一个工作环境
+ *[[https://www6.software.ibm.com/developerworks/cn/education/linux/l-emacs/tutorial/index.html|生活在Emacs中]]
+ *[[http://books.google.com.hk/books?id=-RtYk55cqfgC&printsec=frontcover&dq=Learning+GNU+emacs&cd=1|google图书在线版 Learning GNU Emacs 2nd]]
+ *[[http://book.douban.com/doulist/10106/|Emacs从入门到飞天]] 豆瓣列表
+ *[[http://www.wanglianghome.org/]]emacs使用者
+ *[[http://www.gnu.org/software/emacs/|官网]]
+ *[[http://www.caole.net/diary/emacs_write_cpp.html|emacs C/C++编程]]
+ *[[http://blog.csdn.net/DelphiNew/archive/2008/01/19/2053676.aspx|effective emacs中文版]]
+ *[[http://emacser.com/]]
+ *[[http://mirror.bjtu.edu.cn/gnu/emacs/]]中国地区下载镜像
+ *[[Learning GNU Emacs]] 书籍阅读记录
+ *[[http://emacser.com/to-emacs-beginner.htm]]致Emacs初学者
+ *[[http://www.gnu.org/software/emacs/windows/|GNU Emacs FAQ For MS Windows]]
+ *[[http://emacser.com/torture-emacs.htm|折腾Emacs]]  设置字体终极指导 字体大小调整 右键打开Emacs 配色
+ *[[http://emacser.com/dea.htm|我的Emacs配置文件 － DEA]] 非常庞大的配置程序 可以用来进行入门的参考
+ *C-h v 查看变量
+ *[[http://emacser.com/windows-emacs-home.htm|Windows下设置Emacs的HOME目录]] 使用第二种方法的方式加载别处的.Emacs配置文件
+ *[[http://emacser.com/from-vi-to-emacs.htm|我是如何从vim转向Emacs的]]早期 但有点编程相关的介绍
+ *[[http://emacser.com/dev-vc.htm|Emacs开发VC程序]]介绍了常用的几种插件
+ *[[http://ann77.emacser.com/Emacs/EmacsNotepadLike.html|类似 Notepad 基本操作快速入门]] 初学使用看
+ */doc/右键注册Emacs.reg  在shell的右键有打开Emacs的选项
+ *[[http://emacser.com/emacs-ide.htm|Emacs才是世界上最强的IDE － 序言]] 这个系列好
+ *[[http://emacser.com/emacs-cpp-dev.htm]] 这篇介绍的工具都有点老了
+ *设置和模式代码 下载的代码和自己写的代码要分开
+ *启动依赖最好使用一个总的启动文件来解决 使用文件名的解决方法有点缺陷
+ *require函数好像用来加载symbol 可能使用load来实现
+ *[[http://www.emacswiki.org/]]
+ *[[http://emacser.com/auto-complete_yasnippet.htm|auto complete和yasnippet的区别]]
+ *[[http://blog.chinaunix.net/u3/98822/showart_2137437.html|Emacs配置 gtags+cedet+ecb+doxymacs+session+gdb]]
+ *Emacs字符串中\\才代表一个\ 用于正则表达式中表示一个\要\\\\
+ *replace-regexp-in-string函数 可以用来替换字符串
+ *Emacs Windows中的路径使用/不是标准的\
+ *[[http://www.emacswiki.org/emacs/CompileCommand]] 定制自己的编译命令
+ *[[http://blog.csdn.net/DelphiNew/archive/2009/07/08/4331573.aspx|大家都可以用的emacs草稿buffer生成命令]] 使用completing-read代替ido-completing-read就可以用
+ *[[http://www.emacswiki.org/emacs/InteractivelyDoThings]] ido-mode 不知道干什么的
+ *使用run—python开启相关语言的shell
+ *[[http://emacser.com/emacs-macro.htm]] 关键是一遍生成和二遍求值  一遍生成不是使用简单的替换功能实现的 有点模板的味道
+== Python IDE ==
+ *[[http://www.enigmacurry.com/2008/05/09/emacs-as-a-powerful-python-ide/]]
+ *[[http://rope.sourceforge.net/]] 重构工具
+ *[[http://www.emacswiki.org/emacs/PythonProgrammingInEmacs]]
+ *[[http://www.cnblogs.com/coderzh/archive/2009/12/26/emacspythonide.html]]
+ *[[http://www.saltycrane.com/blog/2010/05/my-emacs-python-environment/]]
+ *[[http://www.cnblogs.com/coderzh/archive/2009/12/26/emacspythonide.html]]
+ *[[https://launchpad.net/python-mode]]
+ *[[http://www.quhuashuai.com/wiki/emacs:emacs23%E4%B8%8B%E6%90%AD%E5%BB%BApython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83|Emacs23下Python开发环境的搭建]]
+ *[[http://www.rwdev.eu/articles/emacspyeng]]
+ *[[http://hide1713.wordpress.com/2009/01/30/setup-perfect-python-environment-in-emacs/]]
+== CEDET ==
+ *[[http://cedet.sourceforge.net/|CEDET官网]] Collection of Emacs Development Environment Tools
+ *[[http://emacser.com/cedet.htm|用CEDET浏览和编辑C++代码]] CEDET详细功能介绍
+ *[[http://emacser.com/install-cedet.htm|CEDET的安装]] CVS版要按照 官方版本不用
+== 问题 ==
+ *如何在不改变load目录的情况下 加载代码
+ *加速Emacs的启动
+ *如何设置编译命令使得自动保存和自动开始编译
+ *Windows下原生程序怎么调试

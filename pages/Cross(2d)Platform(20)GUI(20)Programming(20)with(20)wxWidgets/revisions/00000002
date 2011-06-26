@@ -1,0 +1,17 @@
+= Cross-Platform GUI Programming with wxWidgets =
+ *有点过时了
+== 介绍 ==
+ *是跨平台的
+ *内部组织
+  *通用代码
+  *一般代码
+  *wxUniversal
+  *平台相关代码
+  *外来代码   contrib/ 中
+  *第三方代码
+== 开始使用 ==
+ *从wxApp类的子类开始
+ *wxApp开始于OnInit()虚函数
+ *wxT _T 宏
+ *IMPLEMENT APP(MyApp)声明宏
+ *wxFrame类

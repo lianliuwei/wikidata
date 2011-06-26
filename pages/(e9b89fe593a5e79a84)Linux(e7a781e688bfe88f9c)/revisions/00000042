@@ -1,0 +1,75 @@
+= 鸟哥的Linux私房菜 =
+ *国产里最好的入门书籍 可能也是世界级别的
+ *台湾人做事的确认真
+ *缺少开发工具使用的讲解 要额外学习
+ *[[http://linux.vbird.org/]] 鸟哥的Linux私房菜官网 在线看
+{{{#!wiki
+
+<<TableOfContents>>
+
+== 问题 ==
+ *要是initrd里的module和后来的文件系统中的module不一致怎么办 重新生成
+ *换根文件系统如何实现
+ *root权限受自己控制吗 如他能限制目录进入权限吗
+ *chgrp是如何控制组名是可以改变的 目标组是可以设置的
+ *chown如何判断是否可以呢
+ *set UID 的程序fork出子程序是什么权限
+ *file命令是怎么写的
+ *文件系统前面的开机扇区是多大
+ *df命令怎么写的
+ *文件系统是如何实现的
+ *diff 和 patch的理论基础
+ *mesg 和 write 是如何实现的
+ *mdadm 是如何实现的 如 开机挂载 实际读写
+ *如何实现nohup
+
+ *chroot如何实现
+
+  *是不是只是运行了一个shell进程并且这个shell进程的根目录是改变了的，而系统之前运行的进程不会收到影响，而派生于这个进程的进程继承了这个根目录。这样内核就不较好实现。
+
+ *列印佇列如何实现
+
+ *路由是如何实现的
+
+ *为什么要分那么大的网段给回路测试用 因为一个网卡可以多个IP
+
+ *为什么设定无线网络用iwconfig 而 启动用ifconfig
+
+ *dhcp时候需要网卡硬件支持
+
+ *关闭网卡是什么意思
+
+ *ip指令是如何实现的
+
+ *DHCP是应用层协议，但是在没有IP的情况下如何广播
+== 任务 ==
+
+== 目标 ==
+ *看完 作完练习
+
+== 基础 ==
+ *[[http://linux.vbird.org/linux_basic]]
+
+<<Include(/Linux的規劃與安裝,,editlink)>>
+
+<<Include(/Linux檔案、目錄與磁碟格式,,editlink)>>
+
+<<Include(/學習 Shell 與 Shell scripts,,editlink)>>
+
+<<Include(/Linux 使用者管理,,editlink)>>
+
+<<Include(/Linux 系統管理員,,editlink)>>
+
+== 伺服器架設篇 ==
+
+ *使用預設的套件管理方式來安裝所有的伺服器 比自己手動使用 Tarball 的安裝方式來的方便且安全
+
+ *在架站的過程當中，無論出現任何問題，第一個步驟就是察看登錄檔 (log file)，那是克服問題的地方
+
+<<Incude(/架站前的進修專區,,editlink)>>
+
+<<Incude(/主機的簡易防火措施,,editlink)>>
+
+<<Incude(/區域網路內與小型企業常見的伺服器架設,,editlink)>>
+== 安全 ==
+}}}

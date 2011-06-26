@@ -1,0 +1,47 @@
+= vi =
+ *Vim是vi最好的开源版本
+ *vi的目标 不依赖鼠标
+ *vi有模式: 插入 命令 Ex命令 还真是程序员
+ *插入模式下 也可使用命令
+ *插入模式同样可以构成一条命令 所以可以重复
+ *Ex命令模式 用于高级命令输入
+ *Ctags进行源文件索引
+ *还能用于创建代码
+ *自带最全面的文档
+== 功能 ==
+ *ESC 退出命令
+ *恢复功能
+ *默认配置
+ *命令模式
+  *游标移动
+  *删除
+  *剪切
+  *复制
+  *粘贴
+  *切换模式
+  *区域选择
+ *插入模式
+ *Ex命令模式
+  *搜索
+  *存储
+  *离开
+  *设置环境
+  *多文件编辑
+  *多视窗
+== 学习 ==
+ *Vim有着一个比较陡峭的 学习曲线。这意味着开始学习的时候可能会进展缓慢，但是一旦掌握一些基本操作之后，能大幅度提高编辑效率。
+ *初学者
+  *Vim教学。vimtutor 命令 加 -g出图形界面 
+ *要想好命令再操作
+ *作一命令表
+ *多编码练习
+ ＊会建立.名字.swp的文件用于恢复
+== 资源 ==
+ *鸟哥的linux私房菜 Vim篇
+ *[[http://www.vim.org/|Vim官方网站]]
+ *[[http://zh.wikipedia.org/wiki/Vim|Vim中文wiki]] Vim历史 学习安排
+ *[[http://en.wikipedia.org/wiki/Vim_(text_editor)|Vim英文wiki]]
+ *[[http://www.douban.com/group/vim/|Vim豆瓣]] 有书籍的介绍
+ *[[http://blog.csdn.net/wooin/archive/2007/10/31/1858917.aspx|手把手教你把Vim改装成一个IDE编程环境]]
+ *[[http://blog.sina.com.cn/s/blog_46dac66f010005kw.html|普通人的编辑利器——Vim]]
+ *[[http://www.pconline.com.cn/pcedu/soft/gj/photo/0609/877033.html|程序员的编辑器——VIM]]

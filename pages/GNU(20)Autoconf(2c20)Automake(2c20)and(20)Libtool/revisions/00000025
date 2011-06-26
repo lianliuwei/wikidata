@@ -1,0 +1,178 @@
+= GNU Autoconf, Automake, and Libtool =
+ *三部分： 历史 使用 高级特性
+ *入门书籍
+== Introduction ==
+ *Autoconf用于配置
+ *Automake用于构建
+ *Libtool用于生产库文件
+== History ==
+ *都是为了解决相应问题而生的
+== How to run configure and make ==
+ *构建最好有三棵树：a source tree, a build tree and an install tree.
+ *运行configure要可以添加参数，有很多常见的参数
+ *configure会产生相应的生成文件，有很多常见的生成
+ *使用configure产生文件的原文件一般后缀为.in
+ *使用make有很多常见的Target
+ *Configuration Names用来标示运行环境，由cpu-manufacturer-operating_system组成
+ *编译平台选项有build host target决定，host决定生成软件运行环境，target决定生成软件工作目标，多用于交叉编译器
+== Introducing `Makefile's ==
+ *makefile有很多隐示规则
+ *shell指令是在单独的shell里执行的
+ *命令开头用<tab>
+ *marco是make的一大功能，marco也是相当的复杂的
+ *后缀规则不必具体的编写文件名
+== A Minimal GNU Autotools Project ==
+ *小工程：C语言解释器
+ *需要提供两个文件 makefile.am configure.in
+ *相关的文件生成非常多，要多加了解
+ *修改文件怎么同步
+  *运行相关文件
+  *使用autoreconf
+  *使用automake的maintainer mode
+ *对大众最好发布产生成的配置文件
+ *ChangeLog带有格式
+== Writing `configure.in' ==
+ *保证移植性很有挑战
+ *使用尝试验证方法进行移植
+ *检查顺序
+  1. Boilerplate
+  1. Options
+  1. Programs
+  1. Libraries
+  1. Headers
+  1. Typedefs and structures
+  1. Functions
+  1. Output
+ *容易检查过多或者过少
+ *对付函数的移植
+  *使用替代函数
+  *使用相同功能但名字不同的函数
+  *将其作为一种选项
+ *依赖configure name的配置要小心 多用features测试
+== Introducing GNU Automake ==
+ *Automake的目标是产生符合标准的makefile
+ *主要帮助完成
+  *Build
+  *Check
+  *Clean
+  *Install and uninstall
+  *Distribution
+ *识别primary变量，就是有一特别的后缀
+ *primary代表不同的操作
+ *会对程序名进行normalized就是用_代替非法值
+ *SUBDIRS中 . 可以控制目标在SUBDIRS目标的编译前后顺序
+ *Automake支持test
+ *支持DejaGNU(the GNU test framework)
+== Bootstrapping ==
+ *autogen.sh 和 the bootstrap 解决构建系统更改的问题
+ *autoreconf也是一种方法 但是了解的人少而且功能有限
+ *有AM_MAINTAINER_MODE可以使用
+== A Small GNU Autotools Project ==
+ *文件结构
+ *头文件
+  *需要安装的头文件要小心
+ *C++编译器
+  *C语言的头文件要加符合C++的声明符
+ *函数定义 使用返回值空行的方法
+ *K&R Compilers 可以使用ansi2knr或者使用宏定义解决 但是几乎不会碰到
+ *A Simple Shell Builders Library: Sic 用于帮助构建shell 用来阐述Autotool的用法
+ *对于可能没有的函数可以使用替代函数进行实现
+ *建立了一个使用Sic的程序，来进行测试
+ *宏真的非常牛逼
+== Introducing GNU Libtool ==
+ *库术语
+  *native
+  *Libtool library
+  *pseudo-library
+  *libtoo就是使用shell脚本产生的用于本地生成库用的shell脚本
+ *PIC: Position Independent Code
+ *默认共享库使用PIC 非共享库不使用PIC
+ *要使用创建Libtool时候探测到的编译器
+ *Convenience Libraries使用partially linked objects技术
+ *-static 使用静态库
+ *-all-static 只有是静态库才执行
+ *可以使用partially linked objects作为库的alias
+ *libraries be linked into other libraries用来解决库的依赖问题
+ *使用静态库链接顺序会成为问题
+ *Convenience Libraries会将依赖的object一并包含起来
+ *调试没有安装的程序用libtool gdb hello
+ *硬编码库使得库不能移动，但是减少错误链接的危险
+ *libtool是有mode的
+ *用libtool来管理和lib link有关的全过程
+== Using GNU Libtool with `configure.in' and `Makefile.am' ==
+ *在configure.in中添加AC_PROG_LIBTOOL来支持libtool
+ *调用AC_PROG_LIBTOOL前要设置$top_builddir Automake会自动设置
+ *常用选项
+  *`--enable-shared'
+  *`--enable-static' 
+  *`--disable-fast-install' 用于测试的时候从本地执行，但是要安装的时候要relink
+  *`--with-gnu-ld'
+  *`--disable-libtool-lock'
+  *`--with-pic' 改变动态库和镜头库链接的object文件的特性
+ *Autotool这些东西还是需要了解他们的配合的
+ *_LDFLAG设置选项
+  *`-no-undefined'
+  *`-static'
+  *`-release'
+  *`-version-info'
+  *`-all-static'
+  *`-no-fast-install'
+  *`-static'
+ *保证使用的M4宏的一致性，是使用Autotool的一个窍门
+ *控制libtool版本
+  *拷贝/usr/share/libtool/libtool.m4到本地acinclude.m4
+  *使用automake --add-missing添加关联文件
+  *下载最新的`config.guess' 和 `config.sub'
+ *libtool使用interfaces来控制库的版本 使用-version-info来设置 格式如`0:0:0'
+  *current 确定一个界面
+  *revision 代表版本 兼容性合格
+  *age 代表兼容性
+ *使用-release用来解决稳定库和非稳定库的同时发布问题
+ *`LIBADD':ADDitional LIBrary objects.
+ *`LDADD':ADDitional linker (LD) objects.
+ *11.5 Convenience Libraries  使用convenience库的完整例子
+== 12. A Large GNU Autotools Project ==
+ *添加dist-hook规则使得config文件可以一起发布
+ *不要安装config.h
+ *使用AC_OUTPUT_COMMANDS来产生依赖于平台的安装头文件 不过新版本可能更新
+ *可以添加使用Textinfo的支持
+ *使用mdate-sh用来产生version.texi 可以用来自动在Textinfo中添加版本
+ *使用测试的时候要小心编译位置和源代码位置可能不同
+ *使用单独的文件夹运行测试可以最小化影响
+ *有Autotest
+== Rolling Distribution Tarballs ==
+ *发布使用package-version.tar.gz这种名字
+ *相关的make目标
+  *dist
+  *dist-bzip2
+  *dist-shar
+  *dist-zip
+ *见不安装的头文件发到`_SOURCES'里
+ *放于`EXTRA_DIST'中就发布了
+ *最新版本可能有变化
+ *make distcheck可以测试发布
+ *最好在make dist前用make
+ *实现使用在一个新的目录下拷贝一份源文件 使用链接来实现 所有不能更改文件内容因为源文件会跟着变
+ *dist-hook会在复制完成调用
+== Installing and Uninstalling Configured Packages ==
+ *有很多默认的目录
+ *对于不同的primary有不同的目录
+ *noinst前缀不用于安装
+ *check不用于安装
+ *安装分为data和exec两大类 架构无关和架构有关
+ *可以定义自己的目录 只要在变量后加dir
+ *不仅可以在configure是否控制路径 还可以在make是否指定路径
+ *使用install-exec-local install-data-local或者install-data-hook install-exec-hook可以添加一些功能
+ *local规则不保证执行点
+ *Uninstall功能很可能不正确 使用package system会好很多
+== Writing Portable C with GNU Autotools ==
+ *经验和标准很重要
+== Generated File Dependencies ==
+ *都会使用到m4宏
+ *只和开发有关
+  *aclocal
+  *autoheader 
+  *automake and libtoolize
+ *和开发和安装有关
+  *autoconf
+  *make

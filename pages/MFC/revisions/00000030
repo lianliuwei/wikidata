@@ -1,0 +1,52 @@
+= MFC =
+ *深入浅出MFC
+ *VC++深入详解
+ *绘图使用GDI+比GDI好一点，GDI+半透明比较好做
+ *GDI+是对GDI的C++封装
+ *调用Invalidate()前最好判断一下时候有hwnd 使用GetSafeHwnd()
+ *CView不能在栈上创建，因为它会自己调用析构函数
+== 问题 ==
+ *viewport和window是指两个不同的空间，通过原点和单位进行映射的吗？
+  *是的
+ *View里面为什么会在onMouseMove处理完调用setCursor方法。
+  *自己弄错的，使用官方的鼠标要用全局的变量加上参数NULL
+== 坐标 ==
+ *世界坐标系空间
+  *方便绘图用，可以旋转
+ *页面空间
+  *绘图的逻辑空间
+ *设备空间
+  *可以是客户区，桌面，完整窗口，打印机一页纸
+  *页面空间到设备空间由DC控制
+ *物理设备空间
+  *从设备空间到物理设备空间转换由内核负责
+ *[[http://www.vckbase.com/vckbase/vckbase12/vc/nonctrls/multimedia_22/1222003.htm|视图的缩放的完整论述]]
+== 保存图像 ==
+ *自己设计数据结构保存，并重新绘制
+ *使用MetaFileDC
+ *使用compatibleDC
+  *存到bmp中
+== 双缓冲 ==
+ *[[http://wenku.baidu.com/view/1d456ee79b89680203d825d9.html|MFC+GDI双缓冲避免图形闪烁]]
+== 资源 ==
+ *[[http://www.codeproject.com/Chapters/1/Desktop-Development.aspx]]codeproject中相关内容
+ *[[http://www.codeproject.com/KB/cpp/OpenSource_VC_MFC.aspx|Some of the Best Open Source Project's in VC++ & MFC]]
+ *[[http://www.codeguru.com/cpp/]]codegurn中相关资源
+ *[[http://www.codeguru.com/Cpp/W-D/doc_view/scrolling/article.php/c3345|Add Zoom and Scale Capabilities to CScrollView]]
+ *[[http://fafeng.blogbus.com/tag/MFC/]]相关博文
+ *[[http://msdn.microsoft.com/en/library/kkcb3t0w.aspx|msdn中MFC部分]]
+ *[[http://msdn.microsoft.com/zh-cn/library/52cs05fz.aspx|msdn中Virtual C++类库]]
+ *[[http://blog.csdn.net/zeng622peng/archive/2010/04/28/5540379.aspx|windows消息参考大全(vc 去掉水平滚动条)]]
+ *[[http://blog.csdn.net/touzani/archive/2007/06/17/1655790.aspx|MFC使用GDI+编程基础]]
+ *[[http://blog.csdn.net/bwmwm/archive/2006/10/20/1343348.aspx|SDI模式下，在视图中添加按钮]] 涉及到Windows内部机制 到底窗口时怎么样更新的！
+ *[[http://blog.csdn.net/fmddlmyy/archive/2007/04/08/1556777.aspx|眼见为实(2)：介绍Windows的窗口、消息、子类化和超类化]] 子类化就是用于被Windows创建的对话框中的控件
+ *使用comuil.h中的_bstr_t来进行字符串转换比较好用
+ *[[http://blog.csdn.net/optman/archive/2005/03/28/332277.aspx|从AFX_MANAGE_STATE(AfxGetStaticModuleState())说起]] 在MFC下如何切换资源环境 资源跟DLL是相关的
+ *控件类要设置属性要在窗口创建完了以后 是通过发消息实现的
+ *控件有ReadOnly和Disable属性
+ *CWnd::GetDlgCtrlID()获得对应的ID
+ *CString::LoadString()加载资源字符串
+ *[[http://www.uml.org.cn/net/200611095.htm|创建有个性的对话框之MFC篇]]
+ *[[http://www.cnblogs.com/clever101/archive/2010/05/12/1734136.html|在MFC程序中使用XML文件配置工具栏]]
+ *[[http://blog.csdn.net/yhmhappy2006/archive/2006/10/07/1323904.aspx|动态插入子菜单(ID不定)(MFC)]]
+ *[[http://blog.csdn.net/DigBug/archive/2009/06/20/4284876.aspx|Visual C++.NET中 字符串转换方法]]

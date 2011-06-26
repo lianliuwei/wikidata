@@ -1,0 +1,11 @@
+= GNU Autoconf, Automake, and Libtool =
+ *三部分： 历史 使用 高级特性
+ *入门书籍
+== Introduction ==
+ *Autoconf用于配置
+ *Automake用于构建
+ *Libtool用于生产库文件
+== History ==
+ *都是为了解决相应问题而生的
+== How to run configure and make ==
+ *

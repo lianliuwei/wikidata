@@ -1,0 +1,233 @@
+== copy_strings() ==
+{{{#! cplusplus
+
+/*
+ * 'copy_strings()' copies argument/environment strings from user
+ * memory to free pages in kernel mem. These are in a format ready
+ * to be put directly into the top of new user memory.
+ */
+int copy_strings(int argc,char __user * __user * argv, struct linux_binprm *bprm)
+{
+	struct page *kmapped_page = NULL;
+	char *kaddr = NULL;
+	int ret;
+
+	while (argc-- > 0) {
+		char __user *str;
+		int len;
+		unsigned long pos;
+
+		if (get_user(str, argv+argc) ||
+				!(len = strnlen_user(str, bprm->p))) {
+			ret = -EFAULT;
+			goto out;
+		}
+
+		if (bprm->p < len)  {
+			ret = -E2BIG;
+			goto out;
+		}
+
+		bprm->p -= len;
+		/* XXX: add architecture specific overflow check here. */
+		pos = bprm->p;
+
+		while (len > 0) {
+			int i, new, err;
+			int offset, bytes_to_copy;
+			struct page *page;
+
+			offset = pos % PAGE_SIZE;
+			i = pos/PAGE_SIZE;
+			page = bprm->page[i];
+			new = 0;
+			if (!page) {
+				page = alloc_page(GFP_HIGHUSER);
+				bprm->page[i] = page;
+				if (!page) {
+					ret = -ENOMEM;
+					goto out;
+				}
+				new = 1;
+			}
+
+			if (page != kmapped_page) {
+				if (kmapped_page)
+					kunmap(kmapped_page);
+				kmapped_page = page;
+				kaddr = kmap(kmapped_page);
+			}
+			if (new && offset)
+				memset(kaddr, 0, offset);
+			bytes_to_copy = PAGE_SIZE - offset;
+			if (bytes_to_copy > len) {
+				bytes_to_copy = len;
+				if (new)
+					memset(kaddr+offset+len, 0,
+						PAGE_SIZE-offset-len);
+			}
+			err = copy_from_user(kaddr+offset, str, bytes_to_copy);
+			if (err) {
+				ret = -EFAULT;
+				goto out;
+			}
+
+			pos += bytes_to_copy;
+			str += bytes_to_copy;
+			len -= bytes_to_copy;
+		}
+	}
+	ret = 0;
+out:
+	if (kmapped_page)
+		kunmap(kmapped_page);
+	return ret;
+}
+}}}
+== copy_strings()注释 ==
+{{{#! cplusplus
+
+/*
+ * 'copy_strings()' copies argument/environment strings from user
+ * memory to free pages in kernel mem. These are in a format ready
+ * to be put directly into the top of new user memory. 是用户的栈吗
+ */
+本来只是复制字符串,功能类似于标准 C 库的 strcpy()函数,但这里有两大看点
+1. 从用户空间复制字符串到内核空间
+2. 这复制的字符串不是普通的字符串,而是对任何 C 程序员都有特殊意义的。C programmer
+   都耳熟能详 main()函数。
+int main(int argc, char *argv[], char* envp[]);
+                             那传递给 main()的参数是哪儿来的呢?这里就是答案。
+main()函数是所有 C/C++程序的开始,
+这里 Linux 的实现与 Windows 的就不一样。Linux 是实现在内核里面的,而 Windows 是实
+现在 C 库里面的。最新的 Visual Studio 包含了 Windows 版 C 库的源代码,可以参考。
+
+int copy_strings(int argc,char __user * __user * argv, struct linux_binprm *bprm)用户空间到内核空间
+{
+这里*argv[]是在用户态里的字符串数组,而 argc 是该数组的长度。bprm 参数结构里面的
+page[]空间用于存放来自用户态的字符串数组。
+
+	struct page *kmapped_page = NULL;
+	char *kaddr = NULL;
+	int ret;
+
+	while (argc-- > 0) { 
+该循环用于枚举 argvp[]中的字符串。即这里 argc 是 argv[]数组的个数。
+比如:
+argv[0] = HOSTNAME=dcmp10
+argv[1] = TERM=xterm
+argv[2] = SHELL=/bin/bash
+argv[3] = HISTSIZE=1000
+argv[4] = SSH_CLIENT=::ffff:13.187.241.182 1986 22
+argv[5] = SSH_TTY=/dev/pts/2
+argv[6] = USER=wzhou
+...
+argv[28] = LOGNAME=wzhou
+argv[29] = _=/bin/env
+上例中 argc = 30。这里的循环就是对该数组的枚举,但有一点切记,这个数组的空间在用户
+空间,否则也不用这么麻烦了。
+		char __user *str;
+		int len;
+		unsigned long pos;
+
+		if (get_user(str, argv+argc) || 用户态的
+				!(len = strnlen_user(str, bprm->p))) {
+			ret = -EFAULT;
+			goto out;
+		}
+类似于 C 库中的 strlen()计算 string 长度,还是由于 string 在用户空间才这么麻烦。返
+回的 len 包括最后的 NULL 字符,这与 strcpy()不同。如果用户态的空间有问题,会被
+get_user()和 strnlen_user()捕捉到,返回失败。
+
+		if (bprm->p < len)  {
+			ret = -E2BIG; two big
+			goto out;
+		}
+检查是否超出范围。
+
+存放用户态的 argv[]与 envp[]的内核空间不够,表示用户态的参数列表与环境变量列表变态
+的长,总长超过 32 个叶面,128K,报错。系统最多预
+留 32 页。但这时还没有真正分配物理页面
+正象上图所绘的,bprm->p 指针是由高地址向低地址生长的,最初始在顶端(128K - 4)。
+在 do_execve()中有下面的赋值
+   bprm->p = PAGE_SIZE*MAX_ARG_PAGES-sizeof(void *);
+这里只是 128K 空间的 offset,还谈不上是地址,因为该物理空间还未被 mapping 入虚拟地
+址空间。
+
+		bprm->p -= len;
+由后向前拷贝 
+		/* XXX: add architecture specific overflow check here. */
+		pos = bprm->p;
+
+		while (len > 0) {
+			int i, new, err;
+			int offset, bytes_to_copy;
+			struct page *page;
+
+			offset = pos % PAGE_SIZE;
+			i = pos/PAGE_SIZE; 
+在第几页
+
+i 用于确定当前要拷贝的位置在 128K,32 页中位于哪一页;而 offset 则是该页的偏移。为
+什么这么麻烦呢,关键是这些内存还没有被映射进地址空间,根本没有“virtual address”
+的概念。就象大街上的某座房子,还没有给编上门牌号码,你自然无法通过什么大街第几号来找
+到它。
+
+			page = bprm->page[i];
+这里的 page 管理的是物理页面,不是可寻址的虚拟空间
+			new = 0;
+			if (!page) { 
+申请页
+如果该物理页面还没有分配,则通过物理页面分配器申请一页。这里的物理页面分配器是系统中
+所有内存分配之母,是最底层的内存管理器。一切内存管理都建立在其之上。
+
+				page = alloc_page(GFP_HIGHUSER);
+				bprm->page[i] = page;
+				if (!page) {
+					ret = -ENOMEM;
+					goto out;
+				}
+				new = 1;
+设置分配物理页面标志。以便下面判断是否要初始化。
+			}
+
+			if (page != kmapped_page) { 
+				if (kmapped_page)
+					kunmap(kmapped_page);
+				kmapped_page = page; 当前页吗
+				kaddr = kmap(kmapped_page);
+正象上面说的,page 只是物理页面,是不能寻址的,所以这里临时把它映射到 Virtual
+Address 中,就象给没有门牌号码的房子先指定一个号码。
+
+			}
+			if (new && offset)
+				memset(kaddr, 0, offset); 清空 为什么要清空前面的字节
+			bytes_to_copy = PAGE_SIZE - offset;
+			if (bytes_to_copy > len) {
+				bytes_to_copy = len;
+				if (new)
+					memset(kaddr+offset+len, 0,
+						PAGE_SIZE-offset-len); 为什么要清空后面
+			}
+清零初始化。
+			err = copy_from_user(kaddr+offset, str, bytes_to_copy); 可能会拷贝一些不要的值
+			if (err) {
+				ret = -EFAULT; 为什么要用-
+				goto out;
+			}
+这儿才是本函数实质性的内容, argv[i]的字符串从用户态拷贝过来。把这里 kaddr 就是临时“门牌号码”。
+
+			pos += bytes_to_copy;
+			str += bytes_to_copy;
+			len -= bytes_to_copy;
+调整指针,为拷贝 argv[i + 1]做准备
+		}
+	}
+	ret = 0;
+out:
+	if (kmapped_page) 
+取消临时“门牌号码”
+		kunmap(kmapped_page);
+	return ret;
+}
+}}}

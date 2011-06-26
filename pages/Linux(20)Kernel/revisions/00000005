@@ -1,0 +1,24 @@
+<<TableOfContents>>
+== 构建 ==
+ *处理的方面
+  *按需要编译
+  *自动依赖生成
+  *配置
+  *不同架构和交叉编译
+  *可加载模块
+ *使用Make技术
+ *没有使用autoconf进行配置
+ *配置
+  *menuconfig
+  *xconfig
+  *gconfig
+=== users 使用 ===
+ *会先生成配置用的程序再进行配置
+ *在scripts/kconfig/下有相应的程序
+ *使用/.config作为配置文件
+ *使用外来的配置文件要运行 oldconfig 进行适配
+ *默认会生成bzImage或zImage
+ *使用zdisk和fdimage产生磁盘可用的印象需要mtools和syslinux
+ *使用本地installkernel程序安装内核
+ *make modules_install 安装modules
+ *重改架构需要make disclean

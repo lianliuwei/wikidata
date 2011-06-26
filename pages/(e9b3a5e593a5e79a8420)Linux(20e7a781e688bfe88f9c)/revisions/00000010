@@ -1,0 +1,100 @@
+= 鳥哥的 Linux 私房菜 =
+{{{#!wiki
+<<TableOfContents>>
+== 问题 ==
+ *如何实现nohup
+
+=== Linux 使用者管理 ===
+==== 程序管理與 SELinux 初探 ====
+ *工作管理 (job control)
+  *當我們登入系統取得 bash shell 之後，在單一終端機介面下同時進行多個工作的行為管理
+  *限制
+   *這些工作所觸發的程序必須來自於你 shell 的子程序(只管理自己的 bash)； 
+   *前景：你可以控制與下達指令的這個環境稱為前景的工作 (foreground)； 
+   *背景：可以自行運作的工作，你無法使用 [ctrl]+c 終止他，可使用 bg/fg 呼叫該工作； 
+   *背景中『執行』的程序不能等待 terminal/shell 的輸入(input)
+  *直接將指令丟到背景中『執行』的 &
+  *將『目前』的工作丟到背景中『暫停』：[ctrl]-z
+  *觀察目前的背景工作狀態： jobs
+  *將背景工作拿到前景來處理：fg
+  *讓工作在背景下的狀態變成運作中： bg
+  *管理背景當中的工作： kill
+  *離線管理問題 使用at 或 nohup
+  *+ 代表最近被放到背景的工作號碼， - 代表最近最後第二個被放置到背景中的工作號碼
+ *工作號碼 (job number) 只與你這個 bash 環境有
+ *程序管理
+  *程序的觀察
+   *ps ：將某個時間點的程序運作情況擷取下來
+   *top：動態觀察程序的變化
+   *pstree 显示程序树
+ *程序的管理
+  *kill -signal PID
+  *killall -signal 指令名稱
+ *關於程序的執行順序
+  *Priority 與 Nice 值 共同决定程序的优先级
+  *调整nice值
+   *nice ：新執行的指令即給予新的 nice 值
+   *renice ：已存在程序的 nice 重新調整
+ *系統資源的觀察
+  *free ：觀察記憶體使用情況
+  *uname：查閱系統與核心相關資訊
+  *uptime：觀察系統啟動時間與工作負載
+  *netstat ：追蹤網路或插槽檔
+   *可以查看 unix域 和 tcp/ip域 的socket
+  *dmesg ：分析核心產生的訊息
+  *vmstat ：偵測系統資源變化
+   *与读写有关
+ *特殊檔案與程序
+  */proc/* 代表的意義 看书
+ *查詢已開啟檔案或已執行程序開啟之檔案
+  *fuser：藉由檔案(或檔案系統)找出正在使用該檔案的程序
+  *lsof ：列出被程序所開啟的檔案檔名 ls open file
+  *pidof ：找出某支正在執行的程式的 PID
+ *SELinux 初探
+  *SELinux: Security Enhanced Linux
+  *SELinux 是在進行程序、檔案等細部權限設定依據的一個核心模組 由於啟動網路服務的也是程序，因此剛好也能夠控制網路服務能否存取系統資源的一道關卡
+  *傳統的檔案權限與帳號關係：自主式存取控制, DAC: Discretionary Access Control
+  *以政策規則訂定特定程序讀取特定檔案：委任式存取控制, MAC: Mandatory Access Control
+  *SELinux 的運作模式 看书
+  *主要解决程序权限的问题， 不知用户触发程序的控制是否有
+  *SELinux 的啟動、關閉與觀察
+   *SELinux 三種模式: enforcing, permissive, disabled
+   *getenforce 查看状态
+   *sestatus 状态
+   *SELinux 的啟動與關閉
+    *在 SELinux 運作下切換成為強制 (enforcing) 或寬容 (permissive) 模式，不能夠直接關閉 SELinux  同時，由 SELinux 關閉 (disable) 的狀態到開啟的狀態也需要重新開機
+    *传给内核的参数对SELinux的启动也有影响  selinux=0 为SELinux关闭
+  * -Z 选项表示显示SELinux的安全本文
+  *重設 SELinux 安全性本文
+   *设置安全本文: chcon
+   *使用預設的安全性本文來還原: restorecon
+  *SELinux 所需的服務
+   *setroubleshoot --> 錯誤訊息寫入 /var/log/messages 使用 sealert 处理错误代码
+   *auditd --> 詳細資料寫入 /var/log/audit/audit.log
+    *auditd 會將許多的 SELinux 資訊都記錄下來，不只是錯誤訊息 因此登錄檔 /var/log/audit/audit.log 非常的龐大。audit2why 指令來讓查詢錯誤訊息的回報
+  *AVC: access vector cache
+  *SELinux 的政策與規則管理
+   *規則 (Booleans) 里有 av rules
+   av rules 格式: allow  主體程序安全性本文類別  目標檔案安全性本文類別
+   *seinfo: 政策提供多少相關的規則
+   *sesearch: 知道詳細的規則
+   *getsebool: 布林值的查詢
+   *setsebool: 布林值的修改
+   *semanage fcontext 預設目錄的安全性本文查詢與修改
+    * 使用正規表示法去指定一個範圍
+==== 認識系統服務 (daemons) ====
+ *達成 service 的程式我們就稱呼為 daemon
+== 伺服器架設篇 ==
+ *使用預設的套件管理方式來安裝所有的伺服器 比自己手動使用 Tarball 的安裝方式來的方便且安全
+ *在架站的過程當中，無論出現任何問題，第一個步驟就是察看登錄檔 (log file)，那是克服問題的地方
+=== 架站前的進修專區 === 
+ *對於網路伺服器來說最重要的是基礎檔案權限、程序之啟動關閉與管理、 Bash shell 之操作與 script 、使用者帳號的管理等等
+==== 網路基礎概念 ====
+ *網路層之路由概念
+  *路徑選擇 (routing) 
+  *每部主機都有自己的路由表
+  *Gateway / Router ：網關/路由器的功能就是在負責不同網域之間的封包轉遞 ( IP Forwarder )
+  *Internet 上面的路由協定與變化是相當複雜的，因為 Internet 上面的路由並不是靜態的，他可以隨時因為環境的變化而修訂每個封包的傳送方向。
+  *觀察主機的路由
+   *route [-n]
+}}}

@@ -1,0 +1,63 @@
+= NSIS 源代码分析 =
+ *使用[[Scons]]构建系统
+ *究竟是编译型还是解释型
+ *.nsh 是他的脚本吗？
+ *使用[[WxWidgets]]来做窗口系统底层吗
+ *Contrib外围爱好者贡献的部分
+ *文档使用的什么技术？？
+ *Docs放的是文档源码
+ *Examples放的是例子
+ *Includes放的是写NSIS工程用的头文件
+ *INSTALL介绍如何编译和安装
+ *CHM 交叉编译 [[WxWidgets]] 是可选的
+ *使用Scons命令可以直接编译出大部分 在build/release
+ *NSIS的核心是makensis.exe程序 main()在makenssi.cpp中
+== 构建分析 ==
+ *使用0.98版本
+ *plugins
+ *utils
+ *doc
+ *toolset增加了zip
+ *加载SCons/utils.py
+ *加载SCons/config.py
+ *ignore_tests
+ *dirs 用于安装的目录
+ *hhc微软的chm编译器
+ *自动产生sconf_h nsis-sconf.h
+ *自动产生defines_h nsis-defines.h
+ *自动产生 nsis-version.h
+ *定义函数Distribute和用于各种类型的Distribute
+  *bin
+  *conf
+  *data
+   *Bin
+   *Stubs
+   *Plugins
+   *Contrib
+   *Menu
+   *Include
+  *doc
+   *Docs
+   *Examples 
+ *定义Sign函数用于代码签名
+ *定义TestScript用于测试
+ *根据使用的不同工具链使用不同的SConscript
+  *msvc SCons/Config/ms
+  *gcc SCons/Config/gnu
+  *hpc++ SCons/Config/hpc++
+  *default SCons/Config/default
+ *Stub后面判断加不加_solid 每种Stub生成两种文件 除了uninst
+ *makensis 调用Source下的Sconscript
+ *BuildPlugin()函数
+ *BuildUtil()函数
+ *Plugin 代码在Contrib中
+ *misc 代码放在Contrib中
+ *test 代码放在Source/Tests中
+ *test_scripts()函数用来测试
+ *exehead/估计是用来生产exe文件头的
+ *build.h build.cpp scirpt.cpp 是翻译脚本的
+ *CEXEBuild类 的doCommand()有5000行
+== 问题 ==
+ *究竟是这么产生exe文件的
+ *是如何解释语法的
+ *自己产生help文件吗

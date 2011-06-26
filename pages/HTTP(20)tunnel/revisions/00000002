@@ -1,0 +1,8 @@
+= HTTP tunnel =
+ *使用HTTP端口做tunnel
+ *[[http://en.wikipedia.org/wiki/Http_tunnel]]
+ *软件
+  *[[http://kakku.wordpress.com/2007/11/25/proxy-hacks-final-httptunnel-tcpip-connections-over-plain-old-get-and-post-requests/]]使用httptunnel
+  *[[http://www.http-tunnel.com/]]商业软件
+  *[[http://www.nocrew.org/software/httptunnel.html]]GNU httptunnel
+   *[[http://www.gnu.org/software/httptunnel/]]

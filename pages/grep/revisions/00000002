@@ -1,0 +1,4 @@
+= grep =
+ *文件搜索工具
+ *源于全局, 正则表达式, 打印的命令 g/RE/p
+ *使用 find . -name !'' -print | xargs grep !''来便利目录

@@ -1,0 +1,9 @@
+= Unix Network Programming =
+ *I/O复用 使用select和poll
+ *I/O分类
+  *阻塞
+  *非阻塞 轮训方式
+  *信号
+  *异步 I/O什么时候结束通知
+ *select 要求指定maxfd 比最大的fd多1
+ *select比sleep精确的睡眠函数

@@ -1,0 +1,11 @@
+= Text =
+ *文本文件是一种映射
+ *文本需要字符集
+ *UTF-8 GB2312
+== 文本字符集转换 ==
+ *enca 和 iconv
+ *[[http://hi.baidu.com/haijw1001/blog/item/8674fc83575d5bb66c8119de.html]]
+== 换行符问题 ==
+ *各总换行符 还真是恶心
+ *dos2unix
+ *unix2dos

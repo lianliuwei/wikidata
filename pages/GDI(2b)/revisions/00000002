@@ -1,0 +1,18 @@
+= GDI+ =
+ *这个[[C++]]封装的绘图库比GDI好用
+ *CustomLineCap可以用来实现自定义的线头 AdjustableArrowCap为系统自带的箭头 最好不要从CustomLineCap来派生 只使用最好
+ *[[http://support.microsoft.com/kb/818444/zh-cn|如何： 使用 GDI + 区域在窗体上功能来创建自定义的形状]]
+ *[[http://www.vckbase.com/document/viewdoc/?id=1440|GDI+编程基础（一）GDI+ Vs GDI]]
+ *[[http://hi.baidu.com/gopher2008/blog/item/570d6bed2f0de0d5b21cb15d.html|奇怪的CustomLineCap]]
+ *[[http://msdn.microsoft.com/en-us/library/ms533798%28v=VS.85%29.aspx|GDI+]] MSDN
+ *[[http://www.codeproject.com/KB/GDI-plus/OutlineText.aspx|Outline Text]] 用GDI+画文字的外围
+ *[[http://www.codeproject.com/KB/GDI-plus/gdiplush.aspx|GDI+ and MFC memory leak detection]]
+ *[[http://www.codeproject.com/KB/GDI-plus/gdiplusbrushes.aspx|GDI+ Brushes and Matrices]]
+ *[[http://blog.csdn.net/eplanet/category/340188.aspx]] 相关博客 比较浅
+== Bitmap ==
+ *[[http://www.codeproject.com/KB/graphics/CBitmapEx.aspx]] 高级Bitmap类 不知道底层用什么实现的
+ *Bitmap如果要进行精细的操作，或者大容量的操作，可能需要放在内存中进行操作 不过要速度快，又需要使用绘图库的硬件加速
+== DrawImage ==
+ *[[http://stackoverflow.com/questions/1505586/gdi-using-drawimage-to-draw-a-transperancy-mask-of-the-source-image|GDI+, using DrawImage to draw a transperancy mask of the source image]]
+ *可以设置Image的palette来改变颜色
+ *使用.png文件对透明支持比较好

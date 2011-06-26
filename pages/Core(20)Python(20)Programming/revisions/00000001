@@ -1,0 +1,4 @@
+= Core Python Programming =
+ *.py是Python的扩展名
+ *.pyc .pyo是编译完的文件
+ *#!/bin/env python 可以用于选择python的位置，不知这是什么原理

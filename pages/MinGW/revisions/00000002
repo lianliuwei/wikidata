@@ -1,0 +1,5 @@
+= MinGW =
+ *windows下GNU编译器
+ *还可以用于在POSIX机器上面交叉编译windows程序
+ *还提供[[MSYS]]支持POSIX环境 工具
+ *[[http://sourceforge.net/projects/mingw/|官方下载地址]]

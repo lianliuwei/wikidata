@@ -1,0 +1,55 @@
+## page was renamed from make
+= make =
+ *构建工具
+ *GNU make 为标准
+ *[[http://en.wikipedia.org/wiki/Make_(software)]]介绍
+== 变量 ==
+ *$@ 代表目标
+ *$< 前提条件的第一个
+== Rules ==
+{{{
+target : prereq
+(tab键)commands
+}}}
+ *Empty Targets 用空文件做时间标签
+ *Variables $() 和 $单个字母
+ *Automatic 避免重复 $@=Target $<=第一个条件 $^=所有条件
+ *VPATH和path解决搜索路径 vpath %.c src精确
+ *VPATH下有同名文件就麻烦了
+ *Pattern Rules
+  *%.c:%.o
+  *能形成隐式规则链
+  *有些很难理解
+ *stem 没有后缀
+ *Static Pattern Rules 为固定的几个文件匹配 $(OBJECTS): %.o: %.c
+ *Suffix Rules 放弃使用
+ *默认会通过RCS和SCCS进行控制,但是这两种都不用了,而且版本控制相当复杂,要特别处理
+ *内建虚目标
+  
+== 心得 ==
+ *#注释 \连接多行文字
+ *--just-print -n 只打印不执行命令
+ *--no-buildin-rules -r不使用内部规则
+ *--print-data-base -p 输出内部规则
+ *makefile编写原则避免重复, 减少错误, 易于修改
+ *C语言文件头文件和库位置问题, 通过gcc设置来解决
+ *和文件同名的伪目标, 会出错 用.PHONY申明为伪目标
+ *可以将构建过程和依赖看成一棵树,每条make语句只是一个节点和起子节点的关系
+ *只有文件才有时间, 用来判断是否要更新, 来节省编译时间
+ *由Rule组成
+ *默认很重要 用GNU的新Rule
+ *变量 如同C语言 =和:= 用于赋值 但是:=防止递归 不要和Shell混在一起 变量中的空格和换行需要小心
+  *只有一次定义
+ *make -p 看规则
+ *先显后隐
+ *有自变量
+ *文本替换 用GNU函数
+ *要了解make的运行
+ *可以自定义函数
+ *有条件结构
+== 资料 ==
+ *Managing Projects with GNU make
+ *GNU Make 
+== 模板 ==
+ *[[http://hi.baidu.com/s_yqguo/blog/item/49b4e6ec77f7f32563d09f37.html]]通用模板
+ *[[http://blog.chinaunix.net/u/3038/showart_1842582.html]]

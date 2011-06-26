@@ -1,0 +1,184 @@
+== binfmts.h ==
+{{{#! cplusplus
+#ifndef _LINUX_BINFMTS_H
+#define _LINUX_BINFMTS_H
+
+#include <linux/capability.h>
+
+struct pt_regs;
+
+/*
+ * MAX_ARG_PAGES defines the number of pages allocated for arguments
+ * and envelope for the new program. 32 should suffice, this gives
+ * a maximum env+arg of 128kB w/4KB pages!
+ */
+#define MAX_ARG_PAGES 32
+
+/* sizeof(linux_binprm->buf) */
+#define BINPRM_BUF_SIZE 128
+
+#ifdef __KERNEL__
+
+/*
+ * This structure is used to hold the arguments that are used when loading binaries.
+ */
+struct linux_binprm{
+	char buf[BINPRM_BUF_SIZE];
+	struct page *page[MAX_ARG_PAGES];
+	struct mm_struct *mm;
+	unsigned long p; /* current top of mem */
+	int sh_bang;
+	struct file * file;
+	int e_uid, e_gid;
+	kernel_cap_t cap_inheritable, cap_permitted, cap_effective;
+	void *security;
+	int argc, envc;
+	char * filename;	/* Name of binary as seen by procps */
+	char * interp;		/* Name of the binary really executed. Most
+				   of the time same as filename, but could be
+				   different for binfmt_{misc,script} */
+	unsigned long loader, exec;
+};
+
+/*
+ * This structure defines the functions that are used to load the binary formats that
+ * linux accepts.
+ */
+struct linux_binfmt {
+	struct linux_binfmt * next;
+	struct module *module;
+	int (*load_binary)(struct linux_binprm *, struct  pt_regs * regs);
+	int (*load_shlib)(struct file *);
+	int (*core_dump)(long signr, struct pt_regs * regs, struct file * file);
+	unsigned long min_coredump;	/* minimal dump size */
+};
+
+extern int register_binfmt(struct linux_binfmt *);
+extern int unregister_binfmt(struct linux_binfmt *);
+
+extern int prepare_binprm(struct linux_binprm *);
+extern void remove_arg_zero(struct linux_binprm *);
+extern int search_binary_handler(struct linux_binprm *,struct pt_regs *);
+extern int flush_old_exec(struct linux_binprm * bprm);
+
+/* Stack area protections */
+#define EXSTACK_DEFAULT   0	/* Whatever the arch defaults to */
+#define EXSTACK_DISABLE_X 1	/* Disable executable stacks */
+#define EXSTACK_ENABLE_X  2	/* Enable executable stacks */
+
+extern int setup_arg_pages(struct linux_binprm * bprm, int executable_stack);
+extern int copy_strings(int argc,char __user * __user * argv,struct linux_binprm *bprm); 
+extern int copy_strings_kernel(int argc,char ** argv,struct linux_binprm *bprm);
+extern void compute_creds(struct linux_binprm *binprm);
+extern int do_coredump(long signr, int exit_code, struct pt_regs * regs);
+extern int set_binfmt(struct linux_binfmt *new);
+
+#endif /* __KERNEL__ */
+#endif /* _LINUX_BINFMTS_H */
+}}}
+== binfmts.h 注释 ==
+
+{{{#! cplusplus
+#ifndef _LINUX_BINFMTS_H
+#define _LINUX_BINFMTS_H
+防止重复INCLUDE
+#include <linux/capability.h>
+
+struct pt_regs;
+用户寄存器 用来传参数
+/*
+ * MAX_ARG_PAGES defines the number of pages allocated for arguments
+ * and envelope for the new program. 32 should suffice, this gives
+ * a maximum env+arg of 128kB w/4KB pages!
+ */
+#define MAX_ARG_PAGES 32
+最大的参数页数  128KB
+/* sizeof(linux_binprm->buf) */
+#define BINPRM_BUF_SIZE 128
+读取文件的头部 用来判断是什么格式的可执行文件
+#ifdef __KERNEL__
+
+/*
+ * This structure is used to hold the arguments that are used when loading binaries.
+ */
+struct linux_binprm{
+这名字怎么来的还是不知道
+	char buf[BINPRM_BUF_SIZE];
+放头部128字节
+	struct page *page[MAX_ARG_PAGES];
+32个参数页 
+	struct mm_struct *mm;
+内存管理单元
+	unsigned long p; /* current top of mem */
+	int sh_bang;
+是否是脚本
+	struct file * file;
+可执行文件的文件结构 由于读文件
+	int e_uid, e_gid;
+设置可执行文件的UID 和 GID 
+	kernel_cap_t cap_inheritable, cap_permitted, cap_effective;
+不知道干什么的
+	void *security;
+安全相关的
+	int argc, envc;
+argv 和 envp 的个数
+	char * filename;	/* Name of binary as seen by procps */
+文件名 要放在内核态里
+	char * interp;		/* Name of the binary really executed. Most
+解释器 elf用于动态链接器		   of the time same as filename, but could be
+				   different for binfmt_{misc,script} */
+	unsigned long loader, exec;
+不知道干什么的
+};
+
+/*
+ * This structure defines the functions that are used to load the binary formats that
+ * linux accepts.
+ */
+struct linux_binfmt {
+binary formats 缩写 脚本也用这结构
+	struct linux_binfmt * next;
+用于串成单链表
+	struct module *module;
+还没看到干什么用的 估计和调用module进来有关
+	int (*load_binary)(struct linux_binprm *, struct  pt_regs * regs);
+装载文件用 在search_binary_handle()被调用
+	int (*load_shlib)(struct file *);
+估计是动态链接库用的
+	int (*core_dump)(long signr, struct pt_regs * regs, struct file * file);
+没有看到过 核心备份
+	unsigned long min_coredump;	/* minimal dump size */
+};
+
+extern int register_binfmt(struct linux_binfmt *);
+extern int unregister_binfmt(struct linux_binfmt *);
+见formats和相关函数的分析
+extern int prepare_binprm(struct linux_binprm *);
+见prepare_binprm()分析
+extern void remove_arg_zero(struct linux_binprm *);
+估计是释放内存用的
+extern int search_binary_handler(struct linux_binprm *,struct pt_regs *);
+见search_binary_handler()分析
+extern int flush_old_exec(struct linux_binprm * bprm);
+将原来的进程清空 
+
+/* Stack area protections */
+#define EXSTACK_DEFAULT   0	/* Whatever the arch defaults to */
+#define EXSTACK_DISABLE_X 1	/* Disable executable stacks */
+#define EXSTACK_ENABLE_X  2	/* Enable executable stacks */
+栈是否是可执行的
+extern int setup_arg_pages(struct linux_binprm * bprm, int executable_stack);
+将参数从内核态变为用户态
+extern int copy_strings(int argc,char __user * __user * argv,struct linux_binprm *bprm); 
+见copy_strings()分析
+extern int copy_strings_kernel(int argc,char ** argv,struct linux_binprm *bprm);
+copy_strings()分析
+extern void compute_creds(struct linux_binprm *binprm);
+extern int do_coredump(long signr, int exit_code, struct pt_regs * regs);
+不知是干什么的
+extern int set_binfmt(struct linux_binfmt *new);
+new一个binfmt后的初始化函数
+
+#endif /* __KERNEL__ */
+#endif /* _LINUX_BINFMTS_H */
+}}}

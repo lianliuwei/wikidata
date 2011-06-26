@@ -1,0 +1,6 @@
+= 启动 =
+ *ID = 1 
+ *"init=xxxx"传入参数
+ */sbin/init 默认
+ *两种init:BSD init System V init
+ 

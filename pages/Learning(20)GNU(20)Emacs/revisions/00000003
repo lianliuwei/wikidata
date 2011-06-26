@@ -1,0 +1,14 @@
+= Learning GNU Emacs =
+== Preface ==
+ *是一个工作环境
+ *GNU Emacs 和 XEmacs
+ *一 二章讲基础
+ *学习内容分类
+ *一点一点增量学
+ *各章概述
+ *meta key 是alt
+ *表示法
+== Emacs Basics ==
+ *学Emacs就是学键盘习惯
+ *每次少量多次复习的方法学
+ *buffer和file要分开

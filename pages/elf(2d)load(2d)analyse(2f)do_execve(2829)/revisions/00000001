@@ -1,0 +1,234 @@
+== do_execve() ==
+{{{#! cplusplus
+/*
+ * sys_execve() executes a new program.
+ */
+int do_execve(char * filename,
+	char __user *__user *argv,
+	char __user *__user *envp,
+	struct pt_regs * regs)
+{
+	struct linux_binprm bprm;
+	struct file *file;
+	int retval;
+	int i;
+
+	file = open_exec(filename);
+
+	retval = PTR_ERR(file);
+	if (IS_ERR(file))
+		return retval;
+
+	sched_balance_exec();
+
+	bprm.p = PAGE_SIZE*MAX_ARG_PAGES-sizeof(void *);
+	memset(bprm.page, 0, MAX_ARG_PAGES*sizeof(bprm.page[0]));
+
+	bprm.file = file;
+	bprm.filename = filename;
+	bprm.interp = filename;
+	bprm.sh_bang = 0;
+	bprm.loader = 0;
+	bprm.exec = 0;
+	bprm.security = NULL;
+	bprm.mm = mm_alloc();
+	retval = -ENOMEM;
+	if (!bprm.mm)
+		goto out_file;
+
+	retval = init_new_context(current, bprm.mm);
+	if (retval < 0)
+		goto out_mm;
+
+	bprm.argc = count(argv, bprm.p / sizeof(void *));
+	if ((retval = bprm.argc) < 0)
+		goto out_mm;
+
+	bprm.envc = count(envp, bprm.p / sizeof(void *));
+	if ((retval = bprm.envc) < 0)
+		goto out_mm;
+
+	retval = security_bprm_alloc(&bprm);
+	if (retval)
+		goto out;
+
+	retval = prepare_binprm(&bprm);
+	if (retval < 0)
+		goto out;
+
+	retval = copy_strings_kernel(1, &bprm.filename, &bprm);
+	if (retval < 0)
+		goto out;
+
+	bprm.exec = bprm.p;
+	retval = copy_strings(bprm.envc, envp, &bprm);
+	if (retval < 0)
+		goto out;
+
+	retval = copy_strings(bprm.argc, argv, &bprm);
+	if (retval < 0)
+		goto out;
+
+	retval = search_binary_handler(&bprm,regs);
+	if (retval >= 0) {
+		free_arg_pages(&bprm);
+
+		/* execve success */
+		security_bprm_free(&bprm);
+		return retval;
+	}
+
+out:
+	/* Something went wrong, return the inode and free the argument pages*/
+	for (i = 0 ; i < MAX_ARG_PAGES ; i++) {
+		struct page * page = bprm.page[i];
+		if (page)
+			__free_page(page);
+	}
+
+	if (bprm.security)
+		security_bprm_free(&bprm);
+
+out_mm:
+	if (bprm.mm)
+		mmdrop(bprm.mm);
+
+out_file:
+	if (bprm.file) {
+		allow_write_access(bprm.file);
+		fput(bprm.file);
+	}
+	return retval;
+}
+}}}
+== do_execve()注释 ==
+{{{#! cplusplus
+/*
+ * sys_execve() executes a new program.
+ */
+int do_execve(char * filename,
+	char __user *__user *argv,
+	char __user *__user *envp,
+	struct pt_regs * regs)
+{
+这里的 filename 已经位于内核空间,但启动该可执行文件的参数列表 argv[]还在用户空间,
+同样该程序执行的环境列表 envp[]同样也在用户空间。
+
+	struct linux_binprm bprm; 是什么 内核空间中 
+	struct file *file;
+	int retval;
+	int i;
+
+	file = open_exec(filename); 是什么函数 是一个在内核通用的打开文件的函数 文件的读写都是在内核态进行的
+
+	retval = PTR_ERR(file);
+	if (IS_ERR(file))
+		return retval;
+
+	sched_balance_exec();是什么函数               是否该函数与本执行文件的载入关系不大
+
+
+	bprm.p = PAGE_SIZE*MAX_ARG_PAGES-sizeof(void *);  实际上就是未来该 process的用户 stack 的栈顶 为什么要减去一指针 是否和sched()有关 是指针 所以要减少1个指针
+
+	memset(bprm.page, 0, MAX_ARG_PAGES*sizeof(bprm.page[0]));
+
+	bprm.file = file;
+	bprm.filename = filename;
+	bprm.interp = filename; 先假设该可执行文件可能用到的动态链接器的文件名与可执行文件相同。这个假设几乎 100%不
+成立。
+
+	bprm.sh_bang = 0;
+	bprm.loader = 0;
+	bprm.exec = 0;
+	bprm.security = NULL;
+	bprm.mm = mm_alloc();分配进程的内存管理的结构。
+	retval = -ENOMEM; 没内存 为什么是 -的
+	if (!bprm.mm)这值是怎么表示的
+		goto out_file;
+
+	retval = init_new_context(current, bprm.mm);初始化刚分配的该进程的内存管理结构。
+	if (retval < 0)
+		goto out_mm;
+
+	bprm.argc = count(argv, bprm.p / sizeof(void *)); 参数 count是什么函数 第二参数是什么用 里 argc 即是 argv[]数组的个数,同 int main(int argc, char* argv[])中的 argc
+一样。 只不过由于 argv[]在用户空间,  而计数的动作在内核空间,计起来有点麻烦而已
+
+	if ((retval = bprm.argc) < 0)
+		goto out_mm;
+
+	bprm.envc = count(envp, bprm.p / sizeof(void *));环境变量个数
+	if ((retval = bprm.envc) < 0)
+		goto out_mm;
+
+	retval = security_bprm_alloc(&bprm); 看函数名与安全有关
+	if (retval)
+		goto out;
+
+	retval = prepare_binprm(&bprm);见 prepare_binprm()的分析
+	if (retval < 0)
+		goto out;
+
+	retval = copy_strings_kernel(1, &bprm.filename, &bprm); 拷贝可执行文件名 参数是从内核空间中获得的
+	if (retval < 0)
+		goto out;
+
+	bprm.exec = bprm.p;
+	retval = copy_strings(bprm.envc, envp, &bprm); 个数 源 目标 从用户空间到内核空间吗
+	if (retval < 0)
+		goto out;
+复制当前 envp[]的内容(注意,当前 process 的地址空间还是继承自父进程的,完全与父进
+程的相同,自然这里的 aregv[]的内存中的内容也与父进程的相同。   )这里特别说明一下,常规
+运行一个程序的步骤是这样的(当然从 programmer 的角度) :
+1. 先 fork()一个子进程,这个子进程的地址空间是与父进程相同的,自然父进程的 argv[]
+   与 envp[]也被子进程继承。
+2. 子进程会调用 execve()系统调用,以运行新程序。在 execve()中它当然会先废弃掉原来
+   的地址空间(可以理解吗,因为新执行的程序与父进程完全是两个不同的程序吗,自然有完
+   全不同的地址分配吗)   ,然后建立新的地址空间。我们先在正在分析 execve()调用,目前
+   还没到废弃父进程的地址空间的时候,所以现在整个地址空间还与父进程的相同。
+
+
+	retval = copy_strings(bprm.argc, argv, &bprm);
+	if (retval < 0)
+		goto out;
+
+	retval = search_binary_handler(&bprm,regs);是在这里更新用户空间的吗 所有的可执行文件的处理器都被链接在全局变量 formats 定义的链表里面。
+在 src/fs/exec.c 中的
+    static struct linux_binfmt *formats;
+函数 int register_binfmt(struct linux_binfmt * fmt)完成向该链表添加节点,而
+int unregister_binfmt(struct linux_binfmt * fmt)则删除节点。
+search_binary_handler()函数在枚举该链表,依次让该链表上的处理器来辨认,具体见该
+函数的分析。
+
+	if (retval >= 0) {到底是可以 如果找不到对应的 executable loader 来载入该可执行文件,则释放掉申请的资源,然后返
+回。
+
+		free_arg_pages(&bprm);释放那存放 argv[]与 envp[]的最多 32 个页框(在 copy_strings 函数里分配)。
+
+		/* execve success */
+		security_bprm_free(&bprm);现在是个空函数
+		return retval;
+	}
+
+out:
+	/* Something went wrong, return the inode and free the argument pages*/
+	for (i = 0 ; i < MAX_ARG_PAGES ; i++) { 连续资源释放
+		struct page * page = bprm.page[i];
+		if (page)
+			__free_page(page);
+	}
+  bprm->page[i]在 copy_strings()中申请,具体请见该函数的注释。
+	if (bprm.security)
+		security_bprm_free(&bprm);
+下面都是如果在某一步失败,对应的资源要释放
+out_mm:
+	if (bprm.mm)
+		mmdrop(bprm.mm);
+
+out_file:
+	if (bprm.file) {
+		allow_write_access(bprm.file);
+		fput(bprm.file);
+	}
+	return retval;
+}
+}}}

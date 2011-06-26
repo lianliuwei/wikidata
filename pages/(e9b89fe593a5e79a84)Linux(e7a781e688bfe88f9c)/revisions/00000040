@@ -1,0 +1,95 @@
+= 鸟哥的Linux私房菜 =
+ *国产里最好的入门书籍 可能也是世界级别的
+ *台湾人做事的确认真
+ *缺少开发工具使用的讲解 要额外学习
+ *[[http://linux.vbird.org/]] 鸟哥的Linux私房菜官网 在线看
+{{{#!wiki
+
+<<TableOfContents>>
+
+== 问题 ==
+ *要是initrd里的module和后来的文件系统中的module不一致怎么办 重新生成
+ *换根文件系统如何实现
+ *root权限受自己控制吗 如他能限制目录进入权限吗
+ *chgrp是如何控制组名是可以改变的 目标组是可以设置的
+ *chown如何判断是否可以呢
+ *set UID 的程序fork出子程序是什么权限
+ *file命令是怎么写的
+ *文件系统前面的开机扇区是多大
+ *df命令怎么写的
+ *文件系统是如何实现的
+ *diff 和 patch的理论基础
+ *mesg 和 write 是如何实现的
+ *mdadm 是如何实现的 如 开机挂载 实际读写
+ *如何实现nohup
+
+ *chroot如何实现
+
+  *是不是只是运行了一个shell进程并且这个shell进程的根目录是改变了的，而系统之前运行的进程不会收到影响，而派生于这个进程的进程继承了这个根目录。这样内核就不较好实现。
+
+ *列印佇列如何实现
+
+ *路由是如何实现的
+
+ *为什么要分那么大的网段给回路测试用 因为一个网卡可以多个IP
+
+ *为什么设定无线网络用iwconfig 而 启动用ifconfig
+
+ *dhcp时候需要网卡硬件支持
+
+ *关闭网卡是什么意思
+
+ *ip指令是如何实现的
+
+ *DHCP是应用层协议，但是在没有IP的情况下如何广播
+== 任务 ==
+
+== 目标 ==
+ *看完 作完练习
+
+== 基础 ==
+ *[[http://linux.vbird.org/linux_basic]]
+
+<<Include(/Linux的規劃與安裝,,editlink)>>
+
+<<Include(/Linux檔案、目錄與磁碟格式,,editlink)>>
+
+<<Include(/學習 Shell 與 Shell scripts,,editlink)>>
+
+<<Include(/Linux 使用者管理,,editlink)>>
+=== Linux 系統管理員 ===
+==== 开机流程 模组管理与loader ====
+ */lib和/一定要是同一文件系统 装模板用
+ *使用Initial RAM Disk /boot/initrd 来初始化运行 模块化的结果
+ *使用initrd要换根文件系统
+ *[[http://hi.baidu.com/h_sn999/blog/item/a98b16fa308d6d1ca8d311a3.html]]initrd的详解
+ *init /sbin/init
+ *rc[0-6].d代表不同启动级别的脚步
+ *agetty 或 mingetty 用于等待用户登录
+ *dmesg活得启动信息
+ *系统硬件和模组初始化->启动服务
+ *rc.d脚本里 K 代表 kill S 代表 start 数字代表顺序
+ *自行定义开机流程 rc.local
+ *runlevel 查看级别 init 切换启动级别
+ *模组
+  *lsmod
+  *模组在/lib/modules/version/kernel
+  *modules.dep 为模组依赖文件 为depmod产生
+  *.ko为产生的模组后缀
+  *lsmod列出模组
+  *modinfo列出mod信息
+  *insmod 装载
+  *rmmod 删除
+  *modprode 装载 并装载相关的
+ *grub
+  *使用menu.lst
+  *硬件编码不同
+ *mkinitrd 制造 initrd
+ *grub-install 安装grub
+ *grub可以使用grub-md5-crypt产生的密码来加密开机
+ *启动加 single 进入修改密码
+ *加 init = /bin/bash 使用root登录系统 进行更改
+ *chroot 更改目录 进行别的系统的维护
+== 服务器 ==
+== 安全 ==
+}}}

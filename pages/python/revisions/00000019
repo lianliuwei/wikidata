@@ -1,0 +1,31 @@
+= python =
+ *python 2.5.4 在windows下用的比较多
+ *python 2.5 的库比较多
+ *[[http://wiki.woodpecker.org.cn/moin/OBP|大量python图书翻译]]
+ *[[http://diveintopython.org/|Dive Into Python]]
+ *[[http://python.org/ftp/]] 官网下载被墙的替代方案
+ *因为2.6.4版本里面含有64下载页被GFW封了
+ *[[http://wiki.woodpecker.org.cn/moin/PyCookbook]]
+ *[[http://wiki.woodpecker.org.cn/moin/OBP]]超多书籍
+ *入门书籍[[Core Python Programming]]
+ *代码示例看[[Dive Into Python]]
+ *进阶看[[Expert Python Programming]]
+ *GUI编程看
+  *[[Rapid GUI Programming with Python and Qt]]
+  *[[wxPython in Action]]
+ *IDE
+  *[[Emacs]]
+  *[[http://pydev.org/|PyDev]]
+ *[[http://192.168.27.30:3000/projects/pnp/boards]]内部讨论专帖
+ *[[http://twistedmatrix.com/]]用Python写的event-driven networking engine
+ *[[http://sourceforge.net/projects/pywin32/]] Python for Windows extensions
+== 资源 ==
+ *[[http://hi.baidu.com/wukongafei/blog/item/ce9dc41fcf940602304e1593.html]]Python资源
+ *[[http://my.oschina.net/StreamWang/blog/4058|Python的库和资源]]
+ *[[http://www.ibm.com/developerworks/cn/opensource/os-cn-ecl-pydev/index.html|PyDev for Eclipse 简介]]
+ *[[wxPython]]
+ *[[http://www.ibm.com/developerworks/cn/linux/sdk/python/charm-28/|可爱的 Python: 用 Psyco 让 Python 运行得像 C 一样快]] 解释了常用的加速策略和技术 Psyco就是Python的JIT 对循环和运算有显著的提高
+ *[[http://jythoner.javaeye.com/blog/569987|一个程序员的多年珍藏(python)]]
+ *[[http://www.elias.cn/Python/PyConcurrency|Python几种并发实现方案的性能比较]]
+----
+ [[Category Programming Language]] 

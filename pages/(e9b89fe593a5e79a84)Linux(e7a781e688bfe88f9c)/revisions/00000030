@@ -1,0 +1,164 @@
+= 鸟哥的Linux私房菜 =
+ *国产里最好的入门书籍 可能也是世界级别的
+ ＊台湾人做事的确认真
+ *缺少开发工具使用的讲解 要额外学习
+ *[[http://linux.vbird.org/]] 鸟哥的Linux私房菜官网 在线看
+{{{#!wiki
+
+<<TableOfContents>>
+
+== 问题 ==
+ *要是initrd里的module和后来的文件系统中的module不一致怎么办 重新生成
+ *换根文件系统如何实现
+ *root权限受自己控制吗 如他能限制目录进入权限吗
+ *chgrp是如何控制组名是可以改变的 目标组是可以设置的
+ *chown如何判断是否可以呢
+
+== 任务 ==
+
+== 目标 ==
+ *看完 作完练习
+
+== 基础 ==
+ *[[http://linux.vbird.org/linux_basic]]
+
+<<Include(/Linux的規劃與安裝,,editlink)>>
+
+=== Linux 檔案、目錄與磁碟格式 ===
+==== Linux檔案權限與目錄配置 ====
+ *每个帐号可以有多个group
+ *root有所有的权限
+ */etc/passwd 用户
+ */etc/shadow密码
+ */etc/group群组
+ *链接不对权限作限制
+ *chgrp ：改變檔案所屬群組
+ *chown ：改變檔案擁有者
+ *chmod ：改變檔案的權限, SUID, SGID, SBIT等等的特性
+ *chmod u g o a  r w x 
+ *档案的权限是对内容来说的
+ *目录的权限
+  *跟文件系统内部实现有联系
+  *r 读目录而已
+  *w 
+  *x 切换的目录下
+  *有意义的就是 rwx(读写可进) r_x(只读可进) r__(可列文件名)不常用 _wx(只可以写和进入不能查看其他文件)不常用
+  *文件的删除性在文件系统 不再文件
+ *有socket文件
+ *要用户允许程序才能执行
+ *避免字符 * ? > < ; & ! [ ] | \ ' " ` ( ) { } + -
+ *FHS
+  *[[http://proton.pathname.com/fhs/]]
+ */usr (unix software resource)
+ */var (variable)
+ */bin放置的是在單人維護模式下還能夠被操作的指令
+ *~dmtsai 代表 dmtsai 的家目錄
+ */lib放置的則是在開機時會用到的函式庫， 以及在/bin或/sbin底下的指令會呼叫的函式庫而已
+ *放在/sbin底下的為開機過程中所需要的，裡面包括了開機、修復、還原系統所需要的指令
+ *sbin/ (system binary)
+ *srv可以視為 service
+ *开机必在同一分区
+  *  /etc：設定檔
+  * /bin：重要執行檔
+  * /dev：所需要的裝置檔案
+  * /lib：執行檔所需的函式庫與核心所需的模組
+  * /sbin：重要的系統執行檔
+ */usr/share/zoneinfo：與時區有關的時區檔案
+==== Linux檔案與目錄管理 ====
+ *pwd是Print Working Directory
+  *-P真实路径
+  *-L链接路径
+ *mkdir (make directory)
+  *-m模式
+  *-p多层目录
+ *ls
+  *-i 显示i-node
+ *cp cp做链接不专业
+  *-a用于备份
+ *rm(remove)
+ *mv(move)
+  *可用于改名字
+ *rename
+ *basename dirname
+ *檔案內容查閱
+  *  cat Concatenate（連續）由第一行開始顯示檔案內容 
+   *-n 显示行数
+   *-A 显示特殊字符
+  * tac  從最後一行開始顯示，可以看出 tac 是 cat 的倒著寫！
+  * nl   顯示的時候，順道輸出行號！
+  * more 一頁一頁的顯示檔案內容
+   *  空白鍵 (space)：代表向下翻一頁；
+   * Enter         ：代表向下翻『一行』；
+   * /字串         ：代表在這個顯示的內容當中，向下搜尋『字串』這個關鍵字；
+   * :f            ：立刻顯示出檔名以及目前顯示的行數；
+   * q             ：代表立刻離開 more ，不再顯示該檔案內容。
+   * b 或 [ctrl]-b ：代表往回翻頁，不過這動作只對檔案有用，對管線無用。
+  * less 與 more 類似，但是比 more 更好的是，他可以往前翻頁！
+   *  空白鍵    ：向下翻動一頁；
+   * [pagedown]：向下翻動一頁；
+   * [pageup]  ：向上翻動一頁；
+   * /字串     ：向下搜尋『字串』的功能；
+   * ?字串     ：向上搜尋『字串』的功能；
+   * n         ：重複前一個搜尋 (與 / 或 ? 有關！)
+   * N         ：反向的重複前一個搜尋 (與 / 或 ? 有關！)
+   * q         ：離開 less 這個程式；
+  * head 只看頭幾行
+  * tail 只看尾巴幾行
+  * od   以二進位的方式讀取檔案內容！
+ *man是用less来显示的
+ *档案时间
+  *modification time (mtime)
+  *status time (ctime)
+  *access time (atime)
+ *修改檔案時間或建置新檔： touch
+==== Linux 磁碟與檔案系統管理 ====
+   *设备用类型 主 从设备编号表示 用mknod生成
+   *[[http://www.kernel.org/pub/linux/docs/device-list/]]设备编号标准
+   *可以给硬盘分区命名 不用怕换磁道 可能是记录在硬盘中
+   *hdparm 可以设置硬盘的参数 完全了解设备
+   */etc/fstab 默认挂载
+   *-o loop挂载映象
+   *dd mkfs mount制造文件充当硬盘
+   *parted fdisk 分割硬盘
+   *硬盘还要有引导块
+   *交换分区和硬盘分区一样 可以多块加载 用文件模拟 就是一特殊格式的分区
+
+==== 檔案的壓縮與打包 ====
+=== 學習 Shell 與 Shell scripts ===
+=== Linux 使用者管理 ===
+=== Linux 系統管理員 ===
+==== 开机流程 模组管理与loader ====
+ */lib和/一定要是同一文件系统 装模板用
+ *使用Initial RAM Disk /boot/initrd 来初始化运行 模块化的结果
+ *使用initrd要换根文件系统
+ *[[http://hi.baidu.com/h_sn999/blog/item/a98b16fa308d6d1ca8d311a3.html]]initrd的详解
+ *init /sbin/init
+ *rc[0-6].d代表不同启动级别的脚步
+ *agetty 或 mingetty 用于等待用户登录
+ *dmesg活得启动信息
+ *系统硬件和模组初始化->启动服务
+ *rc.d脚本里 K 代表 kill S 代表 start 数字代表顺序
+ *自行定义开机流程 rc.local
+ *runlevel 查看级别 init 切换启动级别
+ *模组
+  *lsmod
+  *模组在/lib/modules/version/kernel
+  *modules.dep 为模组依赖文件 为depmod产生
+  *.ko为产生的模组后缀
+  *lsmod列出模组
+  *modinfo列出mod信息
+  *insmod 装载
+  *rmmod 删除
+  *modprode 装载 并装载相关的
+ *grub
+  *使用menu.lst
+  *硬件编码不同
+ *mkinitrd 制造 initrd
+ *grub-install 安装grub
+ *grub可以使用grub-md5-crypt产生的密码来加密开机
+ *启动加 single 进入修改密码
+ *加 init = /bin/bash 使用root登录系统 进行更改
+ *chroot 更改目录 进行别的系统的维护
+== 服务器 ==
+== 安全 ==
+}}}

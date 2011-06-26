@@ -1,0 +1,95 @@
+= Linux =
+== 项目 ==
+ *[[零售系统]]
+
+== 学习方法 ==
+ *看代码 [[Code Reading]]
+ *看书
+ *编程
+ *思考
+== msic ==
+ *Initrd = initial RAM disk
+== 链接 ==
+ *[[Linux/学习计划]]
+ *[[Linux/学习内容]]
+ *[[Linux/文档]]
+== 资源 ==
+ *书籍
+  *[[UULP|Understanding Unix/Linux Programming]]
+  *[[APUE]]
+  *[[自己动手写操作系统]]
+  *[[Linux内核完全剖析-基于0.12内核]]
+  *[[UNIX:The Textbook]][[http://www.pearsonhighered.com/educator/academic/product/0,3110,032122731X,00.html]]官网
+  *[[鸟哥的Linux私房菜]]
+  *libc manual /doc/libc
+  *Java Application Development on Linux /doc/Java Application Development on Linux.pdf
+  *Linux内核完全注释
+  *[[Linux设备驱动开发详解]] /doc/Linux设备驱动开发详解.pdf
+  *[[Linux Device Drivers]]
+  *[[Essential Linux Device Drivers]]
+  *[[Understanding the Linux Kernel]]
+  *[[The Art of Unix Programming]] UNIX编程艺术 有开发工具的介绍 历史的介绍 哲学的解释 学习的指南 虽然有点旧但有方向性问题时看看不错
+  *[[Advanced Bash-Scripting Guide]]
+  *[[TCP/IP Illustracted]]
+  *[[http://www.china-pub.com/43029&ref=ps|The Linux Programmer's Toolbox ]]有大部分开发工具介绍
+  *[[http://www.china-pub.com/33159&ref=ps]]Linux应用程序开发(java)
+  *[[http://www.china-pub.com/30951&ref=ps]] UNIX Systems Programming: Communication, Concurrency and Threads 
+ *网站
+  *[[http://www.linuxfoundation.org/]]
+  *[[http://bbs.chinaunix.net/]]
+  *[[http://linux.vbird.org/]] 鸟哥的Linux私房菜官网
+  *[[http://www.study-area.org/menu2.htm]]很多的资料
+  *[[http://www.kerneltravel.net/]]
+  *[[http://pathname.com/fhs/]]文件目录标准
+  *[[http://ibiblio.org/index.html]]很多百科
+  *[[http://www.kde.org/]]
+  *[[http://kernelnewbies.org/]]不错的内核网站
+  *[[http://www.study-area.org/menu2.htm]]有很多教程
+ *misc
+  *[[http://linuxtoy.org/]]Linux的资讯
+
+  *[[http://www.linuxforum.net/index.php]]中国Linux论坛
+  *[[ftp://61.135.158.199/]]大型FTP 
+  *[[http://blog.chinaunix.net/u2/78225/article.html]]
+  *[[http://blog.chinaunix.net/u1/34474/showart_404278.html]]
+  *[[http://en.wikipedia.org/wiki/Command-line_interface]]CLI
+  *[[ttp://www.tuhs.org/]]Unix历史代码维护
+  *[[http://www.kohala.com/start/]]Richard Stevens主页
+  *[[http://club.topsage.com/thread-360538-1-1.html]]BSD资源
+  *[[http://club.topsage.com/thread-360421-1-1.html]]UNIX资源
+  *[[http://club.topsage.com/thread-362514-1-1.html]]Linux资源
+  *[[http://club.topsage.com/thread-226044-1-1.html]]Linux资源
+  *[[http://club.topsage.com/thread-362620-1-1.html]]Linux资源
+== 发行版本 ==
+ *[[Ubuntu]]
+ *[[http://www.gnewsense.org/]]
+ *gOS 集成很多的google应用
+== 爱好者 ==
+ *陈毅东 精通内核
+ *吴登辉 初学者
+ *李贵林 嵌入式和硬件
+== 信息 ==
+ *浙大Linux很强
+== U盘Linux ==
+
+ *[[http://www.lucky8k.com/index.php]]veket
+
+ *[[http://www.damnsmalllinux.org/]]DSL
+
+ *Ubuntu
+
+== 浙大Linux ==
+
+ *[[http://bbs.freecity.cn/agent/index.do]]论坛
+
+ *[[http://bbs.zju.edu.cn/]]用telnet访问
+
+==  图形 ==
+
+ *[[http://blog.csdn.net/hongtao_liu/archive/2009/06/02/4236413.aspx]]
+
+== 嵌入式 ==
+
+ *[[http://blog.csdn.net/hongtao_liu]]
+
+ *[[http://blog.csdn.net/hongtao_liu/archive/2009/07/28/4386375.aspx]]学习内容和重要程度

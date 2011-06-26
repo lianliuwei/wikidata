@@ -1,0 +1,21 @@
+= lib =
+ *程序库
+ *看wiki很有好处
+ *[[http://en.wikipedia.org/wiki/Library_%28software%29]]
+== C ==
+ *[[C]]
+ *[[http://www.gnu.org/software/libc/]]
+ *[[http://en.wikipedia.org/wiki/Libc]]
+ *[[http://en.wikipedia.org/wiki/Category:C_libraries]]
+ *[[http://en.wikipedia.org/wiki/GNU_C_Library]]libc gnu的标准c库实现
+== C++ ==
+ */doc/C++资源之不完全导引.doc
+ *[[http://gcc.gnu.org/libstdc++/]]
+ *[[http://blog.pfan.cn/sun2009/41927.html]]C++标准库简介
+ *[[http://hi.baidu.com/why0813/blog/item/850ea46eecf658db80cb4a6a.html]]介绍
+ *[[http://www.boost.org/]]
+ *[[http://en.wikipedia.org/wiki/Category:C%2B%2B_libraries]]
+== java ==
+ *[[http://en.wikipedia.org/wiki/Category:Java_libraries]]
+== python ==
+ *[[http://en.wikipedia.org/wiki/Category:Python_libraries]]

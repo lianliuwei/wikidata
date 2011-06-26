@@ -1,0 +1,136 @@
+= Linux =
+== 当前目标 ==
+ *学习[[UULP]]
+ *学习[[Linux内核完全剖析-基于0.12内核]]
+== 项目 ==
+ *[[零售系统]]
+
+== 学习方法 ==
+ *看代码 [[Code Reading]]
+ *看书
+ *编程
+ *思考
+== 学习内容 ==
+ *参考
+  *[[http://www.cnblogs.com/zzsbest/archive/2008/07/21/1247426.html]]
+ *操作
+  *系统管理
+   *命令
+   *配置文件
+   *脚本文件
+  *安装X windows
+  *使用编辑器
+   *emacs
+   *vi
+  *Bochs的安装和使用 [[http://osfromscratch.org/bookscn/7-achapter02cn|搭建工作环境]]
+ *服务器
+  *代理服务器，使用的是Linux的iptables功能;
+  *电影服务器，使用的是Linux的samba服务的功能，文件和打印共享服务器
+  *游戏服务器，cs服务器，在Linux系统下使用cs的Linux版本建立的服务器
+  *客户存档服务器，采用的Linux的ftp服务器，常用的有:wu-ftp，pro-ftp软件建立的
+  *-www服务器，使用的是Linux下的apache服务器软件
+  *ftp服务器，下载服务器，使用的是Linux下的wu-ftp，pro-ftp，vs-ftp软件
+  *mail服务器，采用的是Linux下的sendmail，qmail软件
+  *dns服务器，使用的是Linux下的bind软件
+  *数据库服务器，使用的是mysql或者oracle软件
+  *防火墙，软件防火墙服务器，使用的是Linux的iptables功能建立的
+  *路由器，软路由器，使用的是Linux下的routed软件建立的
+  *拨号服务器，vpn服务器等等
+ *应用编程
+  *API
+   *基本API [[Unix/Linux编程实践教程|UULP]]里涉及的那些
+  *Java
+  *C
+  *C++
+  *PHP
+  *Python
+  *Perl
+  *jsp
+  *cgi
+  *脚本
+  *数据库
+   *mysql
+   *oracle
+   *DB2
+  *网络
+  *图形
+  *GUI
+ *工具
+  *grub
+  *vi
+  *gcc
+  *bochs
+  *gdb
+  *emacs
+  *find
+  *grep
+  *man
+  *info
+  *docbook
+  *bash
+  *X windows
+  *gimp
+  *firefox
+  *mysql
+  *apache
+  *ifconfig
+  *bind
+  *samba
+  *sed
+  *awk
+  *PostgreSQL
+ *内核
+  *早期 [[Linux内核完全剖析-基于0.12内核|0.12]]
+  *现在
+  *网络
+  *调度
+  *文件系统
+  *驱动
+ *文化
+ *思想
+  *命令行和窗口
+  *和windows的不同
+  *x windows 和 内核的关系
+ *嵌入式
+  *arm
+  *uclinux
+ *系统
+  *[[http://www.linuxfromscratch.org/|LFS]]
+ *驱动
+  *char
+  *block
+  *kvm
+ *misc
+  *源代码获得方法
+== 链接 ==
+ *[[Linux/学习计划]]
+== 资源 ==
+ *书籍
+  *[[UULP]]
+  *[[APUE]]
+  *[[自己动手写操作系统]]
+  *[[Linux内核完全剖析-基于0.12内核]]
+  *[[UNIX:The Textbook]]
+  *[[鸟哥的Linux私房菜]]
+  *libc manual /doc/libc
+  *Java Application Development on Linux /doc/Java Application Development on Linux.pdf
+  *Linux内核完全注释
+  *[[Linux设备驱动开发详解]] /doc/Linux设备驱动开发详解.pdf
+  *[[Linux Device Drivers]]
+  *[[Essential Linux Device Drivers]]
+  *[[Understanding the Linux Kernel]]
+  *[[The Art of Unix Programming]]
+  *[[Advanced Bash-Scripting Guide]]
+  *[[TCP/IP Illustracted]]
+ *网站
+  *[[www.linuxdoc.org]]
+== 发行版本 ==
+ *[[Ubuntu]]
+== 爱好者 ==
+ *陈毅东 精通内核
+ *吴登辉 初学者
+ *李贵林 嵌入式和硬件
+== 信息 ==
+ *浙大Linux很强
+
+ 

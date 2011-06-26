@@ -1,0 +1,31 @@
+= 软件打包 =
+== InstallShield ==
+ *msi会自动检查时候更新 要使用安静模式
+ *[[http://en.wikipedia.org/wiki/InstallShield]]
+ *[[http://en.wikipedia.org/wiki/Installer]]
+ *[[http://www.157780643.com/thread-18322-1-1.html]]InstallShield 2010 Premier SP1破解版
+ *[[http://blog.joycode.com/hopeq/tags/908.aspx]]教程 不过比较老
+ *[[http://www.flexerasoftware.com/products/installshield.htm]]官网
+ *[[http://mxdxm.javaeye.com/blog/658481]]InstallShield X制作安装程序
+ *[[http://rdc.taobao.com/blog/cs/?p=276]]InstallShield安装新版本时卸载老版本
+ *[[http://www.flexerasoftware.cn/index.asp]]中文官网
+ *[[http://samblg.spaces.live.com ]]破解者空间
+ *[[http://www.flexerasoftware.com/support.htm]]支持
+ *[[http://www.appinstall.cn/]]安装论坛 内容不是很多
+ *[[http://blog.csdn.net/emma_he/category/661253.aspx]]相关博文
+ *\\192.168.4.211\share\Software Setup\限制安装\InstallShield.2009
+ *[[http://hi.baidu.com/honfei/blog/item/c57904164543925af2de3243.html|用installshield打包时在注册表里注册项和键值的动态设定方法]]
+ *打包使用相对路径的方法：在Organization -> Components 下进行编辑比在助手里进行好，使用ISProjectFolder这个预定变量就变成了随工程位置而变找要打包的文件 安装依赖文件通过直接改ISSetupFile表里的值来更改 [[http://topic.csdn.net/u/20090213/11/510f6162-6162-4131-8ec6-f3f331db3291.html|相关帖子]]
+ *2009版本命令行在一般破解下不能使用，使用命令行破解补丁就能用了[[http://blog.csdn.net/shakesky/archive/2009/04/14/4072208.aspx|参考网址]]
+ *命令行
+  *[[http://bbs.scmroad.com/viewthread.php?tid=1655|持续集成之Installshield_利用命令行或者ant(nant)调用installshield]]
+  *[[http://hi.baidu.com/nowgame/blog/item/babde724c07fc9388644f96e.html|InstallShield制作安装包实现自动化]]
+== NSIS ==
+ *[[NSIS]]
+ *[[http://nsis.sourceforge.net]]
+ *[[http://en.wikipedia.org/wiki/Nullsoft_Scriptable_Install_System]]
+ *[[http://www.dreams8.com/]]NSIS论坛
+ *[[http://zlemon.com/category/program/nsis]]NSIS相关文章
+ *[[http://www.dreams8.com/redirect.php?tid=4213&goto=lastpost|NSIS怎样运行安装包里的程序?]] 先解压后安装
+ *NISIS连if else都没有
+ *使用file指令可以递归添加 并排除特定的文件

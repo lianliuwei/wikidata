@@ -1,0 +1,3 @@
+= CFrameWnd研究 =
+ *CFrameWnd在afxwin.h中定义class
+ *CFrameWnd在winfrm.cpp中定义函数

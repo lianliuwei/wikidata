@@ -1,0 +1,50 @@
+MoinMoin学习
+
+*概述
+ *wiki就是一网页系统
+*搜索
+ *页面头的wikiName可以用于搜索所有的引用
+*链接
+ *内部
+  *用wikiName
+ *外部
+  *链接到别的wiki用interWiki
+*问题
+ *如何使一个页属于多个分类之中
+ *如何链接一个本地的资源
+  *比如要用来作资料管理
+  *还有用来分析源码 
+  *用链接运行不能启动
+*技巧
+ *输入法用半角的不然你会死得很惨的
+ *输入带有数字编号的list一定要空格
+ *空格很重要
+------
+MoinMoin学习计划
+*正向 
+ *常用的编辑功能
+ *开发MoinMoin
+ *wiki的开发
+*逆向
+------
+MoinMoin学习资源
+ */software/moin-1.8.3 文件夹下
+ ＊HelpForUsers
+ ＊HelpContents
+ ＊各MoinMoin页面
+ ＊用MoinMoin的网站
+  *MoinMoinWiki(上面有一堆)
+  *[[http://www.woodpecker.org.cn/share/doc/SKSIG/DriveIntoMoinPub/| 一份MoinMoin介绍资料]]
+  *[[http://simonw.cnblogs.com/category/77486.html|另一份MoinMoin相关资料]]
+  *[[http://wiki.cwowaddon.com|中国魔兽世界开发者维基，优秀的MoinMoin范例站点]]
+  *[[http://www.chinesepython.org/cgi_bin/moingb.cgi/_d6_d0_f2_fe_b4_f3_d4_d3_d4_ba|中蟒大杂院]]
+MoinMoin学习方法
+＊看描述
+＊看已有的页面
+*可否用mediawiki的规则
+------
+mediawiki学习(这个先不做了解)
+------
+作moinmoin的服务器(暂时不要)
+------
+docbook最新的文档技术

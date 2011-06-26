@@ -1,0 +1,116 @@
+= FileZilla 源代码 =
+ *界面使用[[WxWidgets|WxWindows]]
+ *主要目录
+  *engine 后台 逻辑引擎
+  *Interface 接口
+   *resources 资源文件
+   *settings 设置接口
+  *putty 使用putty文件改的用于生产 fzputtygen.exe fzsftp.exe
+  *fzshellext 用于Window的shell扩展用 实现拖放支持功能
+  *dbus 用于Linux下的dbus工具库
+  *tinyxml 用于解析xml的工具库
+ *Windows版本要用mingw来构造
+ *使用的是Autotool进行构建的
+ *WxWindows和MFC非常相像
+ *CLogging实现日志功能
+ *CRateLimiter实现速度限制 使用Token Bucket算法
+ *CContextManager CState CStateEventHandler在state.h 和 state.cpp中
+ *CIOThread CSocketThread 继承了WxThreadEx
+ *CTlsSocket CSocket  CTransferSocket CProxySocket CFtpControlSocket CControlSocket CHttpControlSocket
+ *CBackend 继承 CRateLimiterObject
+ *wxThreadEx是项目中所有线程的基类
+ *CSocket可能是个公共的接口，具体由地下的具体CSocket派生类来执行
+ *CLocalPath用来封装本地路径 隔离Windows和Linux的路径表示区别
+ *CLocalFileSystem用来封装文件系统的区别
+ *CServer用来封装Server
+ *CServerPath封装Server的路径
+ *CDirentry CDirectoryListing用来封装目录项
+ *CState给界面提供接口
+ *CRecursiveOperation 实现 CStateEventHandler
+ *CPowerManagement防止系统进入idle sleep 实现 CStateEventHandler
+ *CSearchDialog 实现 CStateEventHandler
+ *可以使用spy++来查看窗口和线程
+ *一开始就有三个线程 一个线程拥有窗口循环队列
+== CMainFrame ==
+ *在interface文件夹中的Mainfrm.h中定义 在Mainfrm.cpp中实现
+ *表示总的面板
+ *有一个CContextControl的指针
+ *m_pQueueLogSplitter是干什么的
+== CContextControl ==
+ *在interface文件夹中的context_control.h中定义 在context_control.cpp中实现
+ *继承wsSplitterWindow 和 CStateEventHandler
+ *struct _context_controls
+  *对应界面上中间的那一块 本地站点 和 远程站点
+  *使用三个CSplitterWindowEx来分隔成4个区域
+ *有一个struct _context_controls队列
+ *wxAuiNotebookEx* m_tabs 可能是多服务器显示上面的标签页(tab页)
+== COptions ==
+ *COptions使用了独子模式
+ *COptions用于保存用户当前的输入以便下次对话框显示用户的输入的值 偏好特性
+== CCommandQueue ==
+ *在interface文件夹commandqueue.h中定义 在interface文件夹commandqueue.cpp中实现
+ *CCommandQueue将命令排成序列进行处理
+ *ProcessCommand()
+  *为什么只有size == 1才处理命令
+== CCommand ==
+ *CCommand在include文件夹中的commands.h中定义 在engine文件夹中的commands.cpp中实现
+ *作为逻辑部分和界面的接口
+ *commands.h中定义CConnectCommand CDisconnectCommand CCancelCommand CListCommand CFileTransferCommand CRawCommand CDeleteCommand CRemoveDirCommand CMkdirCommand CRenameCommand CChmodCommand和相关的enum Command相对应
+ *commands.h还实现了识别功能 可能是C++缺乏相关的支持
+ *这些命令被CFileZillaEngine的Command()进行
+== CContextManager ==
+ *在interface文件夹中state.h中定义 在interface文件夹state.cpp中实现
+ *CContextManager使用单件模式
+ *在interface文件夹的state.h中定义 在state.cpp中实现
+ *使用Static变量的静态初始化 和 Java的不同
+ *使用Get()Static方法来获得CContextManager的唯一变量
+ *CContextManager里面有包含对于各种状态的处理器的list的数组指针
+ *Context到底是干什么用的
+ *Context是一个CState变量
+ *STATECHANGE_NONE将所有列表里相同侦听都删除
+ *current_only只有CurrentContext和侦听的pState相等才通知
+ *blockable到底是什么含义
+ *CurrentContext代表当前界面可以控制的交互 因为界面最多只能交互一个
+== CState ==
+ *在interface文件夹的state.h中定义 在state.cpp中实现
+ *代表对一个站点交互的全过程 充当和站点的controller的角色 其逻辑底层是CFileZillaEngine
+ *CState中有CreateEngine()
+  *创建CFileZillaEngine对象 并调用其Init()
+  *创建CCommandQueue对象
+ *CState中包含一个CCommandQueue对象 充当命令的队列
+ *Connect()函数
+  *检查是否有连接 有就终止
+  *m_pRecursiveOperation->StopRecursiveOperation()
+  *m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
+  *m_pCommandQueue->ProcessCommand(new CListCommand(path, _T(""),LIST_FLAG_FALLBACK_CURRENT))
+  *SetServer(&server)
+== CFileZillaEngine ==
+ *engine的入口
+ *在engine文件夹FileZillaEngine.cpp 中
+ *engine可能使用了线程的技术
+ *CFileZillaEnginePrivate是CFileZillaEngine的基类使用完成大部分的逻辑操作CFileZillaEngine只起包装作用
+ *CFileZillaEngine在CUpdateWizard和CState中有创建 
+ *初始化使用了Init()函数调用
+== 疑问 ==
+ *CFileZillaEngine是同一个站点的交互的处理
+ *CContextManager应该是充当Controller的角色
+ *CStateEventHandler应该相当于是订阅者模式中的观察者的接口
+ *CMainFrame代表主界面
+ *CMenuBar代表菜单栏
+ *CToolBar代表工具栏
+ *CQuickconnectBar代表快速链接栏
+ *CLed代表底下的灯
+ *CUpdateWizard更新助手
+ *CFileZillaApp代表FileZilla应用程序
+ *CWrapEngine和CFileZillaEngine没有关系
+ *CWrapEngine是text wrapping engine
+ *CMainFrameStateEventHandler是CMainFrame来侦听CState的类
+ *notification.h engine使用通知机制来通知应用
+ *使用COptionsBase处理选项
+ *CState可能是代表对于每一个Server的处理
+== 问题 ==
+ *CState和CMainFrame有什么关系
+ *有几个线程
+ *线程同步如何做的
+ *CExternalIPResolver干什么用的
+ *CViewHeader CLocalViewHeader CRemoteViewHeader代表什么

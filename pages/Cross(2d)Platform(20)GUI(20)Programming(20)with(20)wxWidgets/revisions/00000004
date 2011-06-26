@@ -1,0 +1,30 @@
+= Cross-Platform GUI Programming with wxWidgets =
+ *有点过时了
+== 介绍 ==
+ *是跨平台的
+ *内部组织
+  *通用代码
+  *一般代码
+  *wxUniversal
+  *平台相关代码
+  *外来代码   contrib/ 中
+  *第三方代码
+== 开始使用 ==
+ *从wxApp类的子类开始
+ *wxApp开始于OnInit()虚函数
+ *wxT _T 宏
+ *IMPLEMENT APP(MyApp)声明宏
+ *wxFrame类
+ *事件处理函数不是虚函数
+ *和MFC的事件处理宏是一样的
+ *可以动态改变事件表
+ *图标或者小图片使用XPM编码，可以直接include到C++中
+ *对快捷键有支持
+== 事件处理 ==
+ *wxEvtHandler的派生类都维护一个事件表
+ *事件处理函数的形式是统一的 只有一个事件对象作为参数
+ *事件可以不必被产生这个事件的控件所处理
+ *通过wxEvtHandler::ProcessEvent进行匹配
+ *只有Command事件会被递归传递
+ *wxEvent::Skip()继续寻找事件表
+ *wxWindow::PushEventHandler函数动态添加处理事件表

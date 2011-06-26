@@ -1,0 +1,42 @@
+= 向S3C2410移植Linux =
+ *时间要抓紧
+ *开发测试用
+== 问题 ==
+== Bootloader烧写 ==
+ *使用JTAG烧写
+ *Jflash-s3c2410
+== 构建工具 ==
+ *Ubuntu本机构建用软件包
+  *build-essential bison flex manpages-dev
+ *PC工具链
+  *gcc ld objcopy objdump
+ *用于ARM的交叉工具链
+  *arm-linux-cpp 预处理 CPP
+  *cc1 编译器 C/C++变成汇编
+  *arm-linux-as 汇编
+  *arm-linux-ld 连接
+  *arm-linux-gcc 总体接口
+  *arm-linux-objcopy 用于格式转换
+ *使用随书光盘
+ *自己编译
+  *gcc 和 glibc 使用 crosstool
+  *gcc 和 uClibc 使用 buildroot
+== 工具 ==
+ *KScope 代码阅读工具
+ *Vi 编辑工具
+ *grep find 查找工具
+ *man 手册
+ *tar
+ *diff
+ *patch
+== U-Boot ==
+ *自己编译
+ *获得源代码
+ *移植
+ *编译
+ *
+== 应用程序 ==
+ *使用NFS
+== 资料 ==
+ *嵌入式Linux应用开发完全手册
+ *光盘打不开 用Windows下虚拟光驱打开 复制出来

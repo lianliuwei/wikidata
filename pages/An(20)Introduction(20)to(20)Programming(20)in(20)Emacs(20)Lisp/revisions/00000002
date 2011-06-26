@@ -1,0 +1,13 @@
+= An Introduction to Programming in Emacs Lisp =
+{{{#!wiki
+<<TableOfContents(3)>>
+ *这本书是给非程序员写的，比较浅，内容比较少
+== List Processing ==
+ *Lisp中什么都是List
+ *Atom是对于List操作不能再分的元素
+ *Lisp默认会使用List中的第一个元素来当做命令执行
+ *List前面加个’代表不当成命令执行
+ *Symbol就相当于引用
+}}}
+----
+ [[Category Book]]

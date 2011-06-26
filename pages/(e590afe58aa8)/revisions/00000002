@@ -1,0 +1,25 @@
+= 启动 =
+ * bootloader
+ * 内核
+  *start_kernel()
+ * 根文件系统
+ * init
+  *“init＝”启动参数执行用户指定的命令
+  *或者执行以下几个进程之一：
+   *execve("/sbin/init",argv_init,envp_init);
+   *execve("/etc/init",argv_init,envp_init);
+   *execve("/bin/init",argv_init,envp_init);
+   *execve("/bin/sh",argv_init,envp_init)
+== bootloader传参数给内核 ==
+ *旧的 struct param_struct
+ *新的 tagged list
+ *通过内存交换参数
+ *通过寄存器传递地址
+== 内核image ==
+ *一般的image 压缩的zImage
+== init进程 ==
+ *ID = 1 
+ *"init=xxxx"传入参数
+ */sbin/init 默认
+ *两种init:BSD init System V init
+ 

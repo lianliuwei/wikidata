@@ -1,0 +1,8 @@
+= 设备状态栏 =
+ *做显示设备状态信息的提示文字
+ *YT -> 长方形表示
+ *DYT -> 双长方形表示
+ *YT -> 正方形表示
+ *获取数据使用MI_DEVICE_STATUS结构体和IMiDevice::MI_GetDevStatus()来获得
+== 要点 ==
+ *更新机制

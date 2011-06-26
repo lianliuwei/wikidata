@@ -1,0 +1,15 @@
+= Unix Network Programming =
+ *I/O复用 使用select和poll
+ *I/O分类
+  *阻塞
+  *非阻塞 轮训方式
+  *信号
+  *异步 I/O什么时候结束通知
+ *select 要求指定maxfd 比最大的fd多1
+ *select比sleep精确的睡眠函数
+ *有路由套接字
+ *PF协议集 和 AF地址集 的值是一样的
+ *connect失败后要close重新调用socket()申请新的socket
+ *close() 和 shutdown() 有不同
+ *getsockname() 获得本地地址
+ *getpeername() 获得对方地址

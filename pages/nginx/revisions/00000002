@@ -1,0 +1,10 @@
+= nginx =
+ *高性能Web服务器
+ *[[http://nginx.org/]]
+ *[[http://kangzj.net/setup-a-http-proxy-using-nginx/]]
+ *[[http://www.kevinworthington.com/nginx-for-windows/]]
+ *[[http://applife.net/2008/07/nginx-windows/]]
+ *[[http://wiki.nginx.org/]]
+== 文件服务器 ==
+ *[[http://stevenos.iteye.com/blog/560703|用nginx做文件服务器替代samba]]
+ *[[http://blog.chinaunix.net/space.php?uid=7845870&do=blog&id=334831|使用nginx做静态文件服务器 ]]

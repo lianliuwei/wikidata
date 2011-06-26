@@ -1,0 +1,244 @@
+= 鳥哥的 Linux 私房菜 =
+{{{#!wiki
+<<TableOfContents>>
+== 问题 ==
+ *如何实现nohup
+ *chroot如何实现
+
+=== Linux 使用者管理 ===
+==== 程序管理與 SELinux 初探 ====
+ *工作管理 (job control)
+  *當我們登入系統取得 bash shell 之後，在單一終端機介面下同時進行多個工作的行為管理
+  *限制
+   *這些工作所觸發的程序必須來自於你 shell 的子程序(只管理自己的 bash)； 
+   *前景：你可以控制與下達指令的這個環境稱為前景的工作 (foreground)； 
+   *背景：可以自行運作的工作，你無法使用 [ctrl]+c 終止他，可使用 bg/fg 呼叫該工作； 
+   *背景中『執行』的程序不能等待 terminal/shell 的輸入(input)
+  *直接將指令丟到背景中『執行』的 &
+  *將『目前』的工作丟到背景中『暫停』：[ctrl]-z
+  *觀察目前的背景工作狀態： jobs
+  *將背景工作拿到前景來處理：fg
+  *讓工作在背景下的狀態變成運作中： bg
+  *管理背景當中的工作： kill
+  *離線管理問題 使用at 或 nohup
+  *+ 代表最近被放到背景的工作號碼， - 代表最近最後第二個被放置到背景中的工作號碼
+ *工作號碼 (job number) 只與你這個 bash 環境有
+ *程序管理
+  *程序的觀察
+   *ps ：將某個時間點的程序運作情況擷取下來
+   *top：動態觀察程序的變化
+   *pstree 显示程序树
+ *程序的管理
+  *kill -signal PID
+  *killall -signal 指令名稱
+ *關於程序的執行順序
+  *Priority 與 Nice 值 共同决定程序的优先级
+  *调整nice值
+   *nice ：新執行的指令即給予新的 nice 值
+   *renice ：已存在程序的 nice 重新調整
+ *系統資源的觀察
+  *free ：觀察記憶體使用情況
+  *uname：查閱系統與核心相關資訊
+  *uptime：觀察系統啟動時間與工作負載
+  *netstat ：追蹤網路或插槽檔
+   *可以查看 unix域 和 tcp/ip域 的socket
+  *dmesg ：分析核心產生的訊息
+  *vmstat ：偵測系統資源變化
+   *与读写有关
+ *特殊檔案與程序
+  */proc/* 代表的意義 看书
+ *查詢已開啟檔案或已執行程序開啟之檔案
+  *fuser：藉由檔案(或檔案系統)找出正在使用該檔案的程序
+  *lsof ：列出被程序所開啟的檔案檔名 ls open file
+  *pidof ：找出某支正在執行的程式的 PID
+ *SELinux 初探
+  *SELinux: Security Enhanced Linux
+  *SELinux 是在進行程序、檔案等細部權限設定依據的一個核心模組 由於啟動網路服務的也是程序，因此剛好也能夠控制網路服務能否存取系統資源的一道關卡
+  *傳統的檔案權限與帳號關係：自主式存取控制, DAC: Discretionary Access Control
+  *以政策規則訂定特定程序讀取特定檔案：委任式存取控制, MAC: Mandatory Access Control
+  *SELinux 的運作模式 看书
+  *主要解决程序权限的问题， 不知用户触发程序的控制是否有
+  *SELinux 的啟動、關閉與觀察
+   *SELinux 三種模式: enforcing, permissive, disabled
+   *getenforce 查看状态
+   *sestatus 状态
+   *SELinux 的啟動與關閉
+    *在 SELinux 運作下切換成為強制 (enforcing) 或寬容 (permissive) 模式，不能夠直接關閉 SELinux  同時，由 SELinux 關閉 (disable) 的狀態到開啟的狀態也需要重新開機
+    *传给内核的参数对SELinux的启动也有影响  selinux=0 为SELinux关闭
+  * -Z 选项表示显示SELinux的安全本文
+  *重設 SELinux 安全性本文
+   *设置安全本文: chcon
+   *使用預設的安全性本文來還原: restorecon
+  *SELinux 所需的服務
+   *setroubleshoot --> 錯誤訊息寫入 /var/log/messages 使用 sealert 处理错误代码
+   *auditd --> 詳細資料寫入 /var/log/audit/audit.log
+    *auditd 會將許多的 SELinux 資訊都記錄下來，不只是錯誤訊息 因此登錄檔 /var/log/audit/audit.log 非常的龐大。audit2why 指令來讓查詢錯誤訊息的回報
+  *AVC: access vector cache
+  *SELinux 的政策與規則管理
+   *規則 (Booleans) 里有 av rules
+   av rules 格式: allow  主體程序安全性本文類別  目標檔案安全性本文類別
+   *seinfo: 政策提供多少相關的規則
+   *sesearch: 知道詳細的規則
+   *getsebool: 布林值的查詢
+   *setsebool: 布林值的修改
+   *semanage fcontext 預設目錄的安全性本文查詢與修改
+    * 使用正規表示法去指定一個範圍
+=== Linux 系統管理員 ===
+==== 認識系統服務 (daemons) ====
+ *達成 service 的程式我們就稱呼為 daemon
+ *daemon 的主要分類
+  *stand_alone：此 daemon 可以自行單獨啟動服務
+  *super daemon： 一支特殊的 daemon 來統一管理
+   *當沒有用戶端的要求時，各項服務都是未啟動的情況，等到有來自用戶端的要求時， super daemon 才喚醒相對應的服務
+   *super daemon 可以具有安全控管的機制，就是類似網路防火牆的功能
+ *daemon 工作形態的類型: signal-control interval-control
+ *daemon 的命名規則: 程式檔名后加d，這個 d 代表的就是 daemon 的意思
+ *服務與埠口的對應: /etc/services 文件
+ *daemon 的啟動腳本與啟動方式
+  */etc/init.d/* ：啟動腳本放置處
+  */etc/sysconfig/* ：各服務的初始化環境設定檔
+  */etc/* : 各服務各自的設定檔
+  */var/lib/* ：各服務產生的資料庫
+  */var/run/* ：各服務的程序之 PID 記錄處
+ *Stand alone 使用 /etc/init.d/* 啟動
+  */etc/init.d/* {start|stop|status|restart|condrestart}
+  *service 命令 service为一脚本
+ *Super daemon 的啟動方式: 設定檔中設定為啟動該 daemon 設定檔就是 /etc/xinetd.d/* 的所有檔案
+ *解析 super daemon 的設定檔
+  *預設值設定檔：xinetd.conf 
+  *看书
+ *服務的防火牆管理 xinetd, TCP Wrappers
+  *任何以 xinetd 管理的服務，或者服務的程式支援 TCP Wrappers 函式的功能 都可以透過 /etc/hosts.allow, /etc/hosts.deny 來設定防火牆
+  */etc/hosts.allow 與 /etc/hosts.deny 也是 /usr/sbin/tcpd 的設定檔
+  * /usr/sbin/tcpd 則是用來分析進入系統的 TCP 網路封包的一個軟體
+  *使用ldd查看程序是否使用libwrap.so来判断是否支援 TCP Wrappers 函式的功能
+  *設定檔語法: 看书
+  *TCP Wrappers 特殊功能: 
+   *spawn (action) 用shell执行action
+   *twist (action) 执行action并終止該次連線的要求
+ *系統開啟的服務
+  *觀察: netstat 這個網路狀態觀察指令 看书
+  *設定開機後立即啟動服務的方法
+   *具体见开机流程分析
+   *chkconfig： 管理系統服務預設開機啟動與否 还可设定xinetd管理的服务 还可設定自己的系統服務
+   *ntsysv: 類圖形介面管理模式 分都有
+ *預設啟動的服務簡易說明 看书
+==== 認識與分析登錄檔 ====
+ *登錄檔: 記錄系統活動資訊的幾個檔案， 例如：何時、何地 (來源 IP)、何人 (什麼服務名稱)、做了什麼動作 (訊息登錄囉)。
+ *Linux 常見的登錄檔檔名
+  */var/log/cron
+  */var/log/dmesg
+  */var/log/lastlog
+  */var/log/maillog 或 /var/log/mail/*
+  */var/log/messages
+  */var/log/wtmp, /var/log/faillog
+  *var/log/httpd/*, /var/log/news/*, /var/log/samba/*:不同的網路服務會使用自己的登錄檔案
+ *登錄檔所需相關服務 (daemon) 與程式
+  *軟體開發商自行定義寫入的登錄檔與相關格式
+  *Linux distribution 提供的登錄檔管理服務
+   *syslogd：主要登錄系統與網路等服務的訊息 
+   *klogd：主要登錄核心產生的各項資訊
+   *logrotate：主要在進行登錄檔的輪替功能
+ *syslogd: 記錄登錄檔的服務
+  *syslog 的設定檔: /etc/syslog.conf
+   *規定: (1)什麼服務 (2)的什麼等級訊息 (3)需要被記錄在哪裡(裝置或檔案)
+   *服務名稱 看书
+   *訊息等級 看书
+   *CentOS 5.x 預設的 syslog.conf 內容 看书
+   *登錄檔的安全性設置: 用chattr +a设成不能更改, 但是和logrotate有冲突, 要改logrotate的设定
+   *登錄檔伺服器的設定: 使用一台机器做为总的服务器 看书
+  *登錄檔如果被改, syslogd就不会再往里写, 需要重启才能继续写
+ *登錄檔的輪替(logrotate)
+  * logrotate 是在規定的時間到了之後才來進行登錄檔的輪替， logrotate 是掛在 cron 底下進行
+  * 设定档
+   */etc/logrotate.conf 
+   */etc/logrotate.d/
+   *具体看书
+  *輪替的文档用.1 .2 .3 ... 代表輪替次数
+ *分析登錄檔
+  *CentOS 預設提供的 logwatch
+  *鳥哥自己寫的登錄檔分析工具
+==== 開機流程、模組管理與 Loader ====
+ *为 CentOS 5.x 的分析 个发行版差别很大
+ *Linux 的開機流程分析
+  *BIOS, boot loader 與 kernel 載入
+   *BIOS, 開機自我測試與 MBR
+   *Boot Loader 的功能
+   *載入核心偵測硬體與 initrd 的功能
+  *第一支程式 init 及設定檔 /etc/inittab 與 runlevel
+   *Run level: 執行等級有哪些？
+    *0 - halt (系統直接關機) 
+    *1 - single user mode (單人維護模式，用在系統出問題時的維護) 
+    *2 - Multi-user, without NFS (類似底下的 runlevel 3，但無 NFS 服務) 
+    *3 - Full multi-user mode (完整含有網路功能的純文字模式) 
+    *4 - unused (系統保留功能) 
+    *5 - X11 (與 runlevel 3 類似，但加載使用 X Window) 
+    *6 - reboot (重新開機)
+   */etc/inittab 的內容與語法
+   *init 的處理流程
+  *init 處理系統初始化流程 (/etc/rc.d/rc.sysinit)
+  *啟動系統服務與相關啟動設定檔 (/etc/rc.d/rc N & /etc/sysconfig)
+   *使用目录结构来表示各个執行等級需要启动和关闭的服务, 使用chkconfig维护
+  *使用者自訂開機啟動程序 (/etc/rc.d/rc.local)
+  *開機過程會用到的主要設定檔
+   *關於模組: /etc/modprobe.conf
+   */etc/sysconfig/*
+  *Run level 的切換
+   *預設改/etc/inittab
+   *暫時變更系統的 run level 执行init指令
+   *runlevel 查看当前运行级别
+ *核心與核心模組
+  *核心： /boot/vmlinuz 或 /boot/vmlinuz-version； 
+  *核心解壓縮所需 RAM Disk： /boot/initrd (/boot/initrd-version)； 
+  *核心模組： /lib/modules/version/kernel 或 /lib/modules/$(uname -r)/kernel； 
+  *核心原始碼： /usr/src/linux 或 /usr/src/kernels/ (要安裝才會有，預設不安裝) 
+  *核心版本： /proc/version 
+  *系統核心功能： /proc/sys/kernel
+  *核心模組與相依性: 使用depmod解决
+   *依赖寫入/lib/modules/$(uname -r)/modules.dep中
+  *核心模組的觀察: lsmod
+  *查阅核心模组信息:  modinfo
+  *核心模組的載入與移除
+   *原始的使用: insmod 和 lsmod
+   *自动克服模組的相依性問題: modprobe
+  *核心模組的額外參數設定: /etc/modprobe.conf
+  *自動可載入的模組
+   *經由設定/etc/modprobe.conf 或者是將自行做好的設定檔寫入到 /etc/sysconfig/modules/ 目錄中， 並且將檔名取為 filename.modules
+ *Boot Loader: Grub
+  *现在使用 Grub 2
+  *boot loader 的兩個 stage
+  *grub 的設定檔 /boot/grub/menu.lst 與選單類型
+  *硬碟與分割槽在 grub 中的代號 与在Linux中的不一样
+  *設定檔: /boot/grub/menu.lst  解析看书 
+  *initrd 的重要性與建立新 initrd 檔案
+   *initrd 可以將 /lib/modules/.... 內的『開機過程當中一定需要的模組』包成一個檔案 (檔名就是 initrd)， 然後在開機時透過主機的 INT 13 硬體功能將該檔案讀出來解壓縮，並且 initrd 在記憶體內會模擬成為根目錄， 此虛擬檔案系統 (Initial RAM Disk) 主要包含磁碟與檔案系統的模組
+   *mkinitrd 创建initrd
+  *測試與安裝 grub
+   *特別注意 grub 找到不是目錄樹，而是裝置內的檔案
+   *装分区stage1.5 会出错, 但是能用, 这是因为stage1 使用的是分区文件系统上的stage1.5
+  *開機前的額外功能修改 使用grub的在线修改功能
+  *關於核心功能當中的 vga 設定
+   *FRAMEBUFFER_CONSOLE 编译选项开通, 可以再 tty 使用高解析度
+  *BIOS 無法讀取大硬碟的問題
+  *為個別選單加上密碼
+ *開機過程的問題解決
+  *忘記 root 密碼的解決之道
+  *init 設定檔錯誤
+  *BIOS 磁碟對應的問題 (device.map)
+  *因檔案系統錯誤而無法開機
+  *用 chroot 切換到另一顆硬碟工作
+==== 系統設定工具(網路與印表機)與硬體偵測 ====
+== 伺服器架設篇 ==
+ *使用預設的套件管理方式來安裝所有的伺服器 比自己手動使用 Tarball 的安裝方式來的方便且安全
+ *在架站的過程當中，無論出現任何問題，第一個步驟就是察看登錄檔 (log file)，那是克服問題的地方
+=== 架站前的進修專區 ===
+ *對於網路伺服器來說最重要的是基礎檔案權限、程序之啟動關閉與管理、 Bash shell 之操作與 script 、使用者帳號的管理等等
+==== 網路基礎概念 ====
+ *網路層之路由概念
+  *路徑選擇 (routing) 
+  *每部主機都有自己的路由表
+  *Gateway / Router ：網關/路由器的功能就是在負責不同網域之間的封包轉遞 ( IP Forwarder )
+  *Internet 上面的路由協定與變化是相當複雜的，因為 Internet 上面的路由並不是靜態的，他可以隨時因為環境的變化而修訂每個封包的傳送方向。
+  *觀察主機的路由
+   *route [-n]
+}}}

@@ -1,0 +1,19 @@
+= Scons =
+ *[[http://www.scons.org/]]官网
+ *[[http://www.scons.org/wiki/]]官网wiki
+ *[[http://www.scons.org/wiki/FrequentlyAskedQuestions]]FAQ
+ *[[http://hi.baidu.com/sunblackshine/blog/category/Scons]]Scons相关教程
+ *[[http://bigwhite.blogbus.com/logs/32477272.html]]较老的介绍
+ *[[http://groups.google.com/group/comp.lang.c/browse_thread/thread/cc51287c88c85bcb?hl=en |Best Build Tool for large C projects]]
+ *[[http://dipplum.com/tag/scons/]]相关博文
+ *[[http://forums.dolphin-emu.com/thread-11506.html|Use CMake instead of SCons]]
+ *[[http://blog.yangyubo.com/tag/cmake/]]Cmake比Scons好的地方
+ *[[http://cplus.abang.com/od/cprogram/a/sconsintroduct1.htm]]Scons教程
+ *[[http://blog.codingnow.com/2008/09/replacement_of_ide_1.html]]IDE 不是程序员的唯一选择
+ *[[http://www.scons.org/doc/production/HTML/scons-user/index.html|官方Scons 2.01使用手册]]
+ *[[SCons User Guide]] 学习页
+ *使用C:\Python25\Scripts\scons启动
+== 使用的开源软件 ==
+ *[[http://www.qeradiant.com/|GtkRadiant]] 地图编辑器
+ *[[http://nsis.sourceforge.net/|NSIS]] 安装软件程序
+ *[[http://zh.wikipedia.org/zh-cn/Chrome|Chrome]] 浏览器 源代码非常的多

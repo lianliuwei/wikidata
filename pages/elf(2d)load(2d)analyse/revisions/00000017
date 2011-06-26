@@ -1,0 +1,429 @@
+= elf-load-analyse =
+ *工具 file ldd strace
+ *内存分配两阶段
+  *execve()中 有ld
+  *execve()后 系统调用动态链接库 
+ *论文是内核转载的部分
+ 
+== 相关的源码 ==
+ *sys_execve()
+ *do_execve()
+ *prepare_binprm()
+ *search_binary_handler()
+== execve总的执行过程 ==
+ 1. 系统调用execve() 用户态
+  1. 陷入内核对应的sys_execve() 内核态
+   1. do_execve()
+    1. prepare_binprm()
+    1. search_binary_handler()
+     1. 调用对应格式的加载函数如load_elf_binary()
+ 1. 进入动态链接器入口 用户态
+  1. 装载动态链接库
+ 1. 程序的入口
+ *到search_binary_handler()是第一部分 这是总的一般的装载过程 和架构有关 但和文件格式无关
+ *相应的elf相关的load_elf_binary()load_elf_interp()create_elf_tables() 对应于elf格式的装载过程
+ *动态链接器以后的代码不涉及 是libc的内容
+== 一般执行过程 ==
+ 1. [[elf-load-analyse/sys_execve()|sys_execve()]]
+   1. [[elf-load-analyse/do_execve()|do_execve()]]
+    1. [[elf-load-analyse/prepare_binprm()|prepare_binprm()]]
+    1. [[elf-load-analyse/search_binary_handler()|search_binary_handler())]]
+== 参数和环境变量的传递 ==
+== elf格式转载 ==
+== 相关内容 ==
+ 1. bash shell “fork”一个与自身一模一样的 process。
+该 process 执行系统调用 execve(),也就是你看到的 strace 输出的第一行
+execve("./hello", ["./hello"], [/* 22 vars */]) = 0。由于无论是读取文件,还是文件映
+射(File Mapping)都发生在 Kernel 里,所以 strace 不能监控到这一步的任何东
+西。本文要分析的即是该过程。
+ 2. 系统调用 execve()以后, process 的真正入口被设置成动态链接器的入口该(如
+果是静态链接的话,就比较简单,设置的入口就是该可执行文件 hello 的入口).
+当该新 process 返回到用户态(也就是从 execve 执行完后从内核态返回到用户态,不是对该函数调用的返回。因为只有该函数调用失败才会有返回,成功的话,就进入了另一个“世界”,控制转移到动态链接器(/lib/ld-2.3.4.so))。
+== 函数地址 ==
+ */arch/i386/kernel/process.c: 
+ */fs/exec.c
+== copy_strings() ==
+{{{#! cplusplus
+
+/*
+ * 'copy_strings()' copies argument/environment strings from user
+ * memory to free pages in kernel mem. These are in a format ready
+ * to be put directly into the top of new user memory.
+ */
+int copy_strings(int argc,char __user * __user * argv, struct linux_binprm *bprm)
+{
+	struct page *kmapped_page = NULL;
+	char *kaddr = NULL;
+	int ret;
+
+	while (argc-- > 0) {
+		char __user *str;
+		int len;
+		unsigned long pos;
+
+		if (get_user(str, argv+argc) ||
+				!(len = strnlen_user(str, bprm->p))) {
+			ret = -EFAULT;
+			goto out;
+		}
+
+		if (bprm->p < len)  {
+			ret = -E2BIG;
+			goto out;
+		}
+
+		bprm->p -= len;
+		/* XXX: add architecture specific overflow check here. */
+		pos = bprm->p;
+
+		while (len > 0) {
+			int i, new, err;
+			int offset, bytes_to_copy;
+			struct page *page;
+
+			offset = pos % PAGE_SIZE;
+			i = pos/PAGE_SIZE;
+			page = bprm->page[i];
+			new = 0;
+			if (!page) {
+				page = alloc_page(GFP_HIGHUSER);
+				bprm->page[i] = page;
+				if (!page) {
+					ret = -ENOMEM;
+					goto out;
+				}
+				new = 1;
+			}
+
+			if (page != kmapped_page) {
+				if (kmapped_page)
+					kunmap(kmapped_page);
+				kmapped_page = page;
+				kaddr = kmap(kmapped_page);
+			}
+			if (new && offset)
+				memset(kaddr, 0, offset);
+			bytes_to_copy = PAGE_SIZE - offset;
+			if (bytes_to_copy > len) {
+				bytes_to_copy = len;
+				if (new)
+					memset(kaddr+offset+len, 0,
+						PAGE_SIZE-offset-len);
+			}
+			err = copy_from_user(kaddr+offset, str, bytes_to_copy);
+			if (err) {
+				ret = -EFAULT;
+				goto out;
+			}
+
+			pos += bytes_to_copy;
+			str += bytes_to_copy;
+			len -= bytes_to_copy;
+		}
+	}
+	ret = 0;
+out:
+	if (kmapped_page)
+		kunmap(kmapped_page);
+	return ret;
+}
+}}}
+== copy_strings()注释 ==
+{{{#! cplusplus
+
+/*
+ * 'copy_strings()' copies argument/environment strings from user
+ * memory to free pages in kernel mem. These are in a format ready
+ * to be put directly into the top of new user memory. 是用户的栈吗
+ */
+int copy_strings(int argc,char __user * __user * argv, struct linux_binprm *bprm)用户空间到内核空间
+{
+	struct page *kmapped_page = NULL;
+	char *kaddr = NULL;
+	int ret;
+
+	while (argc-- > 0) { 刚好可以用加的
+		char __user *str;
+		int len;
+		unsigned long pos;
+
+		if (get_user(str, argv+argc) || 用户态的
+				!(len = strnlen_user(str, bprm->p))) {
+			ret = -EFAULT;
+			goto out;
+		}
+
+		if (bprm->p < len)  {
+			ret = -E2BIG; two big
+			goto out;
+		}
+存放用户态的 argv[]与 envp[]的内核空间不够,表示用户态的参数列表与环境变量列表变态
+的长,总长超过 32 个叶面,128K,报错。系统最多预
+留 32 页。但这时还没有真正分配物理页面
+		bprm->p -= len;由后向前 
+		/* XXX: add architecture specific overflow check here. */
+		pos = bprm->p;
+
+		while (len > 0) {
+			int i, new, err;
+			int offset, bytes_to_copy;
+			struct page *page;
+
+			offset = pos % PAGE_SIZE;
+			i = pos/PAGE_SIZE; 在第几页
+			page = bprm->page[i];
+			new = 0;
+			if (!page) { 申请页
+如果该物理页面还没有分配,则通过物理页面分配器申请一页。这里的物理页面分配器是系统中
+所有内存分配之母,是最底层的内存管理器。一切内存管理都建立在其之上。
+
+				page = alloc_page(GFP_HIGHUSER);
+				bprm->page[i] = page;
+				if (!page) {
+					ret = -ENOMEM;
+					goto out;
+				}
+				new = 1;
+			}
+
+			if (page != kmapped_page) { 这是干什么的 page 只是物理页面,是不能寻址的,所以这里临时把它映射到 Virtual
+Address 中
+
+				if (kmapped_page)
+					kunmap(kmapped_page);
+				kmapped_page = page; 当前页吗
+				kaddr = kmap(kmapped_page);内存的地址
+			}
+			if (new && offset)
+				memset(kaddr, 0, offset); 清空 为什么要清空前面的字节
+			bytes_to_copy = PAGE_SIZE - offset;
+			if (bytes_to_copy > len) {
+				bytes_to_copy = len;
+				if (new)
+					memset(kaddr+offset+len, 0,
+						PAGE_SIZE-offset-len); 为什么要清空后面
+			}
+			err = copy_from_user(kaddr+offset, str, bytes_to_copy); 可能会拷贝一些不要的值
+			if (err) {
+				ret = -EFAULT; 为什么要用-
+				goto out;
+			}
+
+			pos += bytes_to_copy;
+			str += bytes_to_copy;
+			len -= bytes_to_copy;
+		}
+	}
+	ret = 0;
+out:
+	if (kmapped_page) 只释放一页吗 取消临时“门牌号码”
+		kunmap(kmapped_page);
+	return ret;
+}
+}}}
+== search_binary_handler() ==
+{{{#! cplusplus
+/*
+ * cycle the list of binary formats handler, until one recognizes the image
+ */
+int search_binary_handler(struct linux_binprm *bprm,struct pt_regs *regs)
+{
+	int try,retval=0;
+	struct linux_binfmt *fmt;
+#ifdef __alpha__
+	/* handle /sbin/loader.. */
+	{
+	    struct exec * eh = (struct exec *) bprm->buf;
+
+	    if (!bprm->loader && eh->fh.f_magic == 0x183 &&
+		(eh->fh.f_flags & 0x3000) == 0x3000)
+	    {
+		struct file * file;
+		unsigned long loader;
+
+		allow_write_access(bprm->file);
+		fput(bprm->file);
+		bprm->file = NULL;
+
+	        loader = PAGE_SIZE*MAX_ARG_PAGES-sizeof(void *);
+
+		file = open_exec("/sbin/loader");
+		retval = PTR_ERR(file);
+		if (IS_ERR(file))
+			return retval;
+
+		/* Remember if the application is TASO.  */
+		bprm->sh_bang = eh->ah.entry < 0x100000000UL;
+
+		bprm->file = file;
+		bprm->loader = loader;
+		retval = prepare_binprm(bprm);
+		if (retval<0)
+			return retval;
+		/* should call search_binary_handler recursively here,
+		   but it does not matter */
+	    }
+	}
+#endif
+	retval = security_bprm_check(bprm);
+	if (retval)
+		return retval;
+
+	/* kernel module loader fixup */
+	/* so we don't try to load run modprobe in kernel space. */
+	set_fs(USER_DS);
+	for (try=0; try<2; try++) {
+		read_lock(&binfmt_lock);
+		for (fmt = formats ; fmt ; fmt = fmt->next) {
+			int (*fn)(struct linux_binprm *, struct pt_regs *) = fmt->load_binary;
+			if (!fn)
+				continue;
+			if (!try_module_get(fmt->module))
+				continue;
+			read_unlock(&binfmt_lock);
+			retval = fn(bprm, regs);
+			if (retval >= 0) {
+				put_binfmt(fmt);
+				allow_write_access(bprm->file);
+				if (bprm->file)
+					fput(bprm->file);
+				bprm->file = NULL;
+				current->did_exec = 1;
+				return retval;
+			}
+			read_lock(&binfmt_lock);
+			put_binfmt(fmt);
+			if (retval != -ENOEXEC || bprm->mm == NULL)
+				break;
+			if (!bprm->file) {
+				read_unlock(&binfmt_lock);
+				return retval;
+			}
+		}
+		read_unlock(&binfmt_lock);
+		if (retval != -ENOEXEC || bprm->mm == NULL) {
+			break;
+#ifdef CONFIG_KMOD
+		}else{
+#define printable(c) (((c)=='\t') || ((c)=='\n') || (0x20<=(c) && (c)<=0x7e))
+			if (printable(bprm->buf[0]) &&
+			    printable(bprm->buf[1]) &&
+			    printable(bprm->buf[2]) &&
+			    printable(bprm->buf[3]))
+				break; /* -ENOEXEC */
+			request_module("binfmt-%04x", *(unsigned short *)(&bprm->buf[2]));
+#endif
+		}
+	}
+	return retval;
+}
+}}}
+== search_binary_handler()注释 ==
+{{{#! cplusplus
+/*
+ * cycle the list of binary formats handler, until one recognizes the image
+ */单向的链表
+int search_binary_handler(struct linux_binprm *bprm,struct pt_regs *regs)
+{
+	int try,retval=0;
+	struct linux_binfmt *fmt;
+#ifdef __alpha__ 这是干什么用的
+	/* handle /sbin/loader.. */
+	{
+	    struct exec * eh = (struct exec *) bprm->buf;
+
+	    if (!bprm->loader && eh->fh.f_magic == 0x183 &&
+		(eh->fh.f_flags & 0x3000) == 0x3000)
+	    {
+		struct file * file;
+		unsigned long loader;
+
+		allow_write_access(bprm->file);
+		fput(bprm->file);
+		bprm->file = NULL;
+
+	        loader = PAGE_SIZE*MAX_ARG_PAGES-sizeof(void *);
+
+		file = open_exec("/sbin/loader");
+		retval = PTR_ERR(file);
+		if (IS_ERR(file))
+			return retval;
+
+		/* Remember if the application is TASO.  */
+		bprm->sh_bang = eh->ah.entry < 0x100000000UL;
+
+		bprm->file = file;
+		bprm->loader = loader; 
+		retval = prepare_binprm(bprm);
+		if (retval<0)
+			return retval;
+		/* should call search_binary_handler recursively here,
+		   but it does not matter */
+	    }
+	}
+#endif
+上面的代码都是为 ALPHA CPU(曾经号称世界上最快的 CPU。我记得,最起码在 20 世纪末的时
+候是这样的)的,忽略。想分析也没办法,我哪来 ALPHA CPU。
+
+	retval = security_bprm_check(bprm); 安全相关的
+	if (retval)
+		return retval;
+
+	/* kernel module loader fixup */
+	/* so we don't try to load run modprobe in kernel space. */modprobe是用于模块加载的命令
+	set_fs(USER_DS); 这是干什么
+#define set_fs(x)  (current_thread_info()->addr_limit = (x))
+#define USER_DS    MAKE_MM_SEG(PAGE_OFFSET)
+#define MAKE_MM_SEG(s) ((mm_segment_t) { (s) })
+化简一下,
+current_thread_info()->addr_limit = 3G
+也就是设置用户空间的范围。
+
+	for (try=0; try<2; try++) {循环两次干嘛
+		read_lock(&binfmt_lock); 加锁干什么 整个 formats 链表被 binfmt_lock 来同步加锁保护。在枚举列表以前,先锁住链表
+		for (fmt = formats ; fmt ; fmt = fmt->next) { formats是全局的吗
+			int (*fn)(struct linux_binprm *, struct pt_regs *) = fmt->load_binary;共有的方法
+			if (!fn)
+				continue;
+			if (!try_module_get(fmt->module))
+				continue;
+			read_unlock(&binfmt_lock);
+			retval = fn(bprm, regs);调用载入器,如果是 ELF 格式可执行文件的话,则调用 load_elf_binary()。
+			if (retval >= 0) {
+				put_binfmt(fmt);对应上面的 try_module_get(fmt->module)调用,递减载入器模块的引用计数。
+				allow_write_access(bprm->file);可执行文件正在被载入时,当然是禁止“写”的;载入好以后,允许。这就是 Linux 的特点,
+正在运行的程序的文件允许被写,允许被删除。
+
+				if (bprm->file)
+					fput(bprm->file);
+				bprm->file = NULL;
+				current->did_exec = 1; 这值是干什么用的
+				return retval;
+			}
+			read_lock(&binfmt_lock);
+			put_binfmt(fmt);
+			if (retval != -ENOEXEC || bprm->mm == NULL)
+				break; 不能载入
+			if (!bprm->file) { 没有文件
+				read_unlock(&binfmt_lock);
+				return retval;
+			}
+		}
+		read_unlock(&binfmt_lock);
+		if (retval != -ENOEXEC || bprm->mm == NULL) {
+			break;
+#ifdef CONFIG_KMOD 只有在编译内核时打开 LKM 支持的情况下才谈得上动态载入对应内核模块
+		}else{
+#define printable(c) (((c)=='\t') || ((c)=='\n') || (0x20<=(c) && (c)<=0x7e))
+			if (printable(bprm->buf[0]) &&
+			    printable(bprm->buf[1]) &&
+			    printable(bprm->buf[2]) &&
+			    printable(bprm->buf[3]))
+				break; /* -ENOEXEC */
+			request_module("binfmt-%04x", *(unsigned short *)(&bprm->buf[2])); 在是输出吧 要求modele
+#endif
+		}
+	}
+	return retval;
+}
+}}}

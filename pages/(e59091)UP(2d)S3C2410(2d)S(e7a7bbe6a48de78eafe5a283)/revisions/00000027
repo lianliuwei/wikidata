@@ -1,0 +1,78 @@
+## page was renamed from 向S3C2410移植Linux
+= 向UP-S3C2410-S移植环境 =
+ *时间要抓紧
+ *开发测试用
+== 问题 ==
+ *minicom 无反应
+ *NFS使用
+ *linux下硬件占用 和 释放
+ *U-Boot的使用
+ *如何在实验板上添加SQLite 和 MiniGUI 即是 如何部署到开发板上
+== Jflash ==
+ *[[http://liujinxu198641.blog.163.com/blog/static/457477812009322113243637/]]
+ *[[http://blog.chinaunix.net/u/24474/showart_227846.html]]移植
+ *[[http://blog.sina.com.cn/s/blog_465acfe10100cn59.html]]例子
+ *[[http://hi.baidu.com/mystreetzone/blog/item/0e397b9b2ad89ab3c9eaf493.html]]有关的
+ *[[http://wiki.openmoko.org/wiki/Sjf2410-linux]]
+== Bootloader烧写 ==
+
+ *使用JTAG烧写
+ *Jflash-s3c2410
+ *文件名 /d=5 /t=
+ *开发板的flash type为 SMDK2410:K9S1208 64MB
+ *Jflash-s3c2410无法用
+ *使用windows下烧录工具
+== 构建工具 ==
+ *Ubuntu本机构建用软件包
+  *build-essential bison flex manpages-dev
+ *PC工具链
+  *gcc ld objcopy objdump
+ *用于ARM的交叉工具链
+  *arm-linux-cpp 预处理 CPP
+  *cc1 编译器 C/C++变成汇编
+  *arm-linux-as 汇编
+  *arm-linux-ld 连接
+  *arm-linux-gcc 总体接口
+  *arm-linux-objcopy 用于格式转换
+ *使用随书光盘
+  *解压缩 arm-linux-gcc-3.4.5-glibc-2.3.6.tar.bz2 
+  *设置环境变量 自己的环境.bashrc 加上 export PATH=$PATH:解压缩目录
+ *自己编译
+  *gcc 和 glibc 使用 crosstool
+  *gcc 和 uClibc 使用 buildroot
+== minicom ==
+ *设置为 /dev/ttyS0 115200 8N1 Hardware:no software:no
+ *minicom要使用ttyS0 要注意不要强制关掉 可能资源没有释放
+== 工具 ==
+ *minicom 终端工具
+ *KScope 代码阅读工具
+ *Vi 编辑工具
+ *grep find 查找工具
+ *man 手册
+ *tar
+ *diff
+ *patch
+== U-Boot ==
+ *[[U-Boot]]
+ *[[http://blog.21ic.com/user1/5593/archives/2009/62883.html]]相关文章
+ *[[http://blog.chinaunix.net/u1/34474/showart_410307.html]]完全教程
+ *其1.3.1的版本可以使用 虽然标明为2440但是是2410用的
+  *要改变smdk2410.c 为 uptech2410.c
+ *自己编译
+ *获得源代码
+  *[[http://www.denx.de/wiki/U-Boot]]官网
+ *移植
+  *开教程
+ *编译
+== 内核 ==
+ *移植
+  *[[http://blog.chinaunix.net/u1/34474/showart_410311.html]]
+ *加载
+== t-ftp ==
+== NFS ==
+ *[[http://blog.chinaunix.net/u3/93598/showart_1897102.html]]
+== 应用程序 ==
+ *使用NFS
+== 资料 ==
+ *嵌入式Linux应用开发完全手册
+ *光盘打不开 用Windows下虚拟光驱打开 复制出来

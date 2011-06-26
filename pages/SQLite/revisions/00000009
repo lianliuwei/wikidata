@@ -1,0 +1,48 @@
+= SQLite =
+ *SQLite是一款轻型的数据库，是遵守ACID的关联式数据库管理系统，它的设计目标是嵌入式的
+ *适合想研究数据库系统开发的专业人士
+ *以文件为数据库记录
+ *编译进程序中 不以独立进程存在
+ *可以用来代替fopen()
+ *可以用ODBC和网络来连接
+ *用脚本来创建数据库
+== 任务 ==
+ *找项目
+ *复习数据库
+ *找管理工具 用手写模拟
+ *如何用C来写数据库
+ *配置环境
+ *写一个Demo
+== C/C++接口 ==
+ *[[http://www.sqlite.org/cintro.html]]介绍
+ *[[http://www.sqlite.org/c3ref/intro.html]]索引
+ *150多个API
+ *只有几个简单的有用
+ *SQL引擎的目的是来执行SQL语句 要有两种物体
+  *数据库连接 sqlite3
+  *SQL语句 sqlite_stmt
+ *sqlite_stmt有包装 隐藏起来了
+ *六大核心语句
+  *sqlite3_open() 返回链接对象
+  *sqlite3_prepare() 准备SQL语句 sqlite3_prepare_v2() 新版本
+  *sqlite3_step() 一行一行执行 
+  *sqlite3_column() step返回的行里的列的值 一个家族
+  *sqlite3_finalize() 销毁SQL语句 用完后要用 免得内存溢出
+  *sqlite3_close() 关闭链接
+ *
+== 参考项目 ==
+ *[[http://whm.sourceforge.net/]] c或C++语言的管理系统
+ *[[http://sourceforge.net/projects/cashduck/]]用sqlite的POS系统
+ *[[http://www.pudn.com/downloads42/sourcecode/unix_linux/detail144566.html]] c sqlite pos系统
+ *[[http://code.google.com/p/colligere/]]sqlite的管理系统
+ *[[http://www.docin.com/p-10551343.html]]POS设计
+== 管理工具 ==
+=== sqlite ===
+ *命令行工具 和 数据库不同
+== 资源 ==
+ *[[http://www.sqlite.org]]官方网站
+ *[[http://www.sqlite.com.cn]]
+ *[[http://sqlitemanager.sourceforge.net/]]
+ *[[http://en.wikipedia.org/wiki/Sqlite|wiki英文]]
+ *[[http://www.sqlite.org/cvstrac/wiki?p=SqliteUsers]]使用SQLite的程序
+ *[[http://www.sqlite.com.cn/]]

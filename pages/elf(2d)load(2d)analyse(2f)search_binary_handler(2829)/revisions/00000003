@@ -1,0 +1,235 @@
+== search_binary_handler() ==
+{{{#! cplusplus
+/*
+ * cycle the list of binary formats handler, until one recognizes the image
+ */
+int search_binary_handler(struct linux_binprm *bprm,struct pt_regs *regs)
+{
+	int try,retval=0;
+	struct linux_binfmt *fmt;
+#ifdef __alpha__
+	/* handle /sbin/loader.. */
+	{
+	    struct exec * eh = (struct exec *) bprm->buf;
+
+	    if (!bprm->loader && eh->fh.f_magic == 0x183 &&
+		(eh->fh.f_flags & 0x3000) == 0x3000)
+	    {
+		struct file * file;
+		unsigned long loader;
+
+		allow_write_access(bprm->file);
+		fput(bprm->file);
+		bprm->file = NULL;
+
+	        loader = PAGE_SIZE*MAX_ARG_PAGES-sizeof(void *);
+
+		file = open_exec("/sbin/loader");
+		retval = PTR_ERR(file);
+		if (IS_ERR(file))
+			return retval;
+
+		/* Remember if the application is TASO.  */
+		bprm->sh_bang = eh->ah.entry < 0x100000000UL;
+
+		bprm->file = file;
+		bprm->loader = loader;
+		retval = prepare_binprm(bprm);
+		if (retval<0)
+			return retval;
+		/* should call search_binary_handler recursively here,
+		   but it does not matter */
+	    }
+	}
+#endif
+	retval = security_bprm_check(bprm);
+	if (retval)
+		return retval;
+
+	/* kernel module loader fixup */
+	/* so we don't try to load run modprobe in kernel space. */
+	set_fs(USER_DS);
+	for (try=0; try<2; try++) {
+		read_lock(&binfmt_lock);
+		for (fmt = formats ; fmt ; fmt = fmt->next) {
+			int (*fn)(struct linux_binprm *, struct pt_regs *) = fmt->load_binary;
+			if (!fn)
+				continue;
+			if (!try_module_get(fmt->module))
+				continue;
+			read_unlock(&binfmt_lock);
+			retval = fn(bprm, regs);
+			if (retval >= 0) {
+				put_binfmt(fmt);
+				allow_write_access(bprm->file);
+				if (bprm->file)
+					fput(bprm->file);
+				bprm->file = NULL;
+				current->did_exec = 1;
+				return retval;
+			}
+			read_lock(&binfmt_lock);
+			put_binfmt(fmt);
+			if (retval != -ENOEXEC || bprm->mm == NULL)
+				break;
+			if (!bprm->file) {
+				read_unlock(&binfmt_lock);
+				return retval;
+			}
+		}
+		read_unlock(&binfmt_lock);
+		if (retval != -ENOEXEC || bprm->mm == NULL) {
+			break;
+#ifdef CONFIG_KMOD
+		}else{
+#define printable(c) (((c)=='\t') || ((c)=='\n') || (0x20<=(c) && (c)<=0x7e))
+			if (printable(bprm->buf[0]) &&
+			    printable(bprm->buf[1]) &&
+			    printable(bprm->buf[2]) &&
+			    printable(bprm->buf[3]))
+				break; /* -ENOEXEC */
+			request_module("binfmt-%04x", *(unsigned short *)(&bprm->buf[2]));
+#endif
+		}
+	}
+	return retval;
+}
+}}}
+== search_binary_handler()注释 ==
+{{{#! cplusplus
+/*
+ * cycle the list of binary formats handler, until one recognizes the image
+ */
+本函数用于为特定格式的可执行文件找到其对应的载入器。
+int search_binary_handler(struct linux_binprm *bprm,struct pt_regs *regs)
+{
+	int try,retval=0;
+	struct linux_binfmt *fmt;
+#ifdef __alpha__ 
+	/* handle /sbin/loader.. */
+	{
+	    struct exec * eh = (struct exec *) bprm->buf;
+
+	    if (!bprm->loader && eh->fh.f_magic == 0x183 &&
+		(eh->fh.f_flags & 0x3000) == 0x3000)
+	    {
+		struct file * file;
+		unsigned long loader;
+
+		allow_write_access(bprm->file);
+		fput(bprm->file);
+		bprm->file = NULL;
+
+	        loader = PAGE_SIZE*MAX_ARG_PAGES-sizeof(void *);
+
+		file = open_exec("/sbin/loader");
+		retval = PTR_ERR(file);
+		if (IS_ERR(file))
+			return retval;
+
+		/* Remember if the application is TASO.  */
+		bprm->sh_bang = eh->ah.entry < 0x100000000UL;
+
+		bprm->file = file;
+		bprm->loader = loader; 
+		retval = prepare_binprm(bprm);
+		if (retval<0)
+			return retval;
+		/* should call search_binary_handler recursively here,
+		   but it does not matter */
+	    }
+	}
+#endif
+上面的代码都是为 ALPHA CPU(曾经号称世界上最快的 CPU。我记得,最起码在 20 世纪末的时
+候是这样的)的,忽略。想分析也没办法,我哪来 ALPHA CPU。
+
+	retval = security_bprm_check(bprm); 
+	if (retval)
+		return retval;
+安全性相关,忽略。
+	/* kernel module loader fixup */
+	/* so we don't try to load run modprobe in kernel space. */
+modprobe是用于模块加载的命令, 开发人员开的玩笑
+	set_fs(USER_DS); 
+相关定义抄了过来,
+#define set_fs(x)  (current_thread_info()->addr_limit = (x))
+#define USER_DS    MAKE_MM_SEG(PAGE_OFFSET)
+#define MAKE_MM_SEG(s) ((mm_segment_t) { (s) })
+化简一下,
+current_thread_info()->addr_limit = 3G
+也就是设置用户空间的范围。
+
+	for (try=0; try<2; try++) {
+下面就是去尝试让挂在全局链表头 formats 上的各个可执行文件载入器来辨认并作载入了。这
+里之所以要对该链表枚举两次,意图如下:
+第一遍枚举,如果在链表上没有一个节点认识该可执行文件的格式,则内核还会做一次尝试。在
+尝试以前,它将根据该可执行文件的 signature 来拼凑出一个可载入内核模块的名字来,然后
+通过 request_module()意图载入该 LKM(Loadable Kernel Module),OS 认为该 LKM
+可以向 OS 注册为当前可执行文件的载入器。然后再次对 formats 链表进行枚举,希望这次能
+够成功。当然几乎可以肯定会失败。但也告诉开发者,完全可以开发一个自己独立的某种可执行
+文件格式的载入器,     而且难度到也不大。 难度倒在你怎么定义一个通用灵活强大的可执行文件格
+式。
+
+		read_lock(&binfmt_lock); 
+整个 formats 链表被 binfmt_lock 来同步加锁保护。在枚举列表以前,先锁住链表, 不然改变
+		for (fmt = formats ; fmt ; fmt = fmt->next) { 
+formats是全局的binfmt单链表头指针
+			int (*fn)(struct linux_binprm *, struct pt_regs *) = fmt->load_binary;
+共有的方法, 如同面向对象的多态
+			if (!fn)
+				continue;
+			if (!try_module_get(fmt->module))
+				continue;
+			read_unlock(&binfmt_lock);
+			retval = fn(bprm, regs);
+调用载入器,如果是 ELF 格式可执行文件的话,则调用 load_elf_binary()。
+			if (retval >= 0) {
+				put_binfmt(fmt);
+对应上面的 try_module_get(fmt->module)调用,递减载入器模块的引用计数。开始善后了
+				allow_write_access(bprm->file);
+可执行文件正在被载入时,当然是禁止“写”的;载入好以后,允许。这就是 Linux 的特点,
+正在运行的程序的文件允许被写,允许被删除。
+
+				if (bprm->file)
+					fput(bprm->file);
+递减可执行文件的引用计数,到零时,将关闭。
+				bprm->file = NULL;
+				current->did_exec = 1;
+设执行标志。已经exec完成了 
+				return retval;
+找到可以执行的方法 就返回 在链表前面 如果可执行 后面的就没有机会了
+			}
+			read_lock(&binfmt_lock);
+			put_binfmt(fmt);
+			if (retval != -ENOEXEC || bprm->mm == NULL)
+				break; 
+如果是这种错误,表示载入器是认识该可执行文件的,但在载入之时,出错了,所以退出。
+			if (!bprm->file) { 
+				read_unlock(&binfmt_lock);
+				return retval;
+谁将文件关闭了
+			}
+		}
+		read_unlock(&binfmt_lock);
+		if (retval != -ENOEXEC || bprm->mm == NULL) {
+			break;
+运行到这里,表示链表中没有节点认识该可执行文件。
+#ifdef CONFIG_KMOD 
+		}else{
+#define printable(c) (((c)=='\t') || ((c)=='\n') || (0x20<=(c) && (c)<=0x7e))
+			if (printable(bprm->buf[0]) &&
+			    printable(bprm->buf[1]) &&
+			    printable(bprm->buf[2]) &&
+			    printable(bprm->buf[3]))
+				break; /* -ENOEXEC */
+			request_module("binfmt-%04x", *(unsigned short *)(&bprm->buf[2])); 
+#endif
+只有在编译内核时打开 LKM 支持的情况下才谈得上动态载入对应内核模块。取出可执行文件签
+名的头 4 个之母,拚出模块名,要求载入。
+request_module()是个很有趣的东东,它是内核中难得的 kernel mode 去请求 user mode
+做事的函数。
+		}
+	}
+	return retval;
+}
+}}}

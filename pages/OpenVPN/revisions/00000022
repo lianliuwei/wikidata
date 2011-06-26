@@ -1,0 +1,104 @@
+= OpenVPN =
+ *使用单一的TCP 或者 UDP port
+ *TLS: Transport Layer Security 
+== 问题 ==
+ *OpenVPN是基于 网关模式 还是 代理模式
+ *occ.h 干什么用的
+ *otime.h  是OpenVPN time 函数的意思吗
+ *mtcp.h 是mode server tcp相关代码的意思吗
+ *如何在windows下编译OpenVPN
+ *OpenVPN是如何查到内网地址到外网地址的转换
+== 源码分析 ==
+ *[[http://hi.baidu.com/andy_lu81/blog/item/abce600e9344b1ca7acbe1c0.html|OPENVPN+OPENSSL数据流程分析]]
+ *[[http://hi.baidu.com/cygnusnow/blog/item/040480c847e1cb117e3e6f58.html|dd-wrt之openvpn源码分析]]
+ *[[http://hi.baidu.com/andy%5Flu81/blog/item/0016908bb6a8ced3fc1f10c6.html|OpenVPN协议分析]]
+ *main()函数在 openvpn.c里
+ *两种mode: P2P_mode 和 server_mode
+ *manage.h 管理模块 管理子系统
+ *forward.h 转发功能
+ *schedule.h 使用treap二叉树实现服务器的调度
+ *main()中服务器调用multi.c中的tunel_server(), tunel_server()依据情况调用mtcp.c中的tunel_server_tcp()或mudp.c中的tunel_server_udp()
+ *mtcp.h 和 mudp.h 分别是multi中的tcp和udp相关的代码
+ *integer.h 是对整数型的封装和一些工具函数
+ *p2mp_server是使用p2mp多播传送协议的服务器
+ *perf.h: 用于performance metrics性能测试
+ *memdbg.h: Valgrind内存测试用
+ *basic.h: 基本类型封装
+ *buffer.h: 缓冲模块
+ *cypto.h: 加密模块
+ *ssl.h: 安全套接字
+ *lzo.h: 压缩
+ *tun.h: tun/tap网卡相关
+ *pf.h: packet filter 包过滤
+ *packet_id.h 防止中间人攻击
+ *宏定义 PEDANTIC 学术的, 用于测试不完成功能
+ *有垃圾回收功能:gc
+ *win32.h: win32.h 需要mingw进行编译
+ *有注册信号 作为服务使用
+ *有插件功能
+ *context在openvpn.h中定义,比较重要的结构
+ *OpenVPN将自身定义为openssl的BIO的输入端，从而完全掌握了报文，此时数据的走向是Internet=> OpenVPN9(1) =>Openssl=>OpenVPN(2)=>Openssl=> OpenVPN(1) => Internet
+ *OpenVPN是单进程单线程在运行
+ *OpenVPN进行时间调度interval_earliest_wakeup
+ *应该是使用状态机进行设计的
+ *macinfo.h 用于MAC地址
+ *ieproxy.h 用于ie的代理
+ *config-win32.h win32用的配置文件 Linux用autoconf产生
+ *server.c windows自带server编写框架
+ *openvpnserv.c openvpn自带用于替代Windows自带的server
+ *NTLM windows早期的安全协议
+ *management_callback 结构 用于信号回调的函数的集合
+ *man_persist man_settings man_connection 都是management资料，用不同的保存度进行区分
+ *OpenVPN 在 management layer上面
+ *socket.h 定义传送协议
+ *tunnel_server()->tunnel_server_udp()->tunnel_server_udp_single_threaded()
+ *定义事件循环
+ *插件功能使用的是so动态链接库实现
+ *自己实现调度
+ *有用于控制的接口
+ *可以远程控制
+ *平台有关的放在syshead.h
+ *do_ifconfig()定义平台相关的ifconfig如何操作
+ *tun.c可能用于程序内部控制网卡
+ *route.c 向平台发送route命令
+ *helper.h 提供和平台相关的API如添加路由的API
+ *提供loopback测试 用于单程序测试
+ *命名差用 dowork 表示实际做
+ *forward.c 用于转发
+ *mudp multi 在 forward 之上 forward 在 socket之上
+ *一个client对应与一个multi_instance
+ *socket.h 用于读写
+ *CC: character classes
+ *sig.h 信号模块
+ *misc.c 杂的还没分类
+ *谁开头在哪个文件：函数放置规则
+ *verb_mute记录级别
+ *errorlevel.h 用于规定基本
+ *multi_context 在 context之上
+ *最多只有两个线程 一线程用于加密测试
+ *inteval.h 间隔事件 有一定任务
+ *ps.h port shard的意思
+ *openvpn_sleep()用于睡眠
+ *shaper.h 用于流量控制
+ *pool.h 和ifconfig有关
+ *有连接增长限制: 用于防止DoS
+ *有提供Client to Client吗
+ *hmac 是用于传输内容不被篡改的传输协议 不用传密码
+ *TLS和SSL都是安全socket协议
+ *ssl.c 自己和openssl同步进行处理
+ *tls_multi_process() 和 tls_process() 用于处理 tls 握手处理
+ *wait_signal() 用于等待信号
+== 资料 ==
+ *[[http://en.wikipedia.org/wiki/OpenVPN|OpenVPN 英文wiki]]
+ *[[http://openvpn.net/release/|源代码]]
+ *[[http://bbs.chinaunix.net/forum-50-1.html|chinaunix论坛VPN贴]]
+ *[[http://openvpn.net/|OpenVPN 官网]]
+ *[[http://www.docin.com/p-43448914.html|Windows操作系统中利用OPENVPN配置VPN]]
+ *[[http://wenzk.cublog.cn|OpenVPN相关博客]]
+ *[[http://www.cppblog.com/qiujian5628/archive/2008/10/21/64613.html|VC一步一步编译OpenVPN]]
+ *[[http://openvpn.net/index.php/open-source/documentation/miscellaneous/61-mailing-lists.html|OpenVPN的mailing Lists]] 有开发者的邮件列表
+ *[[http://svn.openvpn.net/|OpenVPN的SVN库]]
+ *[[http://www.joecen.com/openvpn/|使用OpenVPN实现网通、电信机房间快速、安全通信]]
+ *[[http://openvpn.net/index.php/open-source/documentation/manuals/65-openvpn-20x-manpage.html|OpenVPN man页]]
+ *[[http://sourceforge.net/projects/openvpn|OpenVPN 开发站点]] 有很多有用的讨论
+ *[[http://w.xue163.com/html/20091218/3137563.html|WindowsXP下openVPN配置IP转发]]

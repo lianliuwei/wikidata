@@ -1,0 +1,22 @@
+## page was renamed from 移植学习计划
+= 移植学习 =
+
+{{{#!wiki
+<<TableOfContents>>
+
+== 内容 ==
+=== 硬件 ===
+ *CPU
+ *MMU
+ *MTD
+ *总线
+ *中断
+ *时钟
+ *外设
+=== bootloader ===
+=== kernel ===
+=== 根文件系统 ===
+=== 编译环境 ===
+=== 工具和命令 ===
+=== 调试 ===
+}}}

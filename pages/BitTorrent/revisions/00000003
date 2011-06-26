@@ -1,0 +1,23 @@
+= BitTorrent =
+ *代表软件也代表协议
+ *[[http://www.bittorrent.com/]] 已经闭源了最后的开源代码在[[http://download.bittorrent.com/dl/]]
+ *[[http://blog.csdn.net/rstevens/archive/2004/06.aspx|Tracker 服务器源码分析]]
+ *[[http://www.newsmth.net/pc/index.php?id=wolfenstein]]wolfenstein工作室-BT源代码学习心得
+ *[[http://wolfenstein.mysmth.net]]
+ *[[http://blog.csdn.net/gushenghua/category/265987.aspx]]备份：wolfenstein工作室-BT源代码学习心得
+== 开源相关协议软件 ==
+ *[[http://deluge-torrent.org/]]
+ *[[http://www.transmissionbt.com/]]
+ *[[http://en.wikipedia.org/wiki/Libtorrent]]
+== 源代码分析 ==
+ *分析版本是开源版本的最后一版本 5.3
+ *分为 bt 和 bt_library 两部分
+ *GUI都在于bt/GUI_wx中
+ *DownloadManager.py 和 maketorrent.py 是其中的两个大的应用程序
+ *BitTorrent/defaultargs.py 实现默认参数
+ *参数为三元组：属性的名称 属性的值 属性的说明
+ *获取完默认值，各个可执行模块通常都调用BitTorrent/configfile.py中的函数parse_configuration_and_args来进一步从可能存在的配置文件和命令行参数中对程序运行的一些参数进行调整
+ *配置文件为用户目录下的.bittorrent
+ *在parse_configuration_and_args中，要调用BitTorrent/parseargs.py模块中的parseargs对命令行中输入的参数进行处理
+ *配置分为 options 和 args
+ *控制台程序在文件名后为-console

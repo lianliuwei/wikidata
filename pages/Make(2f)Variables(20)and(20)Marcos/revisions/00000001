@@ -1,0 +1,64 @@
+== Variables and Marcos ==
+ *Make的宏语言是用来定义用的
+ *宏语言有CPP, m4, tex, 宏汇编
+ *大写用于常量
+ *小写_ 用于内部变量
+ *大写- 用于函数
+ *末尾的空格不去除
+ *两种Variables
+  *Simply expanded variable
+   *扫描文件时就产生好了
+   *和顺序有关
+   *用 := 赋值
+  *recursively expanded variable
+   *和顺序无关
+   *先记录后扩展
+   *用 = 赋值
+ *conditional assignment
+  *用 ?=
+  *常用于默认赋值
+ *assignment operator
+  *简单赋值容易理解
+  *用于为recursively variable 使用
+  *用 +=
+ *不赋值是一种重要的应用
+ *Macros 或 define directive
+  *用 define endif
+  *用于包含空格 换行 这要小心
+  *使用@符号禁止make打印
+ *左值也能进行expansion
+ *Target-specific variable
+  *target: 赋值
+ *赋值可以从命令行来 最为重要 会覆盖其他的
+  *override 可以 防止被覆盖
+ *环境变量级别最低 会被 makefile覆盖
+  *使用 -e 或 --environment-overides 防止覆盖
+ *递归使用make时 只有原来的环境变量会传过去
+  *使用export输出
+  *使用unexport不输出环境变量
+ *ifndef endif 和 ?= 有区别 在为空定义的时候
+ *conditional processing directives
+{{{
+ifdef variable-name
+else
+endif
+}}}
+  *variable-name不加$()
+  *ifeq (a, b) 使用 ifeq "a" "b" 代替防止空格问题
+  *可以使用strip()函数去掉前后空格
+ *include Directive
+  *include 可以使用 shell类似的文件名方案
+  *make如果遇到更新include文件的target会重新执行
+  *makefile 和 include 文件的反应是一样的
+  *用-I 或--include-dir来指定加载路径
+  *会搜索默认路径
+  *-include 如果加载不成功 不会报错
+ *standard make Variables
+  *MAKE_VERSION
+  *CURDIR 当前目录
+  *--directory或-C会改变make执行目录
+  *MAKEFILE_LIST
+  *MAKECOMGOALS 命令行目标
+  *.VARIABLES 当前变量值
+  *有相当多的为编译用的变量
+  *ACTION.suffix suffix代表源文件类型

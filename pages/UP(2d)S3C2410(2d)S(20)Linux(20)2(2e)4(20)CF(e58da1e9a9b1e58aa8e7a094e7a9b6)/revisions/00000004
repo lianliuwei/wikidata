@@ -1,0 +1,21 @@
+= UP-S3C2410-S Linux 2.4 CF卡驱动研究 =
+ *CF卡自动挂在hdap1目录下
+== 工具 ==
+ *源码阅读工具
+== 硬件 ==
+ *CPLD EPM3128A
+ *核心板->local BUS-> 扩展总线
+ *使用4片 74LVCH16245 
+== 源代码 ==
+ *使用的是PCMCIA
+ *注意PCMCIA_CORE
+ *s3c2410_cpld2
+ *ds
+ *ide-cs
+ *hermes
+ *orinoco
+ *orinoco_cs
+== PCMCIA ==
+ *三层结构 Card Client, Card Services, socket driver
+ *Card　CLient中有一 Driver Service
+ *S3C2410使用CPLD实现

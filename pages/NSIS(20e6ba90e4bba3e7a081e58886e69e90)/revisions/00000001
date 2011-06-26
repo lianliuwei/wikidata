@@ -1,0 +1,18 @@
+= NSIS 源代码分析 =
+ *使用[[Scons]]构建系统
+ *究竟是编译型还是解释型
+ *.nsh 是他的脚本吗？
+ *使用[[WxWidgets]]来做窗口系统底层吗
+== 构建分析 ==
+ *plugins
+ *utils
+ *doc
+ *toolset增加了zip
+ *加载SCons/utils.py
+ *加载SCons/config.py
+ *ignore_tests
+ *dirs 用于安装的目录
+ *hhc微软的chm编译器
+ *自动产生sconf_h nsis-sconf.h
+ *自动产生defines_h nsis-defines.h
+ *自动产生 nsis-version.h

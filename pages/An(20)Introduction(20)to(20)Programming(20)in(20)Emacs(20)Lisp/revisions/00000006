@@ -1,0 +1,26 @@
+= An Introduction to Programming in Emacs Lisp =
+{{{#!wiki
+<<TableOfContents(3)>>
+ *这本书是给非程序员写的，比较浅，内容比较少
+== List Processing ==
+ *Lisp中什么都是List
+ *Atom是对于List操作不能再分的元素
+ *Lisp默认会使用List中的第一个元素来当做命令执行
+ *List前面加个’代表不当成命令执行
+ *Symbol就相当于引用
+ *Emacs中使用前缀的方式来区别Symbol
+ *variable 和 function 是两套不同的系统 可以赋值到同一个Symbol中
+ *Symbol前面加‘返回Symbol本身
+ *函数名中的p一般代表predicate
+ *message和[[C]]中的printf效果一样
+ *setq中的q代表quote,使用setq就不用像set一样使用‘了
+== Practicing Evaluation ==
+ *buffer-name buffer-file-name是不同的函数
+ *buffer和file也是不同的东西
+ *switch-buffer 和 set-buffer 可以用来设置当前buffer
+ *point point-min point-max可以用来获得buffer中的cursor point
+== How To Write Function Definitions ==
+ 
+}}}
+----
+ [[Category Book]]

@@ -1,0 +1,342 @@
+== setup_arg_pages() ==
+{{{#! cplusplus
+int setup_arg_pages(struct linux_binprm *bprm, int executable_stack)
+{
+	unsigned long stack_base;
+	struct vm_area_struct *mpnt;
+	struct mm_struct *mm = current->mm;
+	int i;
+	long arg_size;
+
+#ifdef CONFIG_STACK_GROWSUP
+	/* Move the argument and environment strings to the bottom of the
+	 * stack space.
+	 */
+	int offset, j;
+	char *to, *from;
+
+	/* Start by shifting all the pages down */
+	i = 0;
+	for (j = 0; j < MAX_ARG_PAGES; j++) {
+		struct page *page = bprm->page[j];
+		if (!page)
+			continue;
+		bprm->page[i++] = page;
+	}
+
+	/* Now move them within their pages */
+	offset = bprm->p % PAGE_SIZE;
+	to = kmap(bprm->page[0]);
+	for (j = 1; j < i; j++) {
+		memmove(to, to + offset, PAGE_SIZE - offset);
+		from = kmap(bprm->page[j]);
+		memcpy(to + PAGE_SIZE - offset, from, offset);
+		kunmap(bprm->page[j - 1]);
+		to = from;
+	}
+	memmove(to, to + offset, PAGE_SIZE - offset);
+	kunmap(bprm->page[j - 1]);
+
+	/* Adjust bprm->p to point to the end of the strings. */
+	bprm->p = PAGE_SIZE * i - offset;
+
+	/* Limit stack size to 1GB */
+	stack_base = current->rlim[RLIMIT_STACK].rlim_max;
+	if (stack_base > (1 << 30))
+		stack_base = 1 << 30;
+	stack_base = PAGE_ALIGN(STACK_TOP - stack_base);
+
+	mm->arg_start = stack_base;
+	arg_size = i << PAGE_SHIFT;
+
+	/* zero pages that were copied above */
+	while (i < MAX_ARG_PAGES)
+		bprm->page[i++] = NULL;
+#else
+	stack_base = STACK_TOP - MAX_ARG_PAGES * PAGE_SIZE;
+	mm->arg_start = bprm->p + stack_base;
+	arg_size = STACK_TOP - (PAGE_MASK & (unsigned long) mm->arg_start);
+#endif
+
+	bprm->p += stack_base;
+	if (bprm->loader)
+		bprm->loader += stack_base;
+	bprm->exec += stack_base;
+
+	mpnt = kmem_cache_alloc(vm_area_cachep, SLAB_KERNEL);
+	if (!mpnt)
+		return -ENOMEM;
+
+	if (security_vm_enough_memory(arg_size >> PAGE_SHIFT)) {
+		kmem_cache_free(vm_area_cachep, mpnt);
+		return -ENOMEM;
+	}
+
+	memset(mpnt, 0, sizeof(*mpnt));
+
+	down_write(&mm->mmap_sem);
+	{
+		mpnt->vm_mm = mm;
+#ifdef CONFIG_STACK_GROWSUP
+		mpnt->vm_start = stack_base;
+		mpnt->vm_end = PAGE_MASK &
+			(PAGE_SIZE - 1 + (unsigned long) bprm->p);
+#else
+		mpnt->vm_start = PAGE_MASK & (unsigned long) bprm->p;
+		mpnt->vm_end = STACK_TOP;
+#endif
+		/* Adjust stack execute permissions; explicitly enable
+		 * for EXSTACK_ENABLE_X, disable for EXSTACK_DISABLE_X
+		 * and leave alone (arch default) otherwise. */
+		if (unlikely(executable_stack == EXSTACK_ENABLE_X))
+			mpnt->vm_flags = VM_STACK_FLAGS |  VM_EXEC;
+		else if (executable_stack == EXSTACK_DISABLE_X)
+			mpnt->vm_flags = VM_STACK_FLAGS & ~VM_EXEC;
+		else
+			mpnt->vm_flags = VM_STACK_FLAGS;
+		mpnt->vm_page_prot = protection_map[mpnt->vm_flags & 0x7];
+		insert_vm_struct(mm, mpnt);
+		mm->total_vm = (mpnt->vm_end - mpnt->vm_start) >> PAGE_SHIFT;
+	}
+
+	for (i = 0 ; i < MAX_ARG_PAGES ; i++) {
+		struct page *page = bprm->page[i];
+		if (page) {
+			bprm->page[i] = NULL;
+			install_arg_page(mpnt, page, stack_base);
+		}
+		stack_base += PAGE_SIZE;
+	}
+	up_write(&mm->mmap_sem);
+	
+	return 0;
+}
+}}}
+== setup_arg_pages()注释 ==
+{{{#! cplusplus
+== setup_arg_pages() ==
+{{{#! cplusplus
+int setup_arg_pages(struct linux_binprm *bprm, int executable_stack)
+{
+	unsigned long stack_base;
+	struct vm_area_struct *mpnt;
+	struct mm_struct *mm = current->mm;
+	int i;
+	long arg_size;
+
+#ifdef CONFIG_STACK_GROWSUP
+	/* Move the argument and environment strings to the bottom of the
+	 * stack space.
+	 */
+	int offset, j;
+	char *to, *from;
+
+	/* Start by shifting all the pages down */
+	i = 0;
+	for (j = 0; j < MAX_ARG_PAGES; j++) {
+		struct page *page = bprm->page[j];
+		if (!page)
+			continue;
+		bprm->page[i++] = page;
+	}
+
+	/* Now move them within their pages */
+	offset = bprm->p % PAGE_SIZE;
+	to = kmap(bprm->page[0]);
+	for (j = 1; j < i; j++) {
+		memmove(to, to + offset, PAGE_SIZE - offset);
+		from = kmap(bprm->page[j]);
+		memcpy(to + PAGE_SIZE - offset, from, offset);
+		kunmap(bprm->page[j - 1]);
+		to = from;
+	}
+	memmove(to, to + offset, PAGE_SIZE - offset);
+	kunmap(bprm->page[j - 1]);
+
+	/* Adjust bprm->p to point to the end of the strings. */
+	bprm->p = PAGE_SIZE * i - offset;
+
+	/* Limit stack size to 1GB */
+	stack_base = current->rlim[RLIMIT_STACK].rlim_max;
+	if (stack_base > (1 << 30))
+		stack_base = 1 << 30;
+	stack_base = PAGE_ALIGN(STACK_TOP - stack_base);
+
+	mm->arg_start = stack_base;
+	arg_size = i << PAGE_SHIFT;
+
+	/* zero pages that were copied above */
+	while (i < MAX_ARG_PAGES)
+		bprm->page[i++] = NULL;
+#else
+	stack_base = STACK_TOP - MAX_ARG_PAGES * PAGE_SIZE;
+	mm->arg_start = bprm->p + stack_base;
+	arg_size = STACK_TOP - (PAGE_MASK & (unsigned long) mm->arg_start);
+#endif
+
+	bprm->p += stack_base;
+	if (bprm->loader)
+		bprm->loader += stack_base;
+	bprm->exec += stack_base;
+
+	mpnt = kmem_cache_alloc(vm_area_cachep, SLAB_KERNEL);
+	if (!mpnt)
+		return -ENOMEM;
+
+	if (security_vm_enough_memory(arg_size >> PAGE_SHIFT)) {
+		kmem_cache_free(vm_area_cachep, mpnt);
+		return -ENOMEM;
+	}
+
+	memset(mpnt, 0, sizeof(*mpnt));
+
+	down_write(&mm->mmap_sem);
+	{
+		mpnt->vm_mm = mm;
+#ifdef CONFIG_STACK_GROWSUP
+		mpnt->vm_start = stack_base;
+		mpnt->vm_end = PAGE_MASK &
+			(PAGE_SIZE - 1 + (unsigned long) bprm->p);
+#else
+		mpnt->vm_start = PAGE_MASK & (unsigned long) bprm->p;
+		mpnt->vm_end = STACK_TOP;
+#endif
+		/* Adjust stack execute permissions; explicitly enable
+		 * for EXSTACK_ENABLE_X, disable for EXSTACK_DISABLE_X
+		 * and leave alone (arch default) otherwise. */
+		if (unlikely(executable_stack == EXSTACK_ENABLE_X))
+			mpnt->vm_flags = VM_STACK_FLAGS |  VM_EXEC;
+		else if (executable_stack == EXSTACK_DISABLE_X)
+			mpnt->vm_flags = VM_STACK_FLAGS & ~VM_EXEC;
+		else
+			mpnt->vm_flags = VM_STACK_FLAGS;
+		mpnt->vm_page_prot = protection_map[mpnt->vm_flags & 0x7];
+		insert_vm_struct(mm, mpnt);
+		mm->total_vm = (mpnt->vm_end - mpnt->vm_start) >> PAGE_SHIFT;
+	}
+
+	for (i = 0 ; i < MAX_ARG_PAGES ; i++) {
+		struct page *page = bprm->page[i];
+		if (page) {
+			bprm->page[i] = NULL;
+			install_arg_page(mpnt, page, stack_base);
+		}
+		stack_base += PAGE_SIZE;
+	}
+	up_write(&mm->mmap_sem);
+	
+	return 0;
+}
+}}}
+int setup_arg_pages(struct linux_binprm *bprm, int executable_stack)
+{
+	unsigned long stack_base;
+	struct vm_area_struct *mpnt;
+	struct mm_struct *mm = current->mm;
+	int i;
+	long arg_size;
+
+#ifdef CONFIG_STACK_GROWSUP
+	/* Move the argument and environment strings to the bottom of the
+	 * stack space.
+	 */
+	int offset, j;
+	char *to, *from;
+
+	/* Start by shifting all the pages down */
+	i = 0;
+	for (j = 0; j < MAX_ARG_PAGES; j++) {
+		struct page *page = bprm->page[j];
+		if (!page)
+			continue;
+		bprm->page[i++] = page;
+	}
+
+	/* Now move them within their pages */
+	offset = bprm->p % PAGE_SIZE;
+	to = kmap(bprm->page[0]);
+	for (j = 1; j < i; j++) {
+		memmove(to, to + offset, PAGE_SIZE - offset);
+		from = kmap(bprm->page[j]);
+		memcpy(to + PAGE_SIZE - offset, from, offset);
+		kunmap(bprm->page[j - 1]);
+		to = from;
+	}
+	memmove(to, to + offset, PAGE_SIZE - offset);
+	kunmap(bprm->page[j - 1]);
+
+	/* Adjust bprm->p to point to the end of the strings. */
+	bprm->p = PAGE_SIZE * i - offset;
+
+	/* Limit stack size to 1GB */
+	stack_base = current->rlim[RLIMIT_STACK].rlim_max;
+	if (stack_base > (1 << 30))
+		stack_base = 1 << 30;
+	stack_base = PAGE_ALIGN(STACK_TOP - stack_base);
+
+	mm->arg_start = stack_base;
+	arg_size = i << PAGE_SHIFT;
+
+	/* zero pages that were copied above */
+	while (i < MAX_ARG_PAGES)
+		bprm->page[i++] = NULL;
+#else
+	stack_base = STACK_TOP - MAX_ARG_PAGES * PAGE_SIZE;
+	mm->arg_start = bprm->p + stack_base;
+	arg_size = STACK_TOP - (PAGE_MASK & (unsigned long) mm->arg_start);
+#endif
+
+	bprm->p += stack_base;
+	if (bprm->loader)
+		bprm->loader += stack_base;
+	bprm->exec += stack_base;
+
+	mpnt = kmem_cache_alloc(vm_area_cachep, SLAB_KERNEL);
+	if (!mpnt)
+		return -ENOMEM;
+
+	if (security_vm_enough_memory(arg_size >> PAGE_SHIFT)) {
+		kmem_cache_free(vm_area_cachep, mpnt);
+		return -ENOMEM;
+	}
+
+	memset(mpnt, 0, sizeof(*mpnt));
+
+	down_write(&mm->mmap_sem);
+	{
+		mpnt->vm_mm = mm;
+#ifdef CONFIG_STACK_GROWSUP
+		mpnt->vm_start = stack_base;
+		mpnt->vm_end = PAGE_MASK &
+			(PAGE_SIZE - 1 + (unsigned long) bprm->p);
+#else
+		mpnt->vm_start = PAGE_MASK & (unsigned long) bprm->p;
+		mpnt->vm_end = STACK_TOP;
+#endif
+		/* Adjust stack execute permissions; explicitly enable
+		 * for EXSTACK_ENABLE_X, disable for EXSTACK_DISABLE_X
+		 * and leave alone (arch default) otherwise. */
+		if (unlikely(executable_stack == EXSTACK_ENABLE_X))
+			mpnt->vm_flags = VM_STACK_FLAGS |  VM_EXEC;
+		else if (executable_stack == EXSTACK_DISABLE_X)
+			mpnt->vm_flags = VM_STACK_FLAGS & ~VM_EXEC;
+		else
+			mpnt->vm_flags = VM_STACK_FLAGS;
+		mpnt->vm_page_prot = protection_map[mpnt->vm_flags & 0x7];
+		insert_vm_struct(mm, mpnt);
+		mm->total_vm = (mpnt->vm_end - mpnt->vm_start) >> PAGE_SHIFT;
+	}
+
+	for (i = 0 ; i < MAX_ARG_PAGES ; i++) {
+		struct page *page = bprm->page[i];
+		if (page) {
+			bprm->page[i] = NULL;
+			install_arg_page(mpnt, page, stack_base);
+		}
+		stack_base += PAGE_SIZE;
+	}
+	up_write(&mm->mmap_sem);
+	
+	return 0;
+}
+}}}

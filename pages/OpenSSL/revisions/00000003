@@ -1,0 +1,18 @@
+= OpenSSL =
+ *证书使用PEM格式进行记录, 证书数据用base64进行记录, 证书还要进行密码加密
+ *网络上使用ASN1进行数据标记, 网络上使用X509属性证书
+ *OCSP 在线证书状态协议
+ *CRL 证书撤销列表
+ *pkcs7 pkcs12 存放格式
+ *内存
+  *使用哈希表进行内存泄露的检测
+ *堆栈
+ *哈希表
+ *BIO
+== 资料==
+ *[[http://www.nsfocus.net/index.php?act=magazine&do=view&mid=841|SSL/TLS/WTLS原理]]
+ *[[http://blog.csdn.net/ast_224/archive/2008/09/27/2988743.aspx|openssl编程]]
+ *[[http://blog.csdn.net/wangxing1018/default.aspx?PageNumber=3|相关博客]]
+ *[[http://openssl.cn/|openssl论坛]]
+ *[[http://hi.baidu.com/_%B3%CC%CC%CE/blog/item/b81b63fac1366c2b4e4aea68.html|openssl在windows下的安装]] 
+ *[[http://www.openssl.cn/dispbbs.asp?BoardID=2&ID=5974|windows下设置openssl.cnf]]

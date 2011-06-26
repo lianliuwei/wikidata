@@ -1,0 +1,6 @@
+= gyp =
+ *生成个平台的project文件
+ *[[http://code.google.com/p/gyp/]] 官网
+ *和CMake相同
+ *[[http://groups.google.com/group/gyp-developer/browse_thread/thread/897021689971acf9/c7d7d1551eb0e639?lnk=gst&q=cygwin#c7d7d1551eb0e639|gyp advantages over CMake?]]
+ *[[http://groups.google.com/group/gyp-developer]] 论坛

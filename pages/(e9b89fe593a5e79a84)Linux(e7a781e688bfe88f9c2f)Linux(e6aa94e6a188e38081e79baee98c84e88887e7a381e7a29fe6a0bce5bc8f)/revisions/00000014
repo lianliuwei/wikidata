@@ -1,0 +1,340 @@
+=== Linux檔案、目錄與磁碟格式 ===
+==== Linux檔案權限與目錄配置 ====
+ *每个帐号可以有多个group
+ *root有所有的权限
+ */etc/passwd 用户
+ */etc/shadow密码
+ */etc/group群组
+ *链接不对权限作限制
+ *chgrp ：改變檔案所屬群組
+ *chown ：改變檔案擁有者
+ *chmod ：改變檔案的權限, SUID, SGID, SBIT等等的特性
+ *chmod u g o a  r w x 
+ *档案的权限是对内容来说的
+ *目录的权限
+  *跟文件系统内部实现有联系
+  *r 读目录而已
+  *w 
+  *x 切换的目录下
+  *有意义的就是 rwx(读写可进) r_x(只读可进) `r__`(可列文件名)不常用 `_wx`(只可以写和进入不能查看其他文件)不常用 `__x`可指定文件名进行操作
+  *文件的删除性在文件系统 不再文件
+ *有socket文件
+ *要用户允许程序才能执行
+ *避免字符 * ? > < ; & ! [ ] | \ ' " ` ( ) { } + -
+ *FHS
+  *[[http://proton.pathname.com/fhs/]]
+ */usr (unix software resource)
+ */var (variable)
+ */bin放置的是在單人維護模式下還能夠被操作的指令
+ *~dmtsai 代表 dmtsai 的家目錄
+ */lib放置的則是在開機時會用到的函式庫， 以及在/bin或/sbin底下的指令會呼叫的函式庫而已
+ *放在/sbin底下的為開機過程中所需要的，裡面包括了開機、修復、還原系統所需要的指令
+ *sbin/ (system binary)
+ *srv可以視為 service
+ *开机必在同一分区
+  *  /etc：設定檔
+  * /bin：重要執行檔
+  * /dev：所需要的裝置檔案
+  * /lib：執行檔所需的函式庫與核心所需的模組
+  * /sbin：重要的系統執行檔
+ */usr/share/zoneinfo：與時區有關的時區檔案
+==== Linux檔案與目錄管理 ====
+ *pwd是Print Working Directory
+  *-P真实路径
+  *-L链接路径
+ *mkdir (make directory)
+  *-m模式
+  *-p多层目录
+ *ls
+  *-i 显示i-node
+ *cp cp做链接不专业
+  *-a用于备份
+ *rm(remove)
+ *mv(move)
+  *可用于改名字
+ *rename
+ *basename dirname
+ *檔案內容查閱
+  *  cat Concatenate（連續）由第一行開始顯示檔案內容 
+   *-n 显示行数
+   *-A 显示特殊字符
+  * tac  從最後一行開始顯示，可以看出 tac 是 cat 的倒著寫！
+  * nl   顯示的時候，順道輸出行號！
+  * more 一頁一頁的顯示檔案內容
+   *  空白鍵 (space)：代表向下翻一頁；
+   * Enter         ：代表向下翻『一行』；
+   * /字串         ：代表在這個顯示的內容當中，向下搜尋『字串』這個關鍵字；
+   * :f            ：立刻顯示出檔名以及目前顯示的行數；
+   * q             ：代表立刻離開 more ，不再顯示該檔案內容。
+   * b 或 [ctrl]-b ：代表往回翻頁，不過這動作只對檔案有用，對管線無用。
+  * less 與 more 類似，但是比 more 更好的是，他可以往前翻頁！
+   *  空白鍵    ：向下翻動一頁；
+   * [pagedown]：向下翻動一頁；
+   * [pageup]  ：向上翻動一頁；
+   * /字串     ：向下搜尋『字串』的功能；
+   * ?字串     ：向上搜尋『字串』的功能；
+   * n         ：重複前一個搜尋 (與 / 或 ? 有關！)
+   * N         ：反向的重複前一個搜尋 (與 / 或 ? 有關！)
+   * q         ：離開 less 這個程式；
+  * head 只看頭幾行
+  * tail 只看尾巴幾行
+  * od   以二進位的方式讀取檔案內容！
+ *man是用less来显示的
+ *档案时间
+  *modification time (mtime)
+  *status time (ctime)
+  *access time (atime)
+ *touch 修改檔案時間或建置新檔
+  *ctime无法被改变
+ *umask 创建文件与目录使用的预设值需要减掉的权限
+  *目录预设777
+  *文件预设666
+ *檔案隱藏屬性
+  *chattr
+   *指令只能在Ext2/Ext3的檔案系統上面生效
+   *i 不能删除和改动 只有root有权限设置
+   *a 不能删除只能改动 只有root有权限设置
+  *lsattr 顯示檔案隱藏屬性
+ *檔案特殊權限： SUID, SGID, SBIT
+  *Set UID
+   *只用于二进制程序
+   *SUID 僅可用在binary program 上， 不能夠用在 shell script 上面！
+  *Set GID
+   *可用于目录
+   *使用者在此目錄下具有 w 的權限(可以新建檔案)，則使用者所建立的新檔案，該新檔案的群組與此目錄的群組相同。
+  *Sticky Bit
+   *當使用者在該目錄下建立檔案或目錄時，僅有自己與 root 才有權力刪除該檔案
+  *chmod使用4位的第一为来表示 符号法用 s s t 代表
+ *file 觀察檔案類型
+ *指令與檔案的搜尋
+  *which (尋找『執行檔』)
+   *根據使用者所設定的 PATH 變數內的目錄去搜尋可執行檔的
+   *cd 是bash 內建的指令 which找不到
+  *whereis 與 locate 是利用資料庫來搜尋資料
+  * whereis (尋找特定檔案)
+  *locate
+   *建立的資料庫 /var/lib/mlocate/
+   *updatedb更新数据库
+   */etc/updatedb.conf 設定檔
+  *find
+   *时间选项
+    * +4代表大於等於5天前的檔名
+    * -4代表小於等於4天內的檔案檔名
+    * 4則是代表4-5那一天的檔案檔名
+   *使用者或群組名稱
+    *-user name
+    *-group name
+   *檔案權限及名稱
+    *-name filename
+    * -type TYPE 
+    * -perm [+-]mode -必须都有 +有部分
+    * -size [+-]SIZE
+   *額外可進行的動作
+    *-exec command 对搜索结果执行命令
+     *不能用别名
+     *find / -perm +7000 -exec ls -l {} \; {}代表搜索内容 ;为命令结束 \为转义
+    * -print 打印到屏幕
+   *可以使用正则表达式
+   *逻辑指令
+    *-a and
+    *-o 或 or 
+    *-a ! 代表反项选择
+ *權限與指令間的關係
+  *進入某目錄成為『可工作目錄』
+  *目錄內讀取一個檔案
+  *修改一個檔案的基本權限
+  *建立一個檔案的基本權限
+  *進入某目錄並執行該目錄下的某個指令之基本權限
+ *目录需要一层一层进入 所以权限要相关每层都有
+ *实例: 专案开发
+==== Linux 磁碟與檔案系統管理 ====
+ *  /dev/sd[a-p][1-15]：為SCSI, SATA, USB, Flash隨身碟等介面的磁碟檔名；
+ * /dev/hd[a-d][1-63]：為 IDE 介面的磁碟檔名；
+ * 分区要格式化后才有文件系统
+ *一個可被掛載的資料為一個檔案系統而不是一個分割槽 LVM RAID 技术造成的
+ *索引式檔案系統(indexed allocation) 由inode就知道所有的BLOCK
+ *FAT系统 通过BLOCK找下一个BLOCK
+ *認識 EXT2 檔案系統
+  *superblock：記錄此 filesystem 的整體資訊
+   *  block 與 inode 的總量；
+   * 未使用與已使用的 inode / block 數量；
+   * block 與 inode 的大小 (block 為 1, 2, 4K，inode 為 128 bytes)；
+   * filesystem 的掛載時間、最近一次寫入資料的時間、最近一次檢驗磁碟 (fsck) 的時間等檔案系統的相關資訊；
+   * 一個 valid bit 數值，若此檔案系統已被掛載，則 valid bit 為 0 ，若未被掛載，則 valid bit 為 1 。
+   *一個檔案系統應該僅有一個 superblock 而已 其余为备份
+  *inode：記錄檔案的屬性，一個檔案佔用一個inode，同時記錄此檔案的資料所在的 block 號碼
+   * 該檔案的存取模式(read/write/excute)；
+   * 該檔案的擁有者與群組(owner/group)；
+   * 該檔案的容量；
+   * 該檔案建立或狀態改變的時間(ctime)；
+   * 最近一次的讀取時間(atime)；
+   * 最近修改的時間(mtime)；
+   * 定義檔案特性的旗標(flag)，如 SetUID...；
+   * 該檔案真正內容的指向 (pointer)
+   *一個間接, 一個雙間接與一個三間接記錄區
+  *block：實際記錄檔案的內容，若檔案太大時，會佔用多個 block
+   *1K, 2K 及 4K 
+   *檔案小於 block ，則該 block 的剩餘容量就不能夠再被使用了
+  *多個區塊群組 (block group) 各自不同的superblock inode block
+  *檔案系統最前面有一個開機磁區(boot sector) 安裝開機管理程式
+  *Filesystem Description (檔案系統描述說明)
+   *描述每個 block group
+  *block bitmap (區塊對照表)
+   *查空闲block
+  *inode bitmap (inode 對照表)
+  *與目錄樹的關係
+   *目录就是文件 是系统用的文件
+   *目錄幾乎都是 1024 的倍數
+ *metadata 和 資料存放區域
+ *日誌式檔案系統 (Journaling filesystem)
+  *对操作进行记录 可以快速的知道哪个文件有问题
+  *日志一定要在操作前写入
+ *ext2到ext3不用格式化 可转换
+ *dumpe2fs 查看文件系统
+  *上半部是 superblock 內容 下半部則是每個 block group 的資訊
+ *df 查看挂载的文件系统和使用率
+ *e2fsck 修复不一致性
+ *掛載點的意義 (mount point)
+  *掛載點一定是目錄，該目錄為進入該檔案系統的入口
+ *Linux 支援的檔案系統
+  * 傳統檔案系統：ext2 / minix / MS-DOS / FAT (用 vfat 模組) / iso9660 (光碟)等等；
+  * 日誌式檔案系統： ext3 / ReiserFS / Windows' NTFS / IBM's JFS / SGI's XFS
+  * 網路檔案系統： NFS / SMBFS 
+  *cat /proc/filesystems 现在可以的文件系统
+  *s -l /lib/modules/$(uname -r)/kernel/fs支持的文件系统
+ * Linux VFS (Virtual Filesystem Switch)
+ *磁碟與目錄的容量
+  * df：列出檔案系統的整體磁碟使用量；
+  * du：評估檔案系統的磁碟使用量(常用在推估目錄所佔容量)
+   *du -sh 列出目录所占用的空间
+ *ln: 實體連結與符號連結
+  *檔名只與目錄有關，但是檔案內容則與 inode 有關
+  *hard link
+   *inode相同 引用大于1
+   *不能跨 Filesystem；
+   *不能 link 目錄
+   *目录的 . 和 .. 使用的是这种技术
+  *Symbolic Link
+   *-s 选项
+
+ *磁碟分割： fdisk
+  *要不挂载的状态下使用
+  *可以使用partprobe重新挂载硬件分区表 使得不用重启
+ *磁碟格式化： mkfs
+  *综合指令 有mkfs.ex2 mkfs.msdos等
+  *mke2fs指令有特殊需要时候使用
+ *磁碟檢驗： fsck
+  *執行 fsck 時， 被檢查的 partition 務必不可掛載到系統上！亦即是需要在卸載的狀態喔
+  *e2fsck 有更全面的功能
+  *lost+found 目录是fsck发现的有问题的資料
+  *badblocks 检查坏轨 = mke2fs -c 裝置檔名
+ *磁碟掛載與卸載
+  * 單一檔案系統不應該被重複掛載在不同的掛載點(目錄)中；
+  * 單一目錄不應該重複掛載多個檔案系統；
+  * 要作為掛載點的目錄，理論上應該都是空目錄才是。
+   *如果你要用來掛載的目錄裡面並不是空的，那麼掛載了檔案系統之後，原目錄下的東西就會暫時的消失
+  *mount
+   *-a 使用/etc/fstab来掛載
+   *-t 类型ext2, ext3, vfat, reiserfs, iso9660(光碟格式),nfs, cifs, smbfs(此三種為網路檔案系統類型)
+   *-o 额外参数
+   *可以使用label掛載
+   *参考
+    */etc/filesystems：系統指定的測試掛載檔案系統類型
+    */proc/filesystems：Linux系統已經載入的檔案系統類型
+    */lib/modules/$(uname -r)/kernel/fs/ 驱动目录
+   *掛載隨身碟fdisk -l; mount -t vfat -o iocharset=cp950 /dev/sda1 /mnt/flash
+   *重新掛載根目錄: mount -o remount,rw,auto /   只是改变属性而已
+   *掛載目錄 mount --bind /home /mnt/home
+   *umount (將裝置檔案卸載)
+ *dumpe2fs 来查询Label
+ *磁碟參數修訂
+  *mknod
+   *设备用类型 主 从设备编号表示 用mknod生成
+   *[[http://www.kernel.org/pub/linux/docs/device-list/]]设备编号标准
+   *Major主要用于驱动的识别
+   *Minor主要用于设备的区别
+   * mknod 裝置檔名 [bcp] [Major] [Minor]
+  *e2label
+   *可以给硬盘分区命名 不用怕换磁道 可能是记录在硬盘中
+   *可以不用固定的设备文件
+  *tune2fs
+   *-j转换为ext3
+   *-L 加Label
+  *hdparm
+   *设置硬盘参数
+   *可以设置硬盘的参数 完全了解设备
+   
+  *設定開機掛載
+   */etc/fstab 默认挂载
+   *如若進行卸載﹐您必須先將工作目錄移到 mount point(及其子目錄) 之外。
+  */proc/mounts下是挂载的情况
+  特殊裝置 loop 掛載
+   *mount -o loop /root/centos5.2_x86_64.iso /mnt/centos_dvd
+   *建立大檔案以製作 loop 裝置檔案
+    *可以用来当虚拟硬盘使用
+{{{
+dd if=/dev/zero of=/home/loopdev bs=1M count=512
+mkfs -t ext3 /home/loopdev
+mount -o loop /home/loopdev /media/cdrom/
+}}}
+ *記憶體置換空間(swap)之建置
+  * 設定一個 swap partition
+  * 建立一個虛擬記憶體的檔案
+  *mkswap 指令
+  *swapon 挂载
+   *-s 看挂载的设备
+  *free 看内存空闲
+  *swapoff 關掉 swap file
+  *swap支持休眠模式
+  *swap还有限制
+   *最多還是僅能建立到 32 個 swap 的數量
+   *swap 總量最大也是僅能達 64GB 就是了
+   *交换分区和硬盘分区一样 可以多块加载 用文件模拟 就是一特殊格式的分区
+
+ *boot sector 與 superblock 的關係
+  *block 為 1024 bytes (1K) 時 为分开的
+  *block 大於 1024 bytes (2K, 4K) 時 两者有重叠 防止空间浪费 对齐空间
+ *磁碟空間之浪費問題
+  *文件小但是还是要分配block
+ 
+ *parted 指令
+  *GNU parted 可用于大于2TB的磁盘
+ *硬盘还要有引导块
+ */dev/shm/ 利用記憶體虛擬出來的磁碟空間
+ */proc 的東西都是 Linux 系統所需要載入的系統資料
+
+==== 檔案的壓縮與打包 ====
+ *意义
+  *省空间
+  *方便操作
+  *利于网络传输
+ *Linux 系統常見的壓縮指令
+  *.Z         compress 程式壓縮的檔案；
+  *.gz        gzip 程式壓縮的檔案；
+  *.bz2       bzip2 程式壓縮的檔案；
+  *.tar       tar 程式打包的資料，並沒有壓縮過；
+  *.tar.gz    tar 程式打包的檔案，其中並且經過 gzip 的壓縮
+  *.tar.bz2   tar 程式打包的檔案，其中並且經過 bzip2 的壓縮
+  *gzip
+   *在預設的狀態下原本的檔案會被壓縮成為 .gz 的檔名， 原始檔案就不再存在
+   *-d解压
+   *-c产生文件
+   *-数字 压缩比
+   *-v 显示压缩比
+  *zcat 显示文件中的内容
+  *bzip2, bzcat 和 gzip和zcat操作相同
+ *打包指令：tar
+  *-j  ：透過 bzip2 的支援進行壓縮/解壓縮：此時檔名最好為 *.tar.bz2
+  *-z  ：透過 gzip  的支援進行壓縮/解壓縮：此時檔名最好為 *.tar.gz  
+  *-p  ：保留備份資料的原本權限與屬性，常用於備份(-c)重要的設定檔
+  * 壓　縮：tar -jcv -f filename.tar.bz2 要被壓縮的檔案或目錄名稱
+  * 查　詢：tar -jtv -f filename.tar.bz2
+  *備份 查閱 解壓縮  /etc/ 目錄
+{{{
+tar -jpcv -f /root/etc.tar.bz2 /etc
+tar -jtv -f /root/etc.tar.bz2
+tar -jxv -f /root/etc.tar.bz2或tar -jxv -f /root/etc.tar.bz2 -C /tmp 
+
+
+}}}
+  * 解壓縮：tar -jxv -f filename.tar.bz2 -C 欲解壓縮的目錄

@@ -1,0 +1,47 @@
+= wxPython in Action =
+ *wxPython作者写的
+{{{#!wiki
+<<TableOfContents(3)>>
+== Introduction to wxPython ==
+=== Welcome to wxPython ===
+ *一切能在屏幕上显示的都是window 别的系统也叫widget
+ *wxPython使用[[http://www.swig.org/|SWIG]]来进行接口封装
+ *使用其他的子包时一定要先倒入wx包
+ *MainLoop()后就进入wxPython的控制
+ *有些widget是直接用[[Python]]写成的
+ *wx中的w代表Windows x代表Unix
+ *wxPython中可以动态绑定响应事件
+=== Giving your wxPython program a solid foundation ===
+ *程序都需要application对象和top-level window对象
+ *一般初始化放在OnInit()中
+ *窗口不一定要在OnInit()中创建 只要创建窗口前创建了App对象
+ *wx.PySimpleApp实现了简单的OnInit() 可以在不想继承wx.App时候使用
+ *C++对wxPython的影响：使用不同的方法命名 使用Get和Set方法 不能直接使用属性
+ *默认不同平台的输出从定向是不同的 最好统一设置
+ *wx.App对象的输出重定向在它的生存期中
+ *OnExit()处理退出
+ *App.SetExitOnFrameDelete(flag)设置窗口都关闭的时候时候要退出
+ *对于wx.EVT_QUERY_END_SESSION 可以使用wx.CloseEvent.CanVeto() wx.CloseEvent.Veto()来否决关闭
+ *top-level window是wx.Frame的子类
+ *frame的parent属性代表如果parent不存在的情况下当前的窗口也要关闭
+ *window要有ID，而且ID最好是独一的
+ *使用wx.NewId()可以获得ID
+ *wx.Point wx.Size
+ *Table 2.2 Frame的style
+ *还有扩展属性
+ *wx.Panel会相应tab键
+ *toolbar中的按键和menu是使用一样的事件 触发相同的功能
+ *event的类型比event多
+ *wx.MouseEvent有14总类型
+=== Working in an event-driven environment ===
+ *Table 3.1 event术语
+ *wx.EvtHandler.ProcessEvent()用来分发event
+ *响应事件使用使用On<event>()命名
+ *图3.3 表示处理事件处理流程
+ *wx.Event.Skip() 表示要继续处理
+ *只有wx.CommandEvent会向上传递
+ *在进行长时间计算的时候要中途进行消息处理
+== Essential wxPython ==
+== Advanced wxPython ==
+
+}}}

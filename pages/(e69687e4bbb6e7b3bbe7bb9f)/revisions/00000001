@@ -1,0 +1,27 @@
+= 文件系统 =
+ *有实实在在的存储分区的文件系统
+  *fat16 fat32 ntfs ext2 ext3 jffs2 yaffs
+ *虚拟文件系统
+  *proc sysfs 内核临时生成
+ *FHS
+  */bin
+  */sbin
+  */dev
+ */dev创建
+  *手工创建
+  *devfs 过时
+  *udev
+ */etc
+ */lib
+ */home
+ */root
+ */usr 经常不变
+ */var 可变
+ */proc 内核生成 没有实际的存储设备
+ */mnt
+ */temp
+== 根文件系统创建 ==
+ *工具
+  *Busybox
+  *fileutils
+  *shellutils 

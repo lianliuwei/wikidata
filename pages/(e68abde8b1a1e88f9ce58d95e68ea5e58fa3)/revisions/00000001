@@ -1,0 +1,4 @@
+= 抽象菜单接口 =
+ *CMenu类
+ *CMenu分成三类 Popup Separator Item
+ *Item才有ID

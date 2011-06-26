@@ -1,0 +1,18 @@
+= 向S3C2410移植Linux =
+ *时间要抓紧
+ *开发测试用
+== Bootloader烧写 ==
+ *使用JTAG烧写
+== 构建工具 ==
+ *Ubuntu本机构建用软件包
+  *build-essential bison flex manpages-dev
+== U-Boot ==
+ *自己编译
+ *获得源代码
+ *移植
+ *编译
+ *
+== 应用程序 ==
+ *使用NFS
+== 资料 ==
+ *嵌入式Linux应用开发完全手册

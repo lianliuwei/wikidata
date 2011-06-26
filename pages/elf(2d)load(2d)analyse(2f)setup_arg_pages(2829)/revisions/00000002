@@ -1,0 +1,263 @@
+== setup_arg_pages() ==
+{{{#! cplusplus
+int setup_arg_pages(struct linux_binprm *bprm, int executable_stack)
+{
+	unsigned long stack_base;
+	struct vm_area_struct *mpnt;
+	struct mm_struct *mm = current->mm;
+	int i;
+	long arg_size;
+
+#ifdef CONFIG_STACK_GROWSUP
+	/* Move the argument and environment strings to the bottom of the
+	 * stack space.
+	 */
+	int offset, j;
+	char *to, *from;
+
+	/* Start by shifting all the pages down */
+	i = 0;
+	for (j = 0; j < MAX_ARG_PAGES; j++) {
+		struct page *page = bprm->page[j];
+		if (!page)
+			continue;
+		bprm->page[i++] = page;
+	}
+
+	/* Now move them within their pages */
+	offset = bprm->p % PAGE_SIZE;
+	to = kmap(bprm->page[0]);
+	for (j = 1; j < i; j++) {
+		memmove(to, to + offset, PAGE_SIZE - offset);
+		from = kmap(bprm->page[j]);
+		memcpy(to + PAGE_SIZE - offset, from, offset);
+		kunmap(bprm->page[j - 1]);
+		to = from;
+	}
+	memmove(to, to + offset, PAGE_SIZE - offset);
+	kunmap(bprm->page[j - 1]);
+
+	/* Adjust bprm->p to point to the end of the strings. */
+	bprm->p = PAGE_SIZE * i - offset;
+
+	/* Limit stack size to 1GB */
+	stack_base = current->rlim[RLIMIT_STACK].rlim_max;
+	if (stack_base > (1 << 30))
+		stack_base = 1 << 30;
+	stack_base = PAGE_ALIGN(STACK_TOP - stack_base);
+
+	mm->arg_start = stack_base;
+	arg_size = i << PAGE_SHIFT;
+
+	/* zero pages that were copied above */
+	while (i < MAX_ARG_PAGES)
+		bprm->page[i++] = NULL;
+#else
+	stack_base = STACK_TOP - MAX_ARG_PAGES * PAGE_SIZE;
+	mm->arg_start = bprm->p + stack_base;
+	arg_size = STACK_TOP - (PAGE_MASK & (unsigned long) mm->arg_start);
+#endif
+
+	bprm->p += stack_base;
+	if (bprm->loader)
+		bprm->loader += stack_base;
+	bprm->exec += stack_base;
+
+	mpnt = kmem_cache_alloc(vm_area_cachep, SLAB_KERNEL);
+	if (!mpnt)
+		return -ENOMEM;
+
+	if (security_vm_enough_memory(arg_size >> PAGE_SHIFT)) {
+		kmem_cache_free(vm_area_cachep, mpnt);
+		return -ENOMEM;
+	}
+
+	memset(mpnt, 0, sizeof(*mpnt));
+
+	down_write(&mm->mmap_sem);
+	{
+		mpnt->vm_mm = mm;
+#ifdef CONFIG_STACK_GROWSUP
+		mpnt->vm_start = stack_base;
+		mpnt->vm_end = PAGE_MASK &
+			(PAGE_SIZE - 1 + (unsigned long) bprm->p);
+#else
+		mpnt->vm_start = PAGE_MASK & (unsigned long) bprm->p;
+		mpnt->vm_end = STACK_TOP;
+#endif
+		/* Adjust stack execute permissions; explicitly enable
+		 * for EXSTACK_ENABLE_X, disable for EXSTACK_DISABLE_X
+		 * and leave alone (arch default) otherwise. */
+		if (unlikely(executable_stack == EXSTACK_ENABLE_X))
+			mpnt->vm_flags = VM_STACK_FLAGS |  VM_EXEC;
+		else if (executable_stack == EXSTACK_DISABLE_X)
+			mpnt->vm_flags = VM_STACK_FLAGS & ~VM_EXEC;
+		else
+			mpnt->vm_flags = VM_STACK_FLAGS;
+		mpnt->vm_page_prot = protection_map[mpnt->vm_flags & 0x7];
+		insert_vm_struct(mm, mpnt);
+		mm->total_vm = (mpnt->vm_end - mpnt->vm_start) >> PAGE_SHIFT;
+	}
+
+	for (i = 0 ; i < MAX_ARG_PAGES ; i++) {
+		struct page *page = bprm->page[i];
+		if (page) {
+			bprm->page[i] = NULL;
+			install_arg_page(mpnt, page, stack_base);
+		}
+		stack_base += PAGE_SIZE;
+	}
+	up_write(&mm->mmap_sem);
+	
+	return 0;
+}
+}}}
+== setup_arg_pages() 注释==
+{{{#! cplusplus
+该函数的参数解释如下:
+bprm 是可执行的文件结构,不多介绍。
+stack_top 是该 process 的用户栈的顶。
+Executable_stack 是一个标志值,有下列 3 个值:
+/* Stack area protections */
+#define EXSTACK_DEFAULT  0 /* Whatever the arch defaults to */
+#define EXSTACK_DISABLE_X 1 /* Disable executable stacks */
+#define EXSTACK_ENABLE_X 2 /* Enable executable stacks */
+0 表示 stack 是否可执行,不做特殊处理,由所运行的 CPU 决定;
+1 表示 stack 的不可执行;
+2 表示 stack 的可执行。
+int setup_arg_pages(struct linux_binprm *bprm, int executable_stack)
+{
+	unsigned long stack_base;
+	struct vm_area_struct *mpnt;
+	struct mm_struct *mm = current->mm;
+	int i;
+	long arg_size;
+
+#ifdef CONFIG_STACK_GROWSUP
+i386是向第地址方向 这项跳过
+这里是 stack grow up 的方式,不讨论。常规情况下 stack 是 grow down(向下生长的),
+所以这按常规逻辑来。除非你在 config 内核时打开 CONFIG_STACK_GROWSUP 选项。
+
+	/* Move the argument and environment strings to the bottom of the
+	 * stack space.
+	 */
+	int offset, j;
+	char *to, *from;
+
+	/* Start by shifting all the pages down */
+	i = 0;
+	for (j = 0; j < MAX_ARG_PAGES; j++) {
+		struct page *page = bprm->page[j];
+		if (!page)
+			continue;
+		bprm->page[i++] = page;
+	}
+
+	/* Now move them within their pages */
+	offset = bprm->p % PAGE_SIZE;
+	to = kmap(bprm->page[0]);
+	for (j = 1; j < i; j++) {
+		memmove(to, to + offset, PAGE_SIZE - offset);
+		from = kmap(bprm->page[j]);
+		memcpy(to + PAGE_SIZE - offset, from, offset);
+		kunmap(bprm->page[j - 1]);
+		to = from;
+	}
+	memmove(to, to + offset, PAGE_SIZE - offset);
+	kunmap(bprm->page[j - 1]);
+
+	/* Adjust bprm->p to point to the end of the strings. */
+	bprm->p = PAGE_SIZE * i - offset;
+
+	/* Limit stack size to 1GB */
+	stack_base = current->rlim[RLIMIT_STACK].rlim_max;
+	if (stack_base > (1 << 30))
+		stack_base = 1 << 30;
+	stack_base = PAGE_ALIGN(STACK_TOP - stack_base);
+
+	mm->arg_start = stack_base;
+	arg_size = i << PAGE_SHIFT;
+
+	/* zero pages that were copied above */
+	while (i < MAX_ARG_PAGES)
+		bprm->page[i++] = NULL;
+#else
+常规方式,即 stack grow down 方式。
+	stack_base = STACK_TOP - MAX_ARG_PAGES * PAGE_SIZE;
+最小的量
+	mm->arg_start = bprm->p + stack_base;
+bprm－>p即是参数的开头 
+	arg_size = STACK_TOP - (PAGE_MASK & (unsigned long) mm->arg_start);
+#endif
+
+	bprm->p += stack_base;
+指向虚拟地址
+	if (bprm->loader)
+		bprm->loader += stack_base;
+elf载入里没有设这项
+	bprm->exec += stack_base;
+
+	mpnt = kmem_cache_alloc(vm_area_cachep, SLAB_KERNEL);
+	if (!mpnt)
+		return -ENOMEM;
+设计内存管理跳过
+虽然存放参数的空间是有了,但还没有被映射进 process 的虚拟地址空间,所以先分配为了管
+理这一块虚拟地址空间的数据结构 VMA(Virtual Memory Area)。
+
+	if (security_vm_enough_memory(arg_size >> PAGE_SHIFT)) {
+		kmem_cache_free(vm_area_cachep, mpnt);
+		return -ENOMEM;
+	}
+
+	memset(mpnt, 0, sizeof(*mpnt));
+初始化该数据结构。
+	down_write(&mm->mmap_sem);
+由于要操作当前进程的 memory mapping,所以先获得对 memory mapping 进行保护的
+semaphore。
+
+	{
+		mpnt->vm_mm = mm;
+#ifdef CONFIG_STACK_GROWSUP
+忽略
+		mpnt->vm_start = stack_base;
+		mpnt->vm_end = PAGE_MASK &
+			(PAGE_SIZE - 1 + (unsigned long) bprm->p);
+#else
+		mpnt->vm_start = PAGE_MASK & (unsigned long) bprm->p;
+		mpnt->vm_end = STACK_TOP;
+#endif
+		/* Adjust stack execute permissions; explicitly enable
+		 * for EXSTACK_ENABLE_X, disable for EXSTACK_DISABLE_X
+		 * and leave alone (arch default) otherwise. */
+		if (unlikely(executable_stack == EXSTACK_ENABLE_X))
+			mpnt->vm_flags = VM_STACK_FLAGS |  VM_EXEC;
+如果 stack 是可执行的,则设置管理该块虚存的 vma 的属性为可执行(VM_EXEC)
+		else if (executable_stack == EXSTACK_DISABLE_X)
+			mpnt->vm_flags = VM_STACK_FLAGS & ~VM_EXEC;
+如果 stack 是不可执行的,则清除管理该块虚存的 vma 的可执行(VM_EXEC) 属性
+		else
+			mpnt->vm_flags = VM_STACK_FLAGS;
+但不管怎么样,表示 stack 的 flag(VM_STACK_FLAGS)总要设的。
+		mpnt->vm_page_prot = protection_map[mpnt->vm_flags & 0x7];
+		insert_vm_struct(mm, mpnt);
+		mm->total_vm = (mpnt->vm_end - mpnt->vm_start) >> PAGE_SHIFT;
+vma 的管理是用红黑树实现的(最起码我几年前看2.4 内核时是这么实现的,现在应该没变吧,
+我懒得看了。 )所以在这里要把该 vma 的节点要保持"平衡"的插入。
+	}
+
+	for (i = 0 ; i < MAX_ARG_PAGES ; i++) {
+		struct page *page = bprm->page[i];
+		if (page) {
+			bprm->page[i] = NULL;
+			install_arg_page(mpnt, page, stack_base);
+		}
+		stack_base += PAGE_SIZE;
+	}
+	up_write(&mm->mmap_sem);
+
+	return 0;
+上面的 for 循环为32页物理内存建立真正的映射关系,也就是操作 Page Table Entry。
+这里释放的 page 是在 copy_strings()函数里被申请的,具体请参见该函数的分析。
+
+}
+}}}

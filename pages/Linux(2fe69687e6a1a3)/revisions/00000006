@@ -1,0 +1,72 @@
+= Linux下文档 和帮助的使用 =
+== 在线帮助工具 ==
+=== man ===
+ *使用troff格式
+ *俩种man 传统man man-db
+ *结构
+  1. Executable programs or shell commands
+  2. System calls (functions provided by the kernel)
+  3. Library calls (functions within program libraries)
+  4. Special files (usually found in /dev)
+  5. File formats and conventions eg /etc/passwd
+  6. Games
+  7. Miscellaneous (including macro  packages  and  conven-
+           tions), e.g. man(7), groff(7)
+  8. System administration commands (usually only for root)
+  9. Kernel routines [Non standard]
+ *-a查看全部页面
+ *whatis 大略查看 可用正则表达式
+ *配置文件/etc/manpath.config 可以看出man页面的位置
+ *不能随便浏览
+ *apropos 进行搜索 和 -k 相同 可加正则表达式
+ *man页面由模块组成
+ *每个模块都有intro 用于介绍
+ *[[http://www.kernel.org/doc/man-pages/index.html|man的在线介绍]] 可以大概浏览
+ *7模块有好东西
+=== info系统 ===
+ *gnu工具文档首选
+ *超链接 交叉引用 像web
+ *用Texinfo格式
+ *可用info程序 Emacs pinfo程序 gome-help khelpcenter
+ *info程序
+  *查看info页面和man页面 
+ *推荐页面 coreutils cpp Gcc Ld Libc
+=== gnome-help ===
+ *会上网查找
+ *可以查找man 和 info
+ *可以使用gnome-help 的命令
+ *又叫Yhelp
+== 网络信息 ==
+ *[[http://www.gnu.org]] 
+ *[[http://sourceforge.net]] 开源老巢
+ *[[http://freshmeat.net/]]
+ *[[http://www.tldp.org]] Linux文档计划 注意看是否过期
+ *Usenet 可用google浏览
+ *邮件列表 用于找人
+ *[[http://marc.info/]] 邮件列表存档 
+== 文档格式 ==
+ *纯文本
+ *TeX/LaTex/DVI 脚本Tex/LaTex 产生 DVI
+ *DocBook 是SGML（XML的超集）的一种DTD 可以产生很多种文档格式 需要学习呀 有docbook-utils
+ *HTML
+ *Texinfo 是一种文档源 可以产生info HTML DocBook
+ *PostScript 有Ghostscript工具
+ *PDF evince文件浏览器
+ *toff groff为gnu版本
+== 查找 ==
+ *放在文件系统中 如 /usr/share/doc
+ *看包管理器
+ *上官网查 保证最新
+ *特殊方法
+== 文档应有特性 ==
+ *交叉引用
+ *索引
+ *格式转换
+ *使用不同格式的文件
+ *易于修改
+== Linux内核文档 ==
+ *[[http://kernel.org/]] 内核网站 要关注
+ *内核mod可用nodinfo来查看
+ *内核源代码中的Documentation目录
+== 编程开发文档 ==
+ *系统中的.h文档

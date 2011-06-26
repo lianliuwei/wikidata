@@ -1,0 +1,22 @@
+= U-Boot =
+ *通用bootloader
+== 源代码 ==
+
+ *board 开发板
+ *平台相关
+  *cpu cpu架构
+  *lib_* 通用的文件
+ *通用函数
+  *include
+  *include/configs 配置文件
+ *通用设备驱动
+ *doc 文档
+ *examples 示例
+ *tools 工具
+== Makefile ==
+ *配置项
+{{{uptech2410_config :       unconfig
+        @$(MKCONFIG) $(@:_config=) arm arm920t uptech2410 uptech s3c24×0 
+}}}
+ *CPU的架构、CPU的类型、 开发板的型号(BOARD)，uptech: 开发商vender)、s3c24×0: 片上系统(SOC)
+== 配置构造工具 ==

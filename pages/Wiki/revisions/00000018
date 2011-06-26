@@ -1,0 +1,16 @@
+wiki试验田
+
+----
+[[file:///bin]]
+----
+{{{#! cpulspuls
+int main(int argv, char ＊argv[])
+{
+return 0;
+}
+}}}
+----
+{{{#!python
+from colors import palette
+palette.colorize('python')
+}}}

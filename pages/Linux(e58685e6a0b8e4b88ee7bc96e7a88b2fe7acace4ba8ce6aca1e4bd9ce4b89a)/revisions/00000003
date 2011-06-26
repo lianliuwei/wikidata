@@ -1,0 +1,122 @@
+== 实验目的： ==
+ *1。实现子进程读键盘 父进程显示
+ *2。通过信号机制来实现通信
+ *3。遇到q时退出
+== 实验过程：==
+ *1。实现 1。3。的功能 pipe.c
+ *2。添加 2。的功能 pipe2.c
+== 实验分析： ==
+{{{#! c
+void father()
+{
+  close(fd[1]);
+  while(1){
+    n = read(fd[0], buf, BUFSIZE-1);
+    if(!strcmp(buf, "q\n"))break;
+    buf[n] = '\n';
+    printf("parent: %s", buf);
+  }
+  close(fd[0]);
+}
+
+void child()
+{
+  close(fd[0]);
+  while(1){
+    fgets(buf, BUFSIZE, stdin);
+    write(fd[1], buf, BUFSIZE-1);
+    if(!strcmp(buf, "q\n"))break;
+    
+  }
+  close(fd[1]);
+}
+}}}
+ *main（）里分成父子进程 后分别执行 child() 和 father()
+ *child读 father利用管道的特性阻塞等待
+ *father写向屏幕
+ *接收时要判断是否是退出信号 输入是"q\n" 不是 "q" 这点忽视会不能退出
+{{{#! c
+
+#define BUFSIZE 255
+//两进程用同一中断号码
+
+int fd[2], n;
+char buf[BUFSIZE];
+struct sigaction handler;
+sigset_t ss;
+pid_t fp;
+pid_t cp;
+
+void fsig(int sn)
+{ 
+  printf("father SIGUSR1\n");
+  n = read(fd[0], buf, BUFSIZE-1);
+  if(!strcmp(buf, "q\n"))exit(0);
+  buf[n] = '\n';
+  printf("parent: %s", buf);
+  kill(cp, SIGUSR1);
+}
+
+void father()
+{
+  close(fd[1]);
+  handler.sa_handler = fsig;
+  if(sigaction(SIGUSR1, &handler, NULL)){
+    perror("sigaction");
+  }
+  while(1){
+    pause();
+  }
+  close(fd[0]);
+}
+
+void csig()
+{
+  printf("child SIGUSR1\n");
+}
+
+void child()
+{
+  close(fd[0]);
+  cp = getpid();//防止误用
+  handler.sa_handler = csig;
+  if(sigaction(SIGUSR1, &handler, NULL)){
+    perror("sigaction");
+  }
+  while(1){
+    fgets(buf, BUFSIZE, stdin);
+    write(fd[1], buf, BUFSIZE-1);
+    kill(fp, SIGUSR1);  //反这里不然到q时就会失效
+    if(!strcmp(buf, "q\n"))break;
+//  kill(fp,SUGUSR1); //这是错误的 但是为什么子进程退出 ps后 一看还有显示 但是是defunct状态
+    pause();    
+  }
+  close(fd[1]);
+}
+
+int main(int argc, char* argv[])
+{
+  if(pipe(fd))
+    perror("PIPE error!");
+  //获得夫pid
+  fp = getpid();
+  cp = fork();
+  if(cp < 0){
+    perror("Fork failed!");
+    close(fd[0]);
+    close(fd[1]);
+  }
+  if(cp == 0) {
+    child();
+    exit(0);
+  }
+  
+  father();
+  exit(0);
+}
+
+}}}
+ *要先在fork()前保存父进程pid 子进程会用
+ *分别注册 fsig() 和 csig() 来处理父 和 子 的信号处理
+ *使用pause()来等待消息
+ *用kill()来发送消息

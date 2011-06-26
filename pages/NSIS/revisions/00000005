@@ -1,0 +1,13 @@
+= NSIS =
+ *[[NSIS 源代码分析]]
+ *[[http://nsis.sourceforge.net]]
+ *[[http://en.wikipedia.org/wiki/Nullsoft_Scriptable_Install_System]]
+ *[[http://www.dreams8.com/]]NSIS论坛
+ *[[http://zlemon.com/category/program/nsis]]NSIS相关文章
+ *[[http://www.dreams8.com/redirect.php?tid=4213&goto=lastpost|NSIS怎样运行安装包里的程序?]] 先解压后安装
+ *NISIS连if else都没有
+ *使用file指令可以递归添加 并排除特定的文件
+ *RMDir /r 删除文件的时候 和 SetOutPath设置的变量不能相同 不然删除不掉 可能被SetOutPath锁定了
+ *[[http://www.cnrui.cn/blog/article.asp?id=52|官方 NSIS 插件全集简单介绍]]
+ *[[http://ansifa.blog.163.com/blog/static/5280310020109243949314/|NSIS文件关联方案]]
+ *[[http://my.opera.com/johnllon/blog/2007/03/27/nsis|安装程序的NSIS脚本的详细说明]]

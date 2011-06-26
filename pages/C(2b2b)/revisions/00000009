@@ -1,0 +1,16 @@
+= C++ =
+ *超级难的语言
+ *[[http://www.cplusplus.com/]]
+ *[[http://blog.csdn.net/freefalcon/articles/52619.aspx]] c++资源
+ *[[Inside C++ object model]]未看过
+ *C++程序设计之四书五经.doc
+ *C++资源之不完全导引.doc
+ *[[TCPL]]
+ *Visual Studio附带其自己的C\C++ runtime库的代码 在Visual Studio安装目录\VC\crt\src中
+ *Visual Studio附带其自己的ATL库和MFC库的代码 在Visual Studio安装目录\VC\atlmfc\src中
+ *[[http://blog.csdn.net/pongba|刘未鹏 C++的罗浮宫]] 高级讨论
+ *[[http://www2.research.att.com/~bs/homepage.html|C++之父的主页]]
+ *[[http://en.wikipedia.org/wiki/Generic_programming|泛型编程wiki主页]]
+ *[[http://blog.csdn.net/fmddlmyy/archive/2007/02/14/1510176.aspx|眼见为实(1)：C++基本概念在编译器中的实现]]
+----
+ [[Category Programming Language]] 

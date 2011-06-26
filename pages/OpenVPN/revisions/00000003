@@ -1,0 +1,8 @@
+= OpenVPN =
+== 问题 ==
+ *OpenVPN是基于 网关模式 还是 代理模式
+== 源码分析 ==
+ *[[http://hi.baidu.com/andy_lu81/blog/item/abce600e9344b1ca7acbe1c0.html|OPENVPN+OPENSSL数据流程分析]]
+== 资料 ==
+ *[[http://en.wikipedia.org/wiki/OpenVPN|OpenVPN 英文wiki]]
+ *[[http://openvpn.net/release/|源代码]]

@@ -1,0 +1,74 @@
+## page was renamed from wiki学习
+<<TableOfContents>>
+= 个人wiki =
+ *DokuWiki 
+
+ *Twiki
+
+ *MoinMoin 很好有潜力
+
+ *mediaWiki 是否要用这个 可以试一下 太大了以后再说吧
+
+ *google Apps 中的 Google sites
+
+
+= MoinMoin =
+ *概述
+  *wiki就是一网页系统
+ *搜索
+  *页面头的wikiName可以用于搜索所有的引用
+ *链接
+  *内部
+  *用wikiName
+ *外部
+  *链接到别的wiki用interWiki
+ *问题
+  *如何使一个页属于多个分类之中
+  *如何链接一个本地的资源
+  *比如要用来作资料管理
+  *还有用来分析源码 
+  *用链接运行不能启动
+ *技巧
+  *输入法用半角的不然你会死得很惨的
+  *输入带有数字编号的list一定要空格
+  *空格很重要
+
+== 学习计划 ==
+ *正向 
+  *常用的编辑功能
+  *开发MoinMoin
+  *wiki的开发
+ *逆向
+  *通过学习别的网站
+   *[[http://wiki.apache.org/]]
+   *[[http://kernelnewbies.org/Linux_Kernel_Newbies]]
+== 学习资源 ==
+ */software/moin-1.8.3 文件夹下
+  *HelpForUsers
+  *HelpContents
+ *[[http://moinmo.in/]]官网
+ *[[http://en.wikipedia.org/wiki/MoinMoin]]
+  *各MoinMoin页面
+  *用MoinMoin的网站
+  *[[http://moinmo.in/MoinMoinWikis|MoinMoinWiki]](上面有一堆)
+  *[[http://www.opensourcexpress.com/HelpCenter/00020_MoinMoin]]MoinMoin语法
+  *[[http://www.woodpecker.org.cn/share/doc/SKSIG/DriveIntoMoinPub/| 一份MoinMoin介绍资料]]有插件介绍
+  *[[http://simonw.cnblogs.com/category/77486.html|另一份MoinMoin相关资料]]
+  *[[http://wiki.cwowaddon.com|中国魔兽世界开发者维基，优秀的MoinMoin范例站点]]
+  *[[http://www.chinesepython.org/cgi_bin/moingb.cgi/_d6_d0_f2_fe_b4_f3_d4_d3_d4_ba|中蟒大杂院]]
+== MoinMoin学习方法 ==
+ *看描述
+ *看已有的页面
+ *可否用mediawiki的规则
+== 记录 ==
+ *使用{{{<<TableOfContents>>}}}来产生目录
+ *使用{{{<<Include(/Asia,,editlink)>>}}}来产生加载效果
+ *使用 {{{{{{ 和}}}}}}来避免产生解析
+== 问题 ==
+ *如何配置{{{<<TableOfContents>>}}}
+ *{{{<<TableOfContents>>}}}的处理规则是什么
+ *{{{<<>>}}}是什么
+== 服务器 ==
+= MediaWiki =
+ *百科用的wiki
+ *[[http://lifehacker.com/software/wikipedia/geek-to-live-set-up-your-personal-wikipedia-163707.php]]windows安装

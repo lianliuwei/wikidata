@@ -1,0 +1,60 @@
+= 抽象菜单接口 =
+ *CMenu类
+ *CMenu分成三类 Popup Separator Item
+ *Item才有ID
+ *快捷键如何解决？？？
+ *需要使用Command模式和Composite模式和Decorator模式
+== DynamicItems ==
+ *[[http://www.codeproject.com/KB/menus/dynitems.aspx]]主要参考
+ *好像没有做菜单的缩放 可能会溢出屏幕
+ *更改DynamicItem.cpp 最后一行int CDynamicItems::m_nbMaxItems 来设置最大个数
+ *源代码开头是使用指南
+ *readFromFile()用来读入配置信息
+ *CreateDynamicPopupMenu()添加动态PopupMenu
+ *add(DEFAULTDYNMENUPOS)添加Menu Bar
+ *switchItemState()改变Item的状态
+ *OnExecuteDynamicItems()可以在这里进行string和函数的映射吗
+ *使用ID_POPUP_DynCmd01定义使用的最低ID
+ *定义了简单的菜单脚本
+ *菜单的图片没有设计好 可能还需要动态图片接口
+ *CDynamicItems为使用的动态菜单类
+  *readFromFile()只是读进来更新内部数据但是不会更改menu
+  *CreateDynamicPopupMenu()使用的CMenu对象
+  *GetItemText(UINT nID) 使用相对和绝对ID分别进行检索
+  *GetItemComment(UINT nID)
+  *GetItemFunctionType(UINT nID)
+  *switchItemState(UINT nID)
+  *GetNbMaxItems() SetNbMaxItems()
+  *add() 添加到主menu中 remove()移除
+  *addMenuItem() addDynamicPopupMenu() addIconItem()
+  *都是使用大写
+ *CMenuItem代表单个菜单项
+  *m_type( ITEM ) 三种类型之一
+  *m_comment("NONE") 注释 
+  *m_name("NONE") 菜单上显示的名字
+  *m_state(false) 两种状态
+  *m_position(-1) 内部自己的编号 加上ID_POPUP_DynCmd01等于外部编号
+  *m_function("NONE")  对应函数名
+ *CPopMenuItem
+  *class CPopMenuItem: public CMenuItem
+  *clear()清除其子菜单 
+  *addItem()增加
+  *size()
+  *operator[]
+  *使用vector来记录菜单
+== 完全设计 ==
+ *使用IMenu作为抽象的接口 只可以读
+ *IMFCMenu作为IMenu的子接口 可读可写
+ *MFCPopMenuItem MFCMenuItem MFCMenuSeporator 对应于不同的菜单类 使用组件模式使得菜单操作一致如删除 使用装饰器模式用于对命令调用的封装
+ *MFCDynamicMenus 单独 用来管理向MFC中添加菜单 和 从菜单资源中转换菜单的责任 并未MFC传过来的命令消息和更新消息进行响应的转换 
+== 资源 ==
+ *[[http://blog.csdn.net/gavingey/archive/2008/03/24/2214086.aspx|MFC动态菜单全攻略]] 介绍动态创建Menu的方法 没有另外一场描述
+ *对于动态创建的菜单要调用pCmdUI->Enable(TRUE);
+ *[[http://www.prof-uis.com/prof-uis/tech-support/feature-articles/constructing-menus-dynamically-at-run-time.aspx]]是Prof-uis库的解决方法
+ *[[http://dohkoos.name/wxwidgets-xrc-and-dynamic-sub-menu.html]]WxWidgets使用配置文件产生动态菜单
+ *[[http://www.excelguru.ca/blog/2007/01/09/creating-a-dynamic-menu-an-example/]]在office下
+ *[[http://msdn.microsoft.com/en-us/library/s765c671%28VS.80%29.aspx]]微软的DYNAMENU Sample: Dynamically Updates Menus
+ *[[http://yj10864.javaeye.com/blog/743384]]未知
+ *[[http://www.pudn.com/downloads148/sourcecode/windows/control/menu/detail638804.html]]未知
+ *[[http://www.myfaq.com.cn/A/2001-10-10/1318.html]]利用MFC的消息映像实现动态菜单
+ *[[http://www.comprg.com.cn/detail.asp?hw_id=7059]]如何创建和访问MFC嵌入菜单功能的动态链接库

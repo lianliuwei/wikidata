@@ -1,0 +1,118 @@
+= Cross-Platform GUI Programming with wxWidgets =
+ *有点过时了
+== 介绍 ==
+ *是跨平台的
+ *内部组织
+  *通用代码
+  *一般代码
+  *wxUniversal
+  *平台相关代码
+  *外来代码   contrib/ 中
+  *第三方代码
+== 开始使用 ==
+ *从wxApp类的子类开始
+ *wxApp开始于OnInit()虚函数
+ *wxT _T 宏
+ *IMPLEMENT APP(MyApp)声明宏
+ *wxFrame类
+ *事件处理函数不是虚函数
+ *和MFC的事件处理宏是一样的
+ *可以动态改变事件表
+ *图标或者小图片使用XPM编码，可以直接include到C++中
+ *对快捷键有支持
+== 事件处理 ==
+ *wxEvtHandler的派生类都维护一个事件表
+ *事件处理函数的形式是统一的 只有一个事件对象作为参数
+ *事件可以不必被产生这个事件的控件所处理
+ *通过wxEvtHandler::ProcessEvent进行匹配
+ *只有Command事件会被递归传递
+ *wxEvent::Skip()继续寻找事件表
+ *wxWindow::PushEventHandler()动态添加处理事件表
+ *手动调用事件表使用wxWindow::GetEventHandler()
+ *wxEvtHandler::Connect()动态事件处理
+ *窗口标识符只要在在固定的上下文中是唯一的
+ *使用wxID_ANY，系统分配标识符，都是负数
+ *wxWidgets使用了很多自定义的标识符
+ *可以自定义事件
+== 窗口的基础知识 ==
+ *窗口的定义
+ *客户区和非客户区
+ *滚动条
+  *拥有wxHSCROLL和wxVSCROLL类型的窗口才会自动生成自己的滚动条
+ *光标和鼠标指针
+ *顶层窗口 
+  *延迟删除的
+ *坐标体系
+ *窗口绘制
+  *收到wxEVT_ERASE_BACKGROUND和wxEVT_PAINT
+ *颜色和字体
+ *窗口变体
+ *改变大小
+  *sizer类确定窗口的布局
+ *输入
+  *键盘只能对处于活动状态的窗口输入 和 wxEVT_SET_FOCUS和wxEVT_KILL_FOCUS
+ *空闲事件处理和用户界面更新
+  *wxEVT_IDLE
+ *窗口的创建和删除
+  *一般都是在堆上面new出来的
+  *一步创建和两步创建
+  *顶层用Destroy() 子窗口用delete()
+ *窗口类型
+ *窗口类
+  *基本窗口
+   *基本类型和扩展类型
+  *顶层窗口
+   *模式和非模式
+   *在show()调用之前不显示
+   *可以自己实现模态
+   *可以实现不规则的窗口
+  *容器窗口
+   *Notebook里包含Panel
+  *非静态控件
+   *wxChoice
+   *wxComboBox
+   *wxCheckBox
+   *wxListBox
+   *wxHtmlListBox
+   *wxRadioBox
+   *wxScrollBar
+   *wxSpinButton
+   *wxSpinCtrl
+   *wxSlider
+   *wxTextCtrl
+   *wxToggleButton 
+  *静态控件
+   *wxGauge
+   *wxStaticText
+   *wxStaticBitmap
+   *wxStaticLine
+   *wxStaticBox
+  *菜单
+   *wxMenu
+  *控件条
+   *wxMenuBar
+   *wxToolBar
+   *wxStaticBar
+== 绘图和打印 ==
+ *设备上下文 wxDC
+ *wxDC的子类代表特定的绘图设备的上下文
+ *wxPaintEvent绘制窗口客户区
+ *wxEraseEvent通知擦除背景
+ *wxPaintDC 会告诉窗口系统已经重绘完了 不要再发送重画消息
+ *wxWindow::IsExpose判断是否在重绘区域内
+ *使用wxWindow::Refresh和wxWindow::RefreshRect来指定重画区域
+ *使用wxWindow::Update来进行立刻更新
+ *减少闪烁 使用双缓冲 前景和背景统一绘制
+ *绘画工具：wxColour wxPen wxBrush wxFont wxPalette
+ *wxPen可以设置两端的表示
+ *绘图对象多使用引用计数
+ *wxBrush 决定图像的填充方式
+ *字体家族用来指一个系列的字体
+ *wxPalette已经很少用了
+ *绘制文本有单独的前景和背景
+ *线上的最后一个点将不会绘制
+ *这部分和MFC非常象
+ *打印的最小单位是页
+ *wxPrintout
+ *使用wxGLCanvas绘制三维图形
+== 处理用户输入 ==

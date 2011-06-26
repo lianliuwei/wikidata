@@ -1,0 +1,28 @@
+MoinMoin学习
+
+概述
+ wiki就是一网页系统
+搜索
+ 页面头的wikiName可以用于搜索所有的引用
+链接
+ 内部
+  用wikiName
+ 外部
+问题
+ 如何使一个页属于多个分类之中
+ 如何链接一个本地的资源
+  比如要用来作资料管理
+
+  还有用来分析源码 
+------
+MoinMoin学习计划
+ 1.常用的编辑功能
+ 2.开发MoinMoin
+------
+MoinMoin学习资源
+ 1.HelpForUsers
+MoinMoin学习方法
+ 1.看描述
+ 2.看已有的页面
+------
+mediawiki学习

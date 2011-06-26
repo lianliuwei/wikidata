@@ -1,0 +1,20 @@
+= Chrome =
+ *[[Google]]最新的浏览器
+ *chrome使用的技术变化很快
+ *[[http://www.xiaohui.com/dev/vccool/internet/google-chrome-source-code-download.htm]]
+ *[[http://dev.chromium.org/developers/how-tos/get-the-code]]如何获得源代码 代码量相当的大
+ *[[http://www.chromium.org/]]官网
+ *[[http://dev.chromium.org/developers/how-tos/depottools]] 使用的版本库的工具
+ *使用[[buitbot]]进行构建
+ *[[http://blog.sunchrome.com/]]
+ *depot_tools是用于版本管理的工具，使用了DEP配置文件
+ *有很多代码是在别的版本库中
+ *gyp是构建工具用于生成各种本地构建文件，使用.gyp .gypi文件进行配置
+ *[[http://blog.csdn.net/ciml]]有扩展教程
+ *[[http://dev.chromium.org/developers/how-tos/build-instructions-windows]]
+== 代码分析 ==
+ *[[http://www.cnblogs.com/duguguiyu/]]
+ *[[http://blog.csdn.net/bzero1982]]
+ *[[http://blog.csdn.net/caimouse/category/458770.aspx|谷歌浏览器的源码分析]]
+ *[[http://blog.csdn.net/ciml/archive/2010/04/28/5538276.aspx|chrome源代码目录结构简介（版本4.1.249.1059）]]
+ *[[http://blog.csdn.net/xingtian713]]

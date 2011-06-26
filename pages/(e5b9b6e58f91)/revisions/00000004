@@ -1,0 +1,10 @@
+= 并发 =
+ *很复杂的一部分
+ *[[http://www.ideasandroid.com/archives/290|android之后台线程（UI与线程交互）]] 参考Android中的解决方法
+ *[[http://marlonyao.javaeye.com/blog/875516|wxpython中工作线程与主线程交互]] 
+ *参考COM中的[[http://msdn.microsoft.com/en-us/library/ms693344%28v=VS.85%29.aspx|Processes, Threads, and Apartments]]
+ *并发有常见的几种模式
+ *[[http://www.cublog.cn/u/31756/showart_245840.html|主动对象]]
+ *[[http://www.cs.wustl.edu/~schmidt/patterns-ace.html|Patterns for Concurrent, Parallel, and Distributed Systems]]
+ *[[http://www.cublog.cn/u/31756/showart_245841.html|半同步半异步]]
+ *[[http://www.cublog.cn/u/31756/showart_246007.html|反应堆模式]]

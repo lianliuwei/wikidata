@@ -1,0 +1,10 @@
+= wxPython in Action =
+ *wxPython作者写的
+{{{#!wiki
+<<TableOfContents(3)>>
+== Introduction to wxPython ==
+ *一切能在屏幕上显示的都是window 别的系统也叫widget
+=== Welcome to wxPython ===
+== Essential wxPython ==
+== Advanced wxPython ==
+}}}

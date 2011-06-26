@@ -1,0 +1,47 @@
+= VPN项目 =
+ *4月23号前结束
+ *VPN可用于手机CRM等高级功能
+ *要重写
+ *和VTun有很多的相似性
+ *服务器要了解：内存池 连接池 Erlang ACE windows了解IOCP Linux了解epoll
+== 问题 ==
+ *到底要不要包括路由功能
+ *服务器平台要在 Linux 还是 windows 下
+ *使用TCP还是UDP 使用UDP要自己控制很是麻烦 TCP太慢
+ *采用P2P架构如果两台机器都在NAT后面怎么办，TCP一半的NAT机器不支持穿透
+== 项目目标 ==
+ *实现用于工业控制领域的VPN应用
+ *应用环境: 很多企业的厂房是分布得很分散的, 如果使用VPN软件进行管理的话，就会比较简单。比如：IP不容易改变
+ *先完成系统原型
+ *系统原型完成有限的功能 但是要有可靠性
+ *要有详细的文档: 需求 概要设计 详细设计 测试文档
+== 学习目标 ==
+ *团队合作
+ *学习能力
+ *自我调节
+ *工程化
+ *文档化
+ *需求分析
+== 总任务 ==
+ *负责安全 socket和router方面
+== 路由 ==
+ *[[http://www.java3z.com/cwbwebhome/article/article9/945.html?id=2238|透析Windows路由表透析]]
+ *[[http://blog.csdn.net/wangxing1018/archive/2009/06/20/4285489.aspx|Linux协议栈IP层的路由处理]]
+== 架构 ==
+== 当前任务 ==
+== 杂 ==
+ *[[http://hi.baidu.com/jywb_pub/blog/item/1bb0a30132f01d00738da5f3.html|利用GetPrivateProfileString读取配置文件(.ini)]]
+ *[[http://blog.csdn.net/lcj8/archive/2007/11/18/1891317.aspx|Windows线程函数概述]]
+ *[[http://topic.csdn.net/t/20011225/17/441476.html|windows下字符串]]
+== sslvpn ==
+ *[[http://www.nsfocus.net/index.php?act=magazine&do=view&mid=841|SSL/TLS/WTLS原理]]
+ *[[http://blog.csdn.net/ast_224/archive/2008/09/27/2988743.aspx|openssl编程]]
+ *[[http://blog.csdn.net/wangxing1018/default.aspx?PageNumber=3|相关博客]]
+ *[[http://openssl.cn/|openssl论坛]]
+== 资源 ==
+ *[[http://en.wikipedia.org/wiki/Virtual_private_network|VPN英文wiki]]
+ *[[http://www.arraynetworks.com.cn/|array VPN厂商]]
+ *\\192.168.27.208\  钟华的资料 用命令行上
+ *\\192.168.27.177\  项目的资源
+ *192.168.0.201/trainee2010/yzm/vpn grup  项目组总提交VPN
+ *[[OpenVPN]]

@@ -1,0 +1,33 @@
+= 生产时间预测系统 =
+ *人员 袁露露
+ *注意密码问题--最好不要密码
+ *注意说需要的功能时候需要
+ *是否可能出现文档大量I/O问题
+ *了解excel技术
+ *用python来做
+ *产品有很多部分
+ *产品数量级可能有不同的参考点
+== 联系方式 ==
+ *段小华
+  *坐机号：6403
+  *邮箱：factory@zlgmcu.com
+  *电话号：13826126837
+== 导出excel表 ==
+ *excel自带的脚本VBA
+ *alphamine等软件
+== VBA ==
+ *_ 代表下一行继续
+ *Workbook中包括Worksheet
+== 生产时间预测 ==
+ *界面要灵活 表格显示
+
+ *[[http://feihu1236.blog.163.com/blog/static/27116013200722383929357/|Excel编程]]
+ *[[http://nc.mofcom.gov.cn/news/10507434.html|用access合并excel]]
+ *[[http://www.cs.waikato.ac.nz/ml/weka/|weka官网]]
+ *[[http://www.ieee.org.cn/dispbbs.asp?boardID=69&ID=45444|数据挖掘软件]]
+ *[[http://www.alphaminer.org/|alphaminer]]
+ *[[http://www.microsoft.com/learning/en/us/book.aspx?ID=6851&locale=en-us#tab1|Microsoft® Office Excel 2003 Programming Inside Out]]
+ *[[http://msdn.microsoft.com/en-us/library/bb726437(v=office.11).aspx|msdn帮助页面]]
+ *[[http://www.officefans.net/cdb/viewthread.php?tid=41977&extra=page%3D1| VBA入门课程好贴汇总]]
+ *[[http://zhidao.baidu.com/question/96195372.html|怎么把100多个EXCEL文件合并成一个]]
+ *[[http://www.51vba.com/]]

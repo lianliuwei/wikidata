@@ -1,0 +1,10 @@
+= C =
+== 资源 ==
+ *[[http://en.wikipedia.org/wiki/Category:C_programming_language]]C内容
+ *doc/libc 文件夹是glibc的文档
+ *archive/libc-html_node.tar.gz 为其存档
+ *如果通过参数列表进行赋值 用传这变量的指针 (如果赋值指针, 要传指针的指针)
+ *[[http://net.pku.edu.cn/~yhf/linux_c/index.htm]]C函数库索引
+ *[[C Interfaces and Implementations]]不错 有时间可以看一下
+----
+ [[Category Programming Language]]

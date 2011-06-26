@@ -1,0 +1,93 @@
+== formats及相关函数 ==
+{{{#! cplusplus
+static struct linux_binfmt *formats;
+
+int register_binfmt(struct linux_binfmt * fmt)
+{
+	struct linux_binfmt ** tmp = &formats;
+
+	if (!fmt)
+		return -EINVAL;
+	if (fmt->next)
+		return -EBUSY;
+	write_lock(&binfmt_lock);
+	while (*tmp) {
+		if (fmt == *tmp) {
+			write_unlock(&binfmt_lock);
+			return -EBUSY;
+		}
+		tmp = &(*tmp)->next;
+	}
+	fmt->next = formats;
+	formats = fmt;
+	write_unlock(&binfmt_lock);
+	return 0;	
+}
+
+int unregister_binfmt(struct linux_binfmt * fmt)
+{
+	struct linux_binfmt ** tmp = &formats;
+
+	write_lock(&binfmt_lock);
+	while (*tmp) {
+		if (fmt == *tmp) {
+			*tmp = fmt->next;
+			write_unlock(&binfmt_lock);
+			return 0;
+		}
+		tmp = &(*tmp)->next;
+	}
+	write_unlock(&binfmt_lock);
+	return -EINVAL;
+}
+}}}
+== formats及相关函数注释 ==
+{{{#! cplusplus
+static struct linux_binfmt *formats;
+
+int register_binfmt(struct linux_binfmt * fmt)
+{
+	struct linux_binfmt ** tmp = &formats;
+
+	if (!fmt)
+		return -EINVAL;
+传空值不合法
+	if (fmt->next)
+		return -EBUSY;
+只能传一个
+	write_lock(&binfmt_lock);
+写者锁
+	while (*tmp) {
+		if (fmt == *tmp) {
+已有了, 不重复挂载
+			write_unlock(&binfmt_lock);
+			return -EBUSY;
+		}
+		tmp = &(*tmp)->next;
+	}
+到达最后了
+	fmt->next = formats;
+	formats = fmt;
+	write_unlock(&binfmt_lock);
+	return 0;	
+}
+从链表中消除这种格式
+int unregister_binfmt(struct linux_binfmt * fmt)
+{
+	struct linux_binfmt ** tmp = &formats;
+
+	write_lock(&binfmt_lock);
+	while (*tmp) {
+		if (fmt == *tmp) {
+同一内存地址吧 有安全隐患 如果fmt里的next被只为空会怎么样
+			*tmp = fmt->next;
+			write_unlock(&binfmt_lock);
+			return 0;
+		}
+		tmp = &(*tmp)->next;
+	}
+	write_unlock(&binfmt_lock);
+	return -EINVAL;
+没有这值
+}
+}}}

@@ -1,0 +1,59 @@
+= UNIX:The Textbook =
+== 任务 ==
+ *使用emacs vi gcc make 和 找相关的资料
+ *查nm用法
+ *c语言实现方式
+ *c语言标准
+ *查splint操作
+ *查这些工具的发展
+ *查单元测试工具
+ *查trace工具	
+ *调试器原理
+ *查gdb用法
+ *654页资源搜集
+ *注册gmail
+ *了解邮件
+ *复习课后练习
+ *熟悉正则表达式
+ *掌握find
+ *linux下什么加密最好
+ *POSIX shell是什么
+ *什么是RFC
+ *什么是bind
+ *访问书上的网址 415
+== 记录 ==
+=== 开发工具 ===
+ *代码编辑 emacs vi pico 记事本
+ *代码缩进 indent
+ *代码编译 gcc g++ javac
+ *多文件管理 make	
+ *库 ar ranlib nm
+ *版本控制工具 SCCS RCS
+ *静态分析工具 splint
+ *源码度量 gprof
+ *动态分析工具 ctrace gdb time
+ *模块化编译的目的是节省编译时间 编辑命令输入
+ *编译需要lib
+ *多文件程序是大型软件开发的合理方法但需要工具来管理
+ *但shell不能识别是否需要编译
+ *执行程序依赖于目标文件 而不是源文件 有力于重编译
+ *依赖树好用
+ *make能从。o文件推出。c文件依赖
+ *marco和shell指令增加了make的能力
+ *库就是一系列的object文件
+ *make 内建有库生成约定
+ *ranlib 是原来文件的不足才需要的
+ *sccs的linux实现cssc 使用第二命令和原来的不同 没有sact
+ *代码版本要对应
+ *RCS 不错
+ *gprof使用调试的方法来测量
+ *没有ctrace包 在源码里加输出语句
+ *emacs相当的复杂
+== 心得 ==
+
+ *e-mail 交流的工具
+ *重定向 和顺序有关
+ *pipe 使用内存实现
+ *fifo是文件但如果是空的话 就会等在那里
+== 资源 ==
+ *[[http://www.pearsonhighered.com/educator/academic/product/0,3110,032122731X,00.html]]官网

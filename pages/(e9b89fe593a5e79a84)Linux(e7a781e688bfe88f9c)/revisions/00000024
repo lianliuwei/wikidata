@@ -1,0 +1,182 @@
+= 鸟哥的Linux私房菜 =
+ *国产里最好的入门书籍 可能也是世界级别的
+ ＊台湾人做事的确认真
+ *= 鸟哥的Linux私房菜 =
+ *国产里最好的入门书籍 可能也是世界级别的
+ ＊台湾人做事的确认真
+ *缺少开发工具使用的讲解 要额外学习
+ *新手建議
+  *要有学习的心态
+ *[[http://linux.vbird.org/]] 鸟哥的Linux私房菜官网 在线看
+== 任务 ==
+ *
+== 问题 ==
+ *要是initrd里的module和后来的文件系统中的module不一致怎么办 重新生成
+ *换根文件系统如何实现
+ *root权限受自己控制吗 如他能限制目录进入权限吗
+ *chgrp是如何控制组名是可以改变的 目标组是可以设置的
+ *chown如何判断是否可以呢
+== 目标 ==
+ *看完 作完练习
+== 基础 ==
+ *[[http://linux.vbird.org/linux_basic]]
+=== Linux 的規劃與安裝 ===
+==== 計算機概論 ====
+ *跳过
+ *大部分会了
+==== Linux是什麼 ====
+ *跳过
+ *太熟悉了
+==== Linux如何學習 ====
+ *不能出现一出问题自己不会分析和解决 只能找现成的答案
+ *不要被windows的模式 干扰
+ *要先远离图形界面
+ *图形界面和操作系统一样复杂
+ *要掌握基础理论
+ *不要为了Linux而Linux 要有更高的目标
+ *找一人多的发布版本 学精通 做到对别的版本触类旁通
+ *要有耐心 循序渐进
+ *静下心来 了解
+ *实践再实践
+ *问题处理流程
+  *在自己的主機/網路資料庫上查詢How-To或FAQ
+  *[[http://www.google.com/|google]]
+  *注意訊息輸出，自行解決疑難雜症
+  *搜尋過後，注意網路禮節，討論區大膽的發言吧
+ *帮助别人 同时提高自己
+==== 主機規劃與磁碟分割 ====
+ *设备命名法则
+ *PC的硬盘分区概念
+ *bootloader的概念
+ *目录树的概念
+ *挂载的概念
+ *如何规划系统
+==== 安裝CentOS 5.x與多重開機技巧 ====
+ *装Ubuntu跳过
+ *可以设置RAID
+==== 首次登入與線上求助 man page ====
+ *不正常关机危害大
+ *date 日期时间命令
+ *cal 日历命令
+ *bc 计算器命令
+ *[tab] 补齐键
+ *[ctrl]-c 中断键
+ *[ctrl]-d eof键
+ *man
+  *1	使用者在shell環境中可以操作的指令或可執行檔
+  *2	系統核心可呼叫的函數與工具等
+  *3	一些常用的函數(function)與函式庫(library)，大部分為C的函式庫(libc)
+  *4	裝置檔案的說明，通常在/dev下的檔案
+  *5	設定檔或者是某些檔案的格式
+  *6	遊戲(games)
+  *7	慣例與協定等，例如Linux檔案系統、網路協定、ASCII code等等的說明
+  *8	系統管理員可用的管理指令
+  *9	跟kernel有關的文件
+  */string 向下搜索
+  *n N 继续和反向
+  *-f 搜索 命令 whatis 
+  *-k 关键字 apropos
+ *info
+  *网页格式
+  *[TAB] 切换有的选项
+  *[enter]进入
+  *n 下一个
+  *p 前一个
+  *? 帮助
+ */usr/share/doc目录
+ *shutdown
+ *reboot, halt, poweroff
+ *sync
+ *开关机学问大
+ *init 0 也会关机
+=== Linux 檔案、目錄與磁碟格式 ===
+==== Linux檔案權限與目錄配置 ====
+ *每个帐号可以有多个group
+ *root有所有的权限
+ */etc/passwd 用户
+ */etc/shadow密码
+ */etc/group群组
+ *链接不对权限作限制
+ *chgrp ：改變檔案所屬群組
+ *chown ：改變檔案擁有者
+ *chmod ：改變檔案的權限, SUID, SGID, SBIT等等的特性
+ *chmod u g o a  r w x 
+ *档案的权限是对内容来说的
+ *目录的权限
+  *跟文件系统内部实现有联系
+  *r 读目录而已
+  *w 
+  *x 切换的目录下
+  *有意义的就是 rwx(读写可进) r_x(只读可进) r__(可列文件名)不常用 _wx(只可以写和进入不能查看其他文件)不常用
+  *文件的删除性在文件系统 不再文件
+ *有socket文件
+ *要用户允许程序才能执行
+ *避免字符 * ? > < ; & ! [ ] | \ ' " ` ( ) { } + -
+ *FHS
+  *[[http://proton.pathname.com/fhs/]]
+ */usr (unix software resource)
+ */var (variable)
+ */bin放置的是在單人維護模式下還能夠被操作的指令
+ *~dmtsai 代表 dmtsai 的家目錄
+ */lib放置的則是在開機時會用到的函式庫， 以及在/bin或/sbin底下的指令會呼叫的函式庫而已
+ *放在/sbin底下的為開機過程中所需要的，裡面包括了開機、修復、還原系統所需要的指令
+ *sbin/ (system binary)
+ *srv可以視為 service
+ *开机必在同一分区
+  *  /etc：設定檔
+  * /bin：重要執行檔
+  * /dev：所需要的裝置檔案
+  * /lib：執行檔所需的函式庫與核心所需的模組
+  * /sbin：重要的系統執行檔
+ */usr/share/zoneinfo：與時區有關的時區檔案
+==== Linux檔案與目錄管理 ====
+==== Linux 磁碟與檔案系統管理 ====
+   *设备用类型 主 从设备编号表示 用mknod生成
+   *[[http://www.kernel.org/pub/linux/docs/device-list/]]设备编号标准
+   *可以给硬盘分区命名 不用怕换磁道 可能是记录在硬盘中
+   *hdparm 可以设置硬盘的参数 完全了解设备
+   */etc/fstab 默认挂载
+   *-o loop挂载映象
+   *dd mkfs mount制造文件充当硬盘
+   *parted fdisk 分割硬盘
+   *硬盘还要有引导块
+   *交换分区和硬盘分区一样 可以多块加载 用文件模拟 就是一特殊格式的分区
+
+==== 檔案的壓縮與打包 ====
+=== 學習 Shell 與 Shell scripts ===
+=== Linux 使用者管理 ===
+=== Linux 系統管理員 ===
+==== 开机流程 模组管理与loader ====
+ */lib和/一定要是同一文件系统 装模板用
+ *使用Initial RAM Disk /boot/initrd 来初始化运行 模块化的结果
+ *使用initrd要换根文件系统
+ *[[http://hi.baidu.com/h_sn999/blog/item/a98b16fa308d6d1ca8d311a3.html]]initrd的详解
+ *init /sbin/init
+ *rc[0-6].d代表不同启动级别的脚步
+ *agetty 或 mingetty 用于等待用户登录
+ *dmesg活得启动信息
+ *系统硬件和模组初始化->启动服务
+ *rc.d脚本里 K 代表 kill S 代表 start 数字代表顺序
+ *自行定义开机流程 rc.local
+ *runlevel 查看级别 init 切换启动级别
+ *模组
+  *lsmod
+  *模组在/lib/modules/version/kernel
+  *modules.dep 为模组依赖文件 为depmod产生
+  *.ko为产生的模组后缀
+  *lsmod列出模组
+  *modinfo列出mod信息
+  *insmod 装载
+  *rmmod 删除
+  *modprode 装载 并装载相关的
+ *grub
+  *使用menu.lst
+  *硬件编码不同
+ *mkinitrd 制造 initrd
+ *grub-install 安装grub
+ *grub可以使用grub-md5-crypt产生的密码来加密开机
+ *启动加 single 进入修改密码
+ *加 init = /bin/bash 使用root登录系统 进行更改
+ *chroot 更改目录 进行别的系统的维护
+== 服务器 ==
+== 安全 ==

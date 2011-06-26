@@ -1,0 +1,18 @@
+= emacs =
+ *是一个工作环境
+ *[[https://www6.software.ibm.com/developerworks/cn/education/linux/l-emacs/tutorial/index.html|生活在Emacs中]]
+ *[[http://books.google.com.hk/books?id=-RtYk55cqfgC&printsec=frontcover&dq=Learning+GNU+emacs&cd=1|google图书在线版 Learning GNU Emacs 2nd]]
+ *[[http://book.douban.com/doulist/10106/|Emacs从入门到飞天]] 豆瓣列表
+ *[[http://www.wanglianghome.org/]]emacs使用者
+ *[[http://www.gnu.org/software/emacs/|官网]]
+ *[[http://www.caole.net/diary/emacs_write_cpp.html|emacs C/C++编程]]
+ *[[http://blog.csdn.net/DelphiNew/archive/2008/01/19/2053676.aspx|effective emacs中文版]]
+ *[[http://emacser.com/]]
+ *[[http://mirror.bjtu.edu.cn/gnu/emacs/]]中国地区下载镜像
+ *[[Learning GNU Emacs]] 书籍阅读记录
+ *[[http://emacser.com/to-emacs-beginner.htm]]致Emacs初学者
+ *[[http://www.gnu.org/software/emacs/windows/|GNU Emacs FAQ For MS Windows]]
+ *[[http://emacser.com/torture-emacs.htm|折腾Emacs]]  设置字体终极指导 字体大小调整 右键打开Emacs 配色
+ *[[http://emacser.com/dea.htm|我的Emacs配置文件 － DEA]] 非常庞大的配置程序 可以用来进行入门的参考
+ *C-h v 查看变量
+ *[[http://emacser.com/windows-emacs-home.htm|Windows下设置Emacs的HOME目录]] 使用第二种方法的方式加载别处的.Emacs配置文件

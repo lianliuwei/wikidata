@@ -1,0 +1,72 @@
+= 鸟哥的Linux私房菜 =
+ *国产里最好的入门书籍 可能也是世界级别的
+ *缺少开发工具使用的讲解 要额外学习
+ *新手建議
+  *要有学习的心态
+ *[[http://linux.vbird.org/]] 鸟哥的Linux私房菜官网 在线看
+== 问题 ==
+ *要是initrd里的module和后来的文件系统中的module不一致怎么办
+ *换根文件系统如何实现
+== 目标 ==
+ *看完 作完练习
+== 基础 ==
+ *Linux 的規劃與安裝
+  *計算機概論
+  *Linux是什麼
+  *Linux如何學習 
+   *静下心来 了解
+  *主機規劃與磁碟分割
+  *安裝CentOS 5.x與多重開機技巧
+  *首次登入與線上求助 man page
+ *Linux 檔案、目錄與磁碟格式
+  *Linux檔案權限與目錄配置 
+  *Linux檔案與目錄管理
+  *Linux 磁碟與檔案系統管理
+   *设备用类型 主 从设备编号表示 用mknod生成
+   *[[http://www.kernel.org/pub/linux/docs/device-list/]]设备编号标准
+   *可以给硬盘分区命名 不用怕换磁道 可能是记录在硬盘中
+   *hdparm 可以设置硬盘的参数 完全了解设备
+   */etc/fstab 默认挂载
+   *-o loop挂载映象
+   *dd mkfs mount制造文件充当硬盘
+   *parted fdisk 分割硬盘
+   *硬盘还要有引导块
+   *交换分区和硬盘分区一样 可以多块加载 用文件模拟 就是一特殊格式的分区
+  *檔案的壓縮與打包
+ *學習 Shell 與 Shell scripts
+ *Linux 使用者管理
+ *Linux 系統管理員
+=== 开机流程 模组管理与loader ===
+ */lib和/一定要是同一文件系统 装模板用
+ *使用Initial RAM Disk /boot/initrd 来初始化运行 模块化的结果
+ *使用initrd要换根文件系统
+ *[[http://hi.baidu.com/h_sn999/blog/item/a98b16fa308d6d1ca8d311a3.html]]initrd的详解
+ *init /sbin/init
+ *rc[0-6].d代表不同启动级别的脚步
+ *agetty 或 mingetty 用于等待用户登录
+ *dmesg活得启动信息
+ *系统硬件和模组初始化->启动服务
+ *rc.d脚本里 K 代表 kill S 代表 start 数字代表顺序
+ *自行定义开机流程 rc.local
+ *runlevel 查看级别 init 切换启动级别
+ *模组
+  *lsmod
+  *模组在/lib/modules/version/kernel
+  *modules.dep 为模组依赖文件 为depmod产生
+  *.ko为产生的模组后缀
+  *lsmod列出模组
+  *modinfo列出mod信息
+  *insmod 装载
+  *rmmod 删除
+  *modprode 装载 并装载相关的
+ *grub
+  *使用menu.lst
+  *硬件编码不同
+ *mkinitrd 制造 initrd
+ *grub-install 安装grub
+ *grub可以使用grub-md5-crypt产生的密码来加密开机
+ *启动加 single 进入修改密码
+ *加 init = /bin/bash 使用root登录系统 进行更改
+ *chroot 更改目录 进行别的系统的维护
+== 服务器 ==
+== 安全 ==

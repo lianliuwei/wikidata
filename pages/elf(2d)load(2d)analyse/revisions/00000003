@@ -1,0 +1,51 @@
+= elf-load-analyse =
+ *工具 file ldd strace
+ *内存分配两阶段
+  *execve()中 有ld
+  *execve()后 系统调用动态链接库 
+ *论文是内核转载的部分
+ 
+== 相关的源码 ==
+ *sys_execve()
+ *do_execve()
+ *prepare_binprm()
+== 相关内容 ==
+ 1. bash shell “fork”一个与自身一模一样的 process。
+该 process 执行系统调用 execve(),也就是你看到的 strace 输出的第一行
+execve("./hello", ["./hello"], [/* 22 vars */]) = 0。由于无论是读取文件,还是文件映
+射(File Mapping)都发生在 Kernel 里,所以 strace 不能监控到这一步的任何东
+西。本文要分析的即是该过程。
+ 2. 系统调用 execve()以后, process 的真正入口被设置成动态链接器的入口该(如
+果是静态链接的话,就比较简单,设置的入口就是该可执行文件 hello 的入口).
+当该新 process 返回到用户态(也就是从 execve 执行完后从内核态返回到用户态,不是对该函数调用的返回。因为只有该函数调用失败才会有返回,成功的话,就进入了另一个“世界”,控制转移到动态链接器(/lib/ld-2.3.4.so))。
+== 函数地址 ==
+ */arch/i386/kernel/process.c: * sys_execve() executes a new program. asmlinkage int sys_execve(struct pt_regs regs)
+ */fs/exec.c: * sys_execve() executes a new program.
+== sys_execve() ==
+{{{#! cplusplus
+/*
+ * sys_execve() executes a new program.
+ */
+asmlinkage int sys_execve(struct pt_regs regs)
+{
+	int error;
+	char * filename;
+
+	filename = getname((char __user *) regs.ebx);
+	error = PTR_ERR(filename);
+	if (IS_ERR(filename))
+		goto out;
+	error = do_execve(filename,
+			(char __user * __user *) regs.ecx,
+			(char __user * __user *) regs.edx,
+			&regs);
+	if (error == 0) {
+		current->ptrace &= ~PT_DTRACE;
+		/* Make sure we don't return using sysenter.. */
+		set_thread_flag(TIF_IRET);
+	}
+	putname(filename);
+out:
+	return error;
+}
+}}}

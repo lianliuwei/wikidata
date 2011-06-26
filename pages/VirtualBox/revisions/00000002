@@ -1,0 +1,6 @@
+= VirtualBox =
+ *[[http://forum.ubuntu.org.cn/viewtopic.php?f=65&p=1308865|挂载实际硬盘]]
+= VirtualBox =
+ *Linux下装增强功能要先装内核编译组件
+ *[[http://www.linuxquestions.org/questions/linux-newbie-8/how-to-unistall-vboxlinuxaddition-749454/]]
+ *[[http://forum.virtualbox.org/viewtopic.php?f=3&t=15679|HOWTO: Install Linux Guest Additions + Xorg config]]

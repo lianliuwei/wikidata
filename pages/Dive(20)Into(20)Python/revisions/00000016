@@ -1,0 +1,40 @@
+= Dive Into Python =
+{{{#!wiki
+<<TableOfContents(3)>>
+== Installing Python ==
+== Your First Python Program ==
+ *sys是内置模块 使用C语言写成
+ *万物皆对象
+ *Python 使用硬回车来分割语句，冒号和缩进来分割代码块。C++ 和 Java 使用分号来分割语句，花括号来分割代码块。 
+ *使用 if __name__ 方法来进行单元测试
+== Native Datatypes ==
+ *Dictionary 键值对 无序
+ *List 有序 循环特性 负数索引
+ *tuple创建后不变
+ *例 3.23 介绍字符串格式化
+ *映射 list 可以快速用现有list生成list
+== The Power Of Introspection ==
+ *参数不过是字典
+ *type、str、dir 和其它的 Python 内置函数都归组到了 __builtin__ 模块
+ *Python 在启动时自动执行了from __builtin__ import *
+ *getattr用字符串操作属性 第三参数是缺省返回值
+ *( and [a] or [b])[0] 实现C语言中的 bool ? a : b 功能
+== Objects and Object-Orientation ==
+ *import module 和 from module import 的效果不一样
+ *self不是关键字
+ *不支持类中的函数重载
+ *copy.copy()可以复制所有的对象
+ *专用类方法在特别的情况下由Python调用
+ *交互式窗口使用repr()来获得对象的字符串
+ *双下划线开头为私有 但结束没有下划线
+ *私有化使用重命名的方法隐蔽
+== Exceptions and File Handling ==
+ *file.tell()告诉文件句柄的位置
+ *for循环可以被其他语法部分代替
+ *缺省表达式计算只会在导入时计算一次
+ *os模块中包含了很多的路径相关函数
+ *glob模块可以用通配符来查找目录和文件
+== Regular Expressions ==
+}}}
+----
+ [[Category Book]]

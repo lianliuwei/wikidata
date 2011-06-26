@@ -1,0 +1,102 @@
+== prepare_binprm() ==
+{{{#! cplusplus
+int prepare_binprm(struct linux_binprm *bprm)
+{
+	int mode;
+	struct inode * inode = bprm->file->f_dentry->d_inode;
+	int retval;
+
+	mode = inode->i_mode;
+	/*
+	 * Check execute perms again - if the caller has CAP_DAC_OVERRIDE,
+	 * vfs_permission lets a non-executable through
+	 */
+	if (!(mode & 0111))	/* with at least _one_ execute bit set */
+		return -EACCES;
+	if (bprm->file->f_op == NULL)
+		return -EACCES;
+
+	bprm->e_uid = current->euid;
+	bprm->e_gid = current->egid;
+
+	if(!(bprm->file->f_vfsmnt->mnt_flags & MNT_NOSUID)) {
+		/* Set-uid? */
+		if (mode & S_ISUID)
+			bprm->e_uid = inode->i_uid;
+
+		/* Set-gid? */
+		/*
+		 * If setgid is set but no group execute bit then this
+		 * is a candidate for mandatory locking, not a setgid
+		 * executable.
+		 */
+		if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP))
+			bprm->e_gid = inode->i_gid;
+	}
+
+	/* fill in binprm security blob */
+	retval = security_bprm_set(bprm);
+	if (retval)
+		return retval;
+
+	memset(bprm->buf,0,BINPRM_BUF_SIZE);
+	return kernel_read(bprm->file,0,bprm->buf,BINPRM_BUF_SIZE);
+}
+}}}
+== prepare_binprm()注释 ==
+{{{#! cplusplus
+/* 
+ * Fill the binprm structure from the inode. 
+ * Check permissions, then read the first 128 (BINPRM_BUF_SIZE) bytes
+ */
+int prepare_binprm(struct linux_binprm *bprm)
+{
+	int mode; 是否是许可检查
+	struct inode * inode = bprm->file->f_dentry->d_inode;用inode干嘛 dentry是的意思吗十进制
+	int retval;
+
+	mode = inode->i_mode;
+	/*
+	 * Check execute perms again - if the caller has CAP_DAC_OVERRIDE, 还有这功能
+	 * vfs_permission lets a non-executable through
+	 */
+	if (!(mode & 0111))八进制的 	/* with at least _one_ execute bit set */
+		return -EACCES;
+	if (bprm->file->f_op == NULL) 干什么的
+		return -EACCES;
+
+	bprm->e_uid = current->euid; 当前进程的
+	bprm->e_gid = current->egid;
+设置有效用户 id 与有效组 id。至于什么叫"有效用户 id 与有效组 id"?与现在分析的 ELF 可
+执行文件的载入不怎么搭界。
+这里是针对 mount 时如果没有加 MNT_NOSUID 选项的处理。
+mount 手册中对该选项的描述如下:
+
+	if(!(bprm->file->f_vfsmnt->mnt_flags & MNT_NOSUID)) {有suid功能吗
+		/* Set-uid? */
+		if (mode & S_ISUID)
+			bprm->e_uid = inode->i_uid;文件所有者的uid effective user id 中“effective”的意思。
+
+		/* Set-gid? */
+		/*
+		 * If setgid is set but no group execute bit then this
+		 * is a candidate for mandatory locking, not a setgid
+		 * executable.
+		 */防止死锁
+		if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP))
+			bprm->e_gid = inode->i_gid;
+	}
+
+	/* fill in binprm security blob */
+	retval = security_bprm_set(bprm);
+	if (retval)
+		return retval;
+
+	memset(bprm->buf,0,BINPRM_BUF_SIZE);分配BUF内存 干什么用的
+	return kernel_read(bprm->file,0,bprm->buf,BINPRM_BUF_SIZE);
+读取该可执行文件的头上 128 个 byte,    因为一般可执行文件其头上包含该 format 的 header,
+比如 aout header,ELF header 等。从这 128 个 byte 就能判断出是否是该 executable
+loader 关心的
+
+}
+}}}

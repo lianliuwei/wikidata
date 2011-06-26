@@ -1,0 +1,40 @@
+= NSIS 源代码分析 =
+ *使用[[Scons]]构建系统
+ *究竟是编译型还是解释型
+ *.nsh 是他的脚本吗？
+ *使用[[WxWidgets]]来做窗口系统底层吗
+== 构建分析 ==
+ *使用0.98版本
+ *plugins
+ *utils
+ *doc
+ *toolset增加了zip
+ *加载SCons/utils.py
+ *加载SCons/config.py
+ *ignore_tests
+ *dirs 用于安装的目录
+ *hhc微软的chm编译器
+ *自动产生sconf_h nsis-sconf.h
+ *自动产生defines_h nsis-defines.h
+ *自动产生 nsis-version.h
+ *定义函数Distribute和用于各种类型的Distribute
+  *bin
+  *conf
+  *data
+   *Bin
+   *Stubs
+   *Plugins
+   *Contrib
+   *Menu
+   *Include
+  *doc
+   *Docs
+   *Examples 
+ *定义Sign函数用于代码签名
+ *定义TestScript用于测试
+ *根据使用的不同工具链使用不同的SConscript
+  *msvc SCons/Config/ms
+  *gcc SCons/Config/gnu
+  *hpc++ SCons/Config/hpc++
+  *default SCons/Config/default
+ *Stub后面判断加不加_solid

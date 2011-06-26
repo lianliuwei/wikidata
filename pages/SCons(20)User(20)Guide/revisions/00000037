@@ -1,0 +1,310 @@
+= SCons User Guide =
+{{{#!wiki
+<<TableOfContents(3)>>
+== Preface ==
+ *使用python语言作为脚本
+ *存在功能牺牲正确性来换取速度
+ *man页保证更新
+ *有对个人所做贡献的介绍
+== Building and Installing SCons ==
+ *Python 2.4以后的版本都可以
+ *没有预构建好的包的话就要自己构建
+== Simple Builds ==
+ *会根据文件名进行推断
+ *会根据系统产生合适的文件名(主要是后缀)
+ *builder_method
+  *Program
+  *Object
+ *支持对Java的构建
+ *-c 和 --clean删除生成的文件 不用自定义目标
+ *SConstruct Files 是 Python Scripts
+ *顺序无关 
+ *calling a builder method 和 actually building the program 是无关的
+ *-Q非构建信息取消
+== Less Simple Things to Do With Builds ==
+ *使用如 Program('new_hello', 'hello.c') 指定程序名
+ *使用如 Program(['prog.c', 'file1.c', 'file2.c']) 指定多文件程序
+ *使用如 Program('program', ['prog.c', 'file1.c', 'file2.c']) 指定文件名和多文件
+ *使用Glob()来指定文件模式 如 Glob('*.c')
+ *注意scons内部使用List来表示文件列表 string格式的只适用于只有一个文件的情况
+ *使用Split()来减少“”的适用 如 Program('program', Split('main.c file1.c file2.c'))
+ *使用 Python的“”“方案可以多行列出源文件
+ *使用keyword可以改变调用顺序 如 Program(source = src_files, target = 'program')
+ *多次调用Program()可以构建多个程序 构建顺序和调用顺序无关
+ *scons会自动识别Program()中共同的源文件
+== Building and Linking with Libraries ==
+ *使用Library函数 如 Library('foo', ['f1.c', 'f2.c', 'f3.c'])
+ *可以.o和.c混用
+ *使用StaticLibrary函数 构建静态库
+ *使用SharedLibrary函数 构建动态库
+ *使用$LIBS和$LIBPATH制定链接的库和库的路径 如 Program('prog.c', LIBS=['foo', 'bar'], LIBPATH='.')
+ *单个库文件可以使用简写
+ *多路径最好用列表表示
+  *Unix下可用 如 LIBPATH = '/usr/lib:/usr/local/lib'
+  *Windows下可用 如 LIBPATH = 'C:\\lib;D:\\lib'
+== Node Objects ==
+ *Scons内部表示文件和目录都是使用Nodes
+ *所有的Builder方法都会返回生成文件的Node List
+ *目录和文件节点的操作是不一样的
+ *使用Entry()函数可以生成对应的Node如 Entry('xyzzy')
+ *也可以使用File() 和 Dir()进行相关的Node构建
+ *可以使用Python中的str方法进行生成相关的string变量 如 str(program_list[0])
+ *env.GetBuildPath(file_or_list)返回对用的Node或者string的path ？？？
+== Dependencies ==
+ *减少不必要的编译时间
+ *判断是否改变：默认MD5 时间戳
+ *使用DeciderDecider('MD5') 'content'='MD5'
+ *使用MD5可以造成生成文件没有变化的情况下 下一步生成不继续 这是时间戳说没有的
+ *使用Decider('timestamp-newer')设置使用更新时间戳方法 'make' = 'timestamp-newer'
+ *使用时间戳方法在使用从Archive中导出的文件可能出错
+ *Decider('timestamp-match')时间戳变化的方法可以避免上面的错误 Scons会保存时间戳
+ *Decider('MD5-timestamp')只有在时间戳变化时才计算MD5 缺陷是更高要长于1秒
+ *可以定义自己的Decider函数
+ *可以利用env为不同的构建使用不同的Decider
+ *废弃的Decider方法
+  *SourceSignatures('MD5')
+  *SourceSignatures('timestamp')
+  *TargetSignatures('MD5')
+  *TargetSignatures('timestamp')
+  *'source'代表和SourceSignatures一样
+  *'build'代表依赖的target更新就一定会更新
+ *头文件依赖
+  *需要指定$CPPPATH来告诉Scons头文件的位置 如 Program('hello.c', CPPPATH = '.')
+  *Scons会扫描源文件的#include中的头文件依赖
+  *头文件依赖缓冲
+   *命令行上面 --implicit-cache
+   *文件中 SetOption('implicit_cache', 1)
+   *不会去检查头文件路径的变化的头文件文件夹文件的增加
+   *--implicit-deps-changed提示去更新缓冲
+   *--implicit-deps-unchanged提示Scons不去更改缓冲 默认Scons在文件改变的时候会重新扫描
+ *显示定义依赖 Depends() 如 Depends(hello, goodbye)
+ *依赖扫描器
+  *默认的依赖扫描器不支持C语言宏
+  *使用ParseDepends()传递编译器生成的依赖检测  需要二次编译
+ *忽略依赖Ignore() 如  Ignore(hello_obj, 'hello.h') 忽略生成的文件 如 Ignore('.',[hello,hello_obj])
+ *生成顺序依赖 但不是内容依赖使用Requires() 如 Requires(hello, version_obj)
+ *每次生成使用 AlwaysBuild() 如 AlwaysBuild(hello)
+== Environments ==
+ *分类
+  *External Environment 运行时外部传入的值
+  *Construction Environment 配置Scons运行
+  *Execution Environment 用于运行外部工具
+ *非自动复制外部变量
+ *使用外部变量需要使用os.environ 可以使用import os导入
+ *使用env = Environment()可以构造一个默认的Construction Environments 由Scons侦测出来的
+ *使用Python中数组的方法可以导出变量
+ *使用env.subst()可以获得扩展后的字符串
+ *使用AllowSubstExceptions()可以关掉或开启部分异常
+ *一般使用Scons Scons会扫描可用工具 使用DefaultEnvironment可以节省扫描时间 不过要自己指定
+ *如果两种env要生产相同名字的中间文件Scons会报错
+ *使用env.Clone()方法可以完全拷贝一个env
+ *使用env.Replace()方法可以替代env当中的一个变量 如果没有回添加
+ *Replace()顺序和编译顺序要正确的区分
+ *env.SetDefault()如果没有才设置
+ *env.Append()对原有的值进行增加 没有会新建
+ *env.AppendUnique()如果变量没有包含对应的值才增加
+ *env.Prepend()在前头增加 没有会新建
+ *env.PrependUnique()如果变量中没有包含对应值才在前头增加
+ *Execution Environment不是使用make的方法 不是自动从外部变量中拷贝
+ *使用$ENV记录Execution Environment
+ *使用python的dictionary来表示 要设置 如 env['ENV']['PATH'] = ['/usr/local/bin', '/bin', '/usr/bin']
+ *从外部拷贝环境 env = Environment(ENV = os.environ)
+ *添加PATH值用env.PrependENVPath() 和 env.AppendENVPath()
+== Merging Options into the Environment: the MergeFlags Function ==
+ *使用env.MergeFlags()和并选项 此功能有智能对于PATH是左优先 对于其他是右优先
+ *如果传入的不是List env会调用ParseFlags()函数进行解析
+== Separating Compile Arguments into their Variables: the ParseFlags Function ==
+ *自动的转换输入的值类型为Scons内部选项的值类型
+ *MergeFlags会自动调用
+ *只认识GCC的工具链 不知道的选项放在$CCFLAGS
+ *支持嵌套链表
+ *使用!开头的字符串先传给shell进行解释，后使用其输出进行解析
+== Finding Installed Library Information: the ParseConfig Function ==
+ *使用库是非常的麻烦的事情 有GCC工具专门解决这些事情 如 lib-config pkg-config
+ *env.ParseConfig()函数能通过执行外部的程序根据其输出来设置内部相关的变量
+ *ParseConfig()后使用MergeFlags()进行解析
+== Controlling Build Output ==
+ *好的输出能让用户一下子了解情况
+ *Help()函数输出给用户帮助信息 多使用python“”“引用符号 可以表示多行
+ *scons -h 显示帮助
+ *多次的Help()调用输出会被连接在一起 调用顺序为Help()被调用的顺序
+ *scons -H 显示帮助 带scons本身的帮助
+ *$*COM 对用的 $*COMSTR 代表这项命令执行的时候会显示的文字 $*COMSTR支持所有的宏替换
+ *可以使用VERBOSE命令行选择表示时候需要显示多余信息
+ *Progress()函数在Scons沿依赖树构建时 对节点信息进行打印
+ *Progress()输出信息一般是不发向build output 而是直接发现用户的屏幕
+ *Progress()可以设置回调函数
+ *使用Python的atexit注册一个回调函数 在会调中用GetBuildFailures()可以得到构造失败的信息
+== Controlling a Build From the Command Line ==
+ *命令行可以输入：Options Variables Targets
+ *使用$SCONSFLAGS外部环境变量可以用来保存常用选项
+ *GetOption()用来获得选项
+ *SetOption()用来设置选项 可用于自动设置并行数目
+ *用户在命令行中输入的选项是优先的
+ *GetOption() 和 SetOption() 使用的选项的名字和命令行中的是有差别的
+ *AddOption()增加选项 和Python中的optparse.add_option()参数相同
+ *scons使用ARGUMENTS来存贮variable = value的对应
+ *scons会记录value的变化 用于是否重新构建
+ *scons使用ARGLIST变量来记录用户在命令行的输入
+ *使用Variables可以避免很多的重复变量获得和设置代码
+ *options 和 varibale 有什么区别？？？
+ *vars.GenerateHelpText()用于产生相关的帮助信息
+ *Variables可以定义设定文件
+ *预定义的Variable方法
+  *BoolVariable() 给出 True和False
+  *EnumVariable() 使用固定的enum 可以使用map来映射同义的值 可以忽略大小写
+  *ListVariable() 一组固定值的变量
+  *PathVariable() 路径变量 默认要存在
+  *PackageVariable() 路径变量加布尔变量
+ *vars.AddVariables() 可以一次性增加很多的Variable
+ *env后调用unknown = vars.UnknownVariables()可以获得未设定的变量的列表 不知道这是在什么时候被调用的？？？
+ *COMMAND_LINE_TARGETS代表用于在命令行中输入的Targets
+ *使用Default()指定默认构造目标 如 Default(hello) 可以调用超过一次
+ *.代表当前目录下所有的Target
+ *Default()可以设置目录 代表这个目录下的目标
+ *Default() 使用None 表示没有默认目标
+ *DEFAULT_TARGETS Scons中代表当前默认的Targets 是一些node的list 在第一轮的时候就设定好了 和调用Default的顺序是有关的
+ *最后要构建的target在targets变量中 
+ *BUILD_TARGETS用来表示当前要构建的targets
+== Installing Files in Other Directories: the Install Builder ==
+ *使用env.Install()可以用来install程序 如 env.Install('/usr/bin', hello)
+ *install()的第一个参数还被当成是个Target 跟构建Target同样的性质
+ *可以使用env.Alias()为Target取别名 如 env.Alias('install', '/usr/bin')
+ *env.Install()可以多次调用 可以使用List
+ * env.InstallAs()可以为文件区取别名 但是Target还是目录  两个参数可以使用List 一次处理多个
+== Platform-Independent File System Manipulation ==
+ *返回Action对象 在适当的适合执行
+ *Copy()方法 将其传入Command()方法中  如  Command("file.out", "file.in", Copy("$TARGET", "$SOURCE"))
+ *Delete()方法 Scons默认会删除targets 最好不要使用Delete("$SOURCE")
+ *Move()方法
+ *Touch()方法 更新Modification Time
+ *Mkdir()方法
+ *Chmod()方法 使用POSIX方式的权限设定
+ *使用Execute()方法可以立刻执行相关的Action 不用Python相关的方法是因为 在有些选项时候Python相关的方法不合适
+ *-n 只会打印相关的action
+ *-q 只执行不打印
+ *可以使用 Exit(1)来退出构建
+== Controlling Removal of Targets ==
+ *Scons默认清除target文件的时机
+  *判断target需要更新时
+  *使用-c选项
+ *使用env.Precious()可以压制第一种情况
+ *使用env.NoClean()可以压制第二种情况
+ *Clean() 设置相关联清除文件 第一对象代表相关联的Target 第二个参数为要删除的文件 清除使用-c选项
+== Hierarchical Builds ==
+ *使用SConscript()函数加载子脚本 通常命名为SConscript
+ *SConscript脚本中文件的解析式依据SConscript所在的路径 但构建还是在SConstruct所在目录下进行的
+ *#在路径名中代表顶级目录 SConstruct所在目录 如'#lib/foo1.c'
+ *也可以使用绝对路径
+ *可以使用Export()导出变量 来让其他SConscript共享
+ *可以使用SConscript()的第二个参数 exports 来导出
+ *其他的SConscript还要使用Import()来导入变量 使用*可以导入所有的变量
+ *SConscript可以使用Return()来返回变量
+== Separating Source and Build Directories ==
+ *使用 SConscript 或者 VariantDir() 来实现
+ *VariantDir以前叫BuildDir
+ *SConscript()的variant_dir参数可以提供build的目录
+ *默认使用复制源文件实现分别编译
+ *可以使用duplicate=0禁止复制行为 如 SConscript('src/SConscript', variant_dir='build', duplicate=0)
+ *使用VariantDir()复制源目录下的Target就可以在别的目录下进行构建了 如 VariantDir('build', 'src')
+ *VariantDir()可以和SConscript一起使用
+== Variant Builds ==
+ *使用variant_dir可以用于多种平台的为别编译 而且能处理好include lib 和 bin的问题
+ *看例子
+== Writing Your Own Builders ==
+ *可以使用全局变量BUILDERS以dictionary方式存储builder
+ *默认是带Program Library等的Builder的 一旦自己设定就没有了 使用env.Append()就可以保存 或者 直接对dictionary进行设置也可以保存 
+ *通过Builder的suffix和src_suffix参数可以设置文件后缀  还可以设置前缀
+ *可以 def build_function(target, source, env) 类似的Python函数来进行构建 使用builder的action参数来设置构造函数
+ *可以 def generate_actions(source, target, env, for_signature) 类似的Python函数来进行产生构造方法 使用builder的generator参数来设置产生构造方法的函数  动态函数就是不一样
+ *前面两者不能同时使用
+ *可以 def modify_targets(target, source, env) 类似的Python函数来进行target和source的修改 使用builder的emitter参数来设置函数 也可使用Environment的MY_EMITTER参数来设置产生相同的builder使用不同的emitter
+ *site_scons可以用来放置可以被Sconscript import的Python modules site_scons/site_tools 放置工具 site_scons/site_init.py最先被执行
+ *site_scons/site_tools优先级比默认工具还高
+ *--site-dir可以指定位置 --no-site-dir可以不使用
+== Not Writing a Builder: the Command Builder ==
+ *使用env.Command()可以执行外部命令和内部函数
+ *$SOURCE 和 $TARGET 还可以有扩展功能 如  env.Command('${SOURCE.basename}.out', 'foo.in', build)
+== Pseudo-Builders: the AddMethod function ==
+ *使用env.AddMethod()可以添加方法 方法可以是Pseudo-Builders用来包装其他方法
+== Writing Scanners ==
+ *Scanner用来侦察依赖
+ *如def kfile_scan(node, env, path, arg)这种格式
+ *使用Scanner()方法来产生Scanner skeys参数用来指定后缀
+ *使用的路径参数通过path来传递 使用FindPathDirs可以生成这种参数 通过Scanner()的path参数进行设置
+==  Building From Code Repositories ==
+ *这里的Repository和CVS这种Repository不同 应该是公共代码一类的
+ *Repository()用于指定Repository的路径
+ *Repository()会增加用于搜索的路径
+ *C预编译器会干扰repository的行为
+  *用C编译器的选项控制
+  *使用#include<>
+  *以文件夹为单位
+ *Scons使用-Y选项可以指定Repository的位置
+ *使用Repository还可以用来保存产生文件 防止重复编译
+ *使用.sconsign来记录MD5计算值
+ *Local告诉Scons一定要有一份本地拷贝 如 Local(hello)
+== Multi-Platform Configuration (Autoconf Functionality) ==
+ *还在开发中
+ *使用Configure()来产生对应的env的检查对象 如 conf = Configure(env)
+ *会对检查的结果进行缓存
+ *conf.CheckCHeader()来检查C头文件
+ *conf.CheckCXXHeader()来检查CPP头文件
+ *conf.CheckFunc()来检查函数是否存在
+ *conf.CheckLib()检查Lib时候存在
+ *conf.CheckLibWithHeader()检查Lib和头文件
+ *conf.CheckType()检查类型
+ *定义如 def CheckMyLibrary(context) 的函数可以添加自己的检查
+ *context.Message可以打印消息
+ *context.Result 可以打印结果
+ *在Configure()中使用custom_tests可以设置自己的检查 如 Configure(env, custom_tests = {'CheckMyLibrary' : CheckMyLibrary})
+ *在clean的时候不用configure
+== Caching Built Files ==
+ *CacheDir()指定Cache目录 如 CacheDir('/usr/local/build_cache')
+ *一定会用MD5算法
+ *小组局域网开发效果不错
+ *--cache-show选项 打印相关的命令而不是检索cache的
+ *NoCache()可以指定不Cache的文件
+ *--cache-disable选项 不使用cache
+ *--cache-force选项 将生产的文件放在cache中
+ *--random选项 随机生成依赖文件
+== Alias Targets ==
+ *使用env.Alias()进行创建
+ *Alias还可以在Alias
+ *Alias还可以对应多个
+== Java Builds ==
+ *使用Java() 来编译Java文件 需要指定原文件位置和生产文件位置 如 Java('classes', 'src')
+ *可以自动处理依赖关系 需要告诉Java()JAVAVERSION
+ *使用Jar()可以创建包 如  Jar(target = 'test.jar', source = 'classes')
+ *可以使用Java()返回的list来进行分别打包
+ *JavaH()用来创建用于本地方法的C头文件和源文件
+ *RMIC()用来产生用于远程方法调用的stub和skeleton
+== Miscellaneous Functionality ==
+ *EnsurePythonVersion()保证使用的Python的版本 如 EnsurePythonVersion(2, 5)
+ *EnsureSConsVersion()保证使用的Scons的版本 如 EnsureSConsVersion(1, 0)
+ *Exit()用于终止Scons
+ *FindFile() 用于在指定的目录下查找文件 还可以发现要生成的文件 也可以发现在Build目录下的文件
+ *Flatten() 将输入的List弄平
+ *GetLaunchDir() 获得Scons输入命令的目录
+== Troubleshooting ==
+ *如何确定问题是很重要的
+ *--debug=explain 打印出简单的为什么的消息
+ *env.Dump() 将Construction Environment列出来 可以用print打印出来 如  print env.Dump()
+ *env.Dump() 可以指定要列出的变量
+ *--tree 看依赖树 可以指定具体的目标 使用status参数可以看到更多的信息 derived参数打印生成的 prune参数减少重复
+ *--debug=presub 检查被替代前的命令的值
+ *-debug=findlibs 显示侦测的lib目录的过程
+ *--debug=stacktrace 显示出错时候的堆栈
+ *--taskmastertrace 对进行依赖构建的taskmaster程序的运行过程进行显示
+== Construction Variables ==
+ *默认有的变量
+== Builders ==
+ *可以使用的Builders
+ *有用于产生VC工程的MSVSProject() 和解决方案的MSVSSolution()
+== Tools ==
+ *可以使用的外部工具
+== Handling Common Tasks ==
+ *常要解决的问题
+}}}
+----
+ [[Category Book]]

@@ -1,0 +1,89 @@
+= SCons User Guide =
+== Preface ==
+ *使用python语言作为脚本
+ *存在功能牺牲正确性来换取速度
+ *man页保证更新
+ *有对个人所做贡献的介绍
+== Building and Installing SCons ==
+ *Python 2.4以后的版本都可以
+ *没有预构建好的包的话就要自己构建
+== Simple Builds ==
+ *会根据文件名进行推断
+ *会根据系统产生合适的文件名(主要是后缀)
+ *builder_method
+  *Program
+  *Object
+ *支持对Java的构建
+ *-c 和 --clean删除生成的文件 不用自定义目标
+ *SConstruct Files 是 Python Scripts
+ *顺序无关 
+ *calling a builder method 和 actually building the program 是无关的
+ *-Q非构建信息取消
+== Less Simple Things to Do With Builds ==
+ *使用如 Program('new_hello', 'hello.c') 指定程序名
+ *使用如 Program(['prog.c', 'file1.c', 'file2.c']) 指定多文件程序
+ *使用如 Program('program', ['prog.c', 'file1.c', 'file2.c']) 指定文件名和多文件
+ *使用Glob()来指定文件模式 如 Glob('*.c')
+ *注意scons内部使用List来表示文件列表 string格式的只适用于只有一个文件的情况
+ *使用Split()来减少“”的适用 如 Program('program', Split('main.c file1.c file2.c'))
+ *使用 Python的“”“方案可以多行列出源文件
+ *使用keyword可以改变调用顺序 如 Program(source = src_files, target = 'program')
+ *多次调用Program()可以构建多个程序 构建顺序和调用顺序无关
+ *scons会自动识别Program()中共同的源文件
+== Building and Linking with Libraries ==
+ *使用Library函数 如 Library('foo', ['f1.c', 'f2.c', 'f3.c'])
+ *可以.o和.c混用
+ *使用StaticLibrary函数 构建静态库
+ *使用SharedLibrary函数 构建动态库
+ *使用$LIBS和$LIBPATH制定链接的库和库的路径 如 Program('prog.c', LIBS=['foo', 'bar'], LIBPATH='.')
+ *单个库文件可以使用简写
+ *多路径最好用列表表示
+  *Unix下可用 如 LIBPATH = '/usr/lib:/usr/local/lib'
+  *Windows下可用 如 LIBPATH = 'C:\\lib;D:\\lib'
+== Node Objects ==
+ *Scons内部表示文件和目录都是使用Nodes
+ *所有的Builder方法都会返回生成文件的Node List
+ *目录和文件节点的操作是不一样的
+ *使用Entry()函数可以生成对应的Node如 Entry('xyzzy')
+ *也可以使用File() 和 Dir()进行相关的Node构建
+ *可以使用Python中的str方法进行生成相关的string变量 如 str(program_list[0])
+ *env.GetBuildPath(file_or_list)返回对用的Node或者string的path ？？？
+== Dependencies ==
+ *减少不必要的编译时间
+ *判断是否改变：默认MD5 时间戳
+ *使用DeciderDecider('MD5') 'content'='MD5'
+ *使用MD5可以造成生成文件没有变化的情况下 下一步生成不继续 这是时间戳说没有的
+ *使用Decider('timestamp-newer')设置使用更新时间戳方法 'make' = 'timestamp-newer'
+ *使用时间戳方法在使用从Archive中导出的文件可能出错
+ *Decider('timestamp-match')时间戳变化的方法可以避免上面的错误 Scons会保存时间戳
+ *Decider('MD5-timestamp')只有在时间戳变化时才计算MD5 缺陷是更高要长于1秒
+ *可以定义自己的Decider函数
+ *可以利用env为不同的构建使用不同的Decider
+ *废弃的Decider方法
+  *SourceSignatures('MD5')
+  *SourceSignatures('timestamp')
+  *TargetSignatures('MD5')
+  *TargetSignatures('timestamp')
+  *'source'代表和SourceSignatures一样
+  *'build'代表依赖的target更新就一定会更新
+ *头文件依赖
+  *需要指定$CPPPATH来告诉Scons头文件的位置 如 Program('hello.c', CPPPATH = '.')
+  *Scons会扫描源文件的#include中的头文件依赖
+  *头文件依赖缓冲
+   *命令行上面 --implicit-cache
+   *文件中 SetOption('implicit_cache', 1)
+   *不会去检查头文件路径的变化的头文件文件夹文件的增加
+   *--implicit-deps-changed提示去更新缓冲
+   *--implicit-deps-unchanged提示Scons不去更改缓冲 默认Scons在文件改变的时候会重新扫描
+ *显示定义依赖 Depends() 如 Depends(hello, goodbye)
+ *依赖扫描器
+  *默认的依赖扫描器不支持C语言宏
+  *使用ParseDepends()传递编译器生成的依赖检测  需要二次编译
+ *忽略依赖Ignore() 如  Ignore(hello_obj, 'hello.h') 忽略生成的文件 如 Ignore('.',[hello,hello_obj])
+ *生成顺序依赖 但不是内容依赖使用Requires() 如 Requires(hello, version_obj)
+ *每次生成使用 AlwaysBuild() 如 AlwaysBuild(hello)
+== Environments ==
+
+
+
+  

@@ -1,0 +1,11 @@
+= Omaha =
+ *[[http://code.google.com/p/omaha/]]
+ *使用WTL swtoolkit等多种技术
+ *和[[Windows]]有很大的相关
+ *[[Scons]]大规模应用的案例
+ *有详细的介绍
+ *[[http://code.google.com/p/omaha/wiki/DeveloperSetupGuide]] 开发环境设置
+ *[[Omaha 源代码分析]]
+== UI ==
+ *worker/中有UI部分 是一个对话框 实现显示更新状态 包含一个模态对话框 使用WTL 实现带超链接的静态控件 使用状态机的方式
+ *worker/job_observer.h 中JobObserverCallMethodDecorator实现UI线程和worker线程间的交互 只在Worker线程中使用 好像也没有做怎么使用

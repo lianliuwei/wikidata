@@ -1,0 +1,10 @@
+= Visual C++ =
+ *[[http://www.cnblogs.com/xcj26/archive/2010/03/17/1688455.html|深入理解 resx文件]]
+ *在Visual C++中定制AppWizard
+  *[[http://www.vckbase.com/document/viewdoc/?id=276]]
+  *[[http://www.vckbase.com/document/viewdoc/?id=286]]
+  *[[http://www.vckbase.com/document/viewdoc/?id=287]]
+ *窥探PE文件内幕：Win32 PE 文件格式之旅
+  *[[http://www.cnblogs.com/jasonsun/archive/2010/08/13/1799029.html]]
+ *[[http://hi.baidu.com/aztack/blog/item/7fbc82cbfcc258f752664fee.html|VC的对话框模板原理]]
+ *2008中使用ctrl+f5运行控制台程序就不会一闪而过

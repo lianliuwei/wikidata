@@ -1,0 +1,79 @@
+= Linux =
+== 当前目标 ==
+ *学习[[UULP]]
+ *学习[[Linux内核完全剖析-基于0.12内核]]
+== 项目 ==
+ *[[零售系统]]
+== 学习计划 ==
+ 1. 操作
+ 2. API 基本的API()
+ 3. 内核 早期内核 [[自己动手写操作系统]]
+ 4. 思想
+== 学习方法 ==
+ *看代码 [[Code Reading]]
+ *看书
+ *编程
+ *思考
+== 学习内容 ==
+ *应用编程
+  *Java
+  *C
+  *C++
+  *PHP
+  *Python
+  *Perl
+  *脚本
+  *数据库
+  *网络
+  *图形
+  *GUI
+ *工具
+  *grub
+  *vi
+  *gcc
+  *bochs
+  *gdb
+  *emacs
+  *find
+  *grep
+  *man
+  *info
+  *docbook
+  *bash
+  *X windows
+  *gimp
+  *firefox
+  *mysql
+ *内核
+  *早期
+  *现在
+  *网络
+  *调度
+  *文件系统
+  *驱动
+ *文化
+ *思想
+ *嵌入式
+ *系统
+  *[[http://www.linuxfromscratch.org/|LFS]]
+== 资源 ==
+ *书籍
+  *[[UULP]]
+  *[[APUE]]
+  *[[自己动手写操作系统]]
+  *[[Linux内核完全剖析-基于0.12内核]]
+  *[[UNIX:The Textbook]]
+  *[[鸟哥的Linux私房菜]]
+  *libc manual /doc/libc
+  *Java Application Development on Linux /doc/Java Application Development on Linux.pdf
+  *Linux内核完全注释
+  *[[Linux设备驱动开发详解]] /doc/Linux设备驱动开发详解.pdf
+== 发行版本 ==
+ *[[Ubuntu]]
+== 爱好者 ==
+ *陈毅东 精通内核
+ *吴登辉 初学者
+== 信息 ==
+ *浙大Linux很强
+
+ 

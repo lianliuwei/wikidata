@@ -1,0 +1,50 @@
+= UULP/文件操作 =
+ *命令是程序在 /bin, /usr/bin, /usr/local/bin里
+ *utmp 和 wtmp用来存储登录信息 用二进制存储 和 UNIX的传统不一样 大概是系统信息 不适合手工修改吧
+ *可以用grep来搜索内容
+ *和外界的交流都是通过文件描述符来实现的
+ *文件描述符就是一文件指针数组的索引值 利于实现重定向 0 1 2 分别是 标准输入输出和错误
+ *标准文件操作 open read write close
+ *C语言文件操作 fopen fread fwrite fclose 用STDIN STDOUT STDERR 表示 标准输入输出和错误 就是UNIX的翻版
+== utmp&wtmp ==
+ *[[http://hi.baidu.com/captainsteven/blog/item/cfcd5aec8831b54778f055f1.html]]Linux用户管理
+ *
+== time ==
+ *UNIX类似的系统使用 1970年1月1日 UTC 零点 经过的秒数
+ *time()获得UNIX时间
+ *time_t -> struct tm -> ASCII
+ *ctime() = asctime(localtime())
+ *里面有一静态变量用于存储返回 返回为指针 这样作很不好
+ *_r后缀参数 使用的用户分配的空间 线程安全
+ *gmtime() 源于格林威治时 GMT
+ *mktime() 将 struct_tm -> time_t 和时区有关
+ *localtime()和时区有关
+ *时区和夏令时
+== open ==
+ *成功返回非负整数 是 fd 文件描述符
+== 方法 ==
+ *联机帮助 头文件很重要
+ *通过自己编写来检验
+== who ==
+ *w命令有相同的功能
+=== 外部观察 ===
+ *可以列出当前登录的人
+=== 分析 ===
+ *使用utmp 和 wtmp文件
+ *读写使用底层读写 填充结构
+ *utmp 有记录用户类型的数据 用于判断是否用户进程
+ *时间为Unix time 要转换
+== 实现 ==
+ *2.1 和 2.2 为对应程序
+ *2.1 只是列出了所有的记录 但是没有区别登录了还是登出了
+ *2.2 只显示已经登录的用户 并且转换了时间
+== cp ==
+ *复制copy 文件或者文件夹
+== 外部观察 ==
+ * cp [OPTION]... [-T] SOURCE DEST
+ * cp [OPTION]... SOURCE... DIRECTORY 多源到一个目录
+ *使用 -r 可以复制目录
+ *--sparse可以产生空闲的
+ *有备份功能
+== 分析 ==
+ *使用文件的创建 读取 写入API

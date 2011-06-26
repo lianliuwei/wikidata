@@ -1,0 +1,25 @@
+= python =
+ *python 2.5.4 在windows下用的比较多
+ *python 2.5 的库比较多
+ *[[http://wiki.woodpecker.org.cn/moin/OBP|大量python图书翻译]]
+ *[[http://diveintopython.org/|Dive Into Python]]
+ *[[http://python.org/ftp/]] 官网下载被墙的替代方案
+ *因为2.6.4版本里面含有64下载页被GFW封了
+ *[[http://wiki.woodpecker.org.cn/moin/PyCookbook]]
+ *[[http://wiki.woodpecker.org.cn/moin/OBP]]超多书籍
+ *入门书籍[[Core Python Programming]]
+ *代码示例看[[Dive Into Python]]
+ *进阶看[[Expert Python Programming]]
+ *GUI编程看
+  *[[Rapid GUI Programming with Python and Qt]]
+  *[[wxPython in Action]]
+ *IDE
+  *emacs
+  *[[http://pydev.org/|PyDev]]
+ *[[http://192.168.27.30:3000/projects/pnp/boards]]内部讨论专帖
+== 资源 ==
+ *[[http://hi.baidu.com/wukongafei/blog/item/ce9dc41fcf940602304e1593.html]]Python资源
+ *[[http://my.oschina.net/StreamWang/blog/4058|Python的库和资源]]
+ *[[http://www.cnblogs.com/licheng/archive/2010/07/24/1784224.html|PyDev for Eclipse 简介]]
+----
+ [[Category Programming Language]] 

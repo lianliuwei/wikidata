@@ -1,0 +1,202 @@
+= Pragmatic Version Control_Using Git =
+{{{#!wiki
+<<TableOfContents(3)>>
+
+ *三部分：概念 日常操作 管理操作
+== Welcome to the Distributed World ==
+=== Version Control the Git Way　===
+ *Repository代表所有的变更的数据集合
+ *upstream Repository代表共同开发的repository
+ *pushing向服务器发送变更版本
+ *pulling = fetch + merge
+ *Git使用分布式模型，本地有repository
+ *Git的Repository放在.git文件夹里面
+ *Git跟踪的是文件的内容
+ *Tag确定Repository的一个历史状态
+ *trunk版本的主干部分
+ *merge才是人要关注的重点
+ *optimistic locking使得可以同时check out但是会对commit进行merge
+=== Setting Up Git ===
+ *Linux下直接编译获得最新版本
+ *Windows下用cgwin或者Git onMSys
+ *配置
+  *全局变量user.name user.email
+ *Git GUI: git-gui gitk
+ *Git Help: git-help 官网html
+=== Creating Your First Project ===
+ *Git Commit使用SHA-1值作为唯一名字 有40个字 但7个基本就够了
+ *Status命令查看当前working tree的状态
+ *commit前要stage自己要提交的 放在stage area中
+ *git中建立branch非常方便 有tag就行
+ *两种使用branch的目的 发行 实验新功能
+ *Git提供打包功能 容易导出
+ *CLONE remote repository一般指定远端地址和本地目录就行了
+== Everyday Git ==
+=== Adding and Committing: Git Bases ===
+ *Git add添加改变到Index也就是staging area中 然后再从中更新到repository中
+ *隔一步是为了能够实现自己定制更新内容的功能
+ *git add -i使用交互模式来进行add
+ *git add -p使用patch模式进行add 
+ *Git commit提交到repository中
+ *-a 提交之前已经跟踪的
+ *Git Status 和 Git diff 观察三部分的改变
+ *Git diff --cached比较stage和repository区域
+ *Git mv移动文件
+ *.gitignore添加忽略文件 .git/info/exclude忽略不去共享
+=== Understanding and Using Branches ===
+ *everything is branch
+ *git branch -m 选项move表示移动一个branch造成移动的表现
+ *git branch 显示所有的branch
+ *git branch branch名字 新建一个branch
+ *git checkout 检出特定的branch
+ *git checkout -b branch名字 branch对应的祖先 用于新建加检出
+ *merge分类：Straight merges   Squashed commits    cherry-picking commit
+ *Straight merges：融合两个branch
+ *Squashed commits：将一个branch的变化压缩（squashed）应用到一个branch里。用后要记得commit
+ *cherry-picking：将一个commit用于另一个分支 
+  *使用 git cherry-pick 命令，更改并且commit 
+  *使用 -n 选项阻止commit 
+  *可以多次cherry-pick到一个分支后在commit
+ *conflict
+  *使用的是以行为单位
+  *工具：kdiff opendiff
+  *命令git mergetool 启动合并工具
+ *git branch -d 删除版本命令 会检查是否合并
+ *git branch -D 强制删除
+ *git branch -m 重命名
+== Working with Git's History ==
+ *git log 显示commit的log
+  *-数字 显示几个
+  *-p 显示对应的diff
+  *commit名 对应commit的log
+  *--since
+  *--before
+  *old revision .. new revision 显示范围
+  *--pretty 显示格式设置
+  *^代表之后 ~代表之前
+ *git diff比较两个版本
+  *--stat 统计改动 
+ *git blame详细列出每一行的出处
+  *-L 表示范围 可以使用数字 也可以使用正则表达式
+  *可以声明版本范围
+  *-M 内部拷贝检查
+  *-C -C文件范围内检查
+ *修改中心服务器是很危险的
+ *git commit修改选项
+  *-C 使用相同的commit message
+  *-c 使用并修改
+  *--amend 修改最近的commit
+ *git revert回复操作 重新commit覆盖到以前的 以前的还在
+  *-n 不立刻commit
+ *git reset重置repository
+  *--soft 不会将更改删除
+  *--hard 删除不能回复
+ *git rebase
+  *通过对一定范围的版本进行使用特点语句进行修改可以达到移动 squash 拆分
+  *高级技巧
+=== Working with Remote Repositories ===
+ *网络协议
+  *SSH
+  *git 
+   *使用9418端口
+   *匿名的
+   *最快
+  *HTTP/HTTPS
+ *git clone 克隆以及存在的库
+ *git fetch 更新版本库
+  *branch有remote和local之分
+  *不会同时更新本地的版本库
+  *同时更新本地版本库用git pull
+ *git push 上传branch
+  *-dry-run显示更新内容
+ *git remote add添加remote repository的alias
+ *git remote查看有几个remote alias   
+ *git remote rm移除
+ *git remote show查看信息
+=== Organizing Your Repository ===
+ *tag方便的标记版本
+ *tag是只读的
+ *git tag查看当前有的tag版本 
+ *tag名字不能带空格
+ *git tag 名字 branch 给特定分支的最新版本打tag
+ *git branch tag 跳到相关的tag但是这时候是没有在任何一个branch上 所以不能更改
+ *git checkout -b branch tag名 可以从相关的tag中创建新的branch
+ *处理发行版本
+  *常使用RB_前缀
+  *tag用于标识 branch用于改变
+  *删除branch的时候要移动到别的branch
+ *合法名字
+  *可使用/ 但不能在末尾
+  *可使用. 但不能在开头
+ *多工程
+  *多工程使用一个repository 用目录隔开
+  *多工程个使用repository
+ *submodules
+  *用于比如依赖的库
+  *git submodules看本repository德submodules
+  *git submodules add git_repository 要储存的路径   添加submodules
+  *上面命令后要用git submodules init submodules路径   在本repository添加submodules的记录
+  *submodules记录在.gitmodules中
+  *clone后除了init后还要update
+  *-表示没有初始化
+  *+表示不是git说期待的版本 就是submodules的版本发生变化
+  *commit的时候目录不要加/ 不过好像改进了
+  *git submodule update 不会保存更改的记录
+  *更改submodule内容要先checkout 最新版本好像有更改
+  *更改submodule一定要先提交到远端的版本
+=== Beyond the Basics ===
+ *压缩repositories
+ *git gc 回收多余的空间
+  *--aggressive主动回收可能牺牲速度
+ *deltas ？
+ *git archive 导出项目文件
+  *--format 格式
+  *--prefix 前缀 有没有 / 有很大的区别
+  *tar只是打包 但是没有压缩
+ *git rebase 造成好像历史性的改变
+  *--onto 只将相关的应用 但是和别的branch相关的不会应用
+  *多使用branch进行实验 和工作的branch隔开
+ *git reflog 查看更改记录包括rebase造成的效果 git不会立即删除commit 所以可以从rebase中回复
+  *gc.reflogExpireUnreachable配置过期时间
+ *git bisect
+  *可用于定位bug是什么时候引入的
+  *从一个坏点到一个好点中进行定位 使用二分查找法 
+  *git bisect start 后 git bisect bad <版本>后 git bisect good <版本> 就开始测试 而后不断报道good或bad
+  *git bisect reset 提前结束
+  *git bisect log 查看好坏记录
+  *git bisect replay <文件>回复到这个版本
+  *git bisect run 使用脚本进行自动测试定位
+== Administration ==
+=== Migrating to Git ===
+ *有SVN CVS和Git 命令对照图
+ *和SVN交互
+  *需要有git svn 可以通过git svn --version检测
+  *git svn clone
+   * -s 使用SVN标识结构进行clone
+   * -r 指定开始clone的版本
+   * --prefix 使用的前缀
+  *git svn fetch pull更新 但不merge 
+  *git svn rebase
+  *git svn dcommit 提交更新到SVN服务器
+   *-n 显示要更新的内容
+ *git cvsimport 转换CVS版本库
+ *使用cvs2svn CVS转换为SVN
+=== Running a Git Server with Gitosis ===
+ *.git/hooks hook脚本
+ *需要Python PEAK(使用EasyInstall安装方便)
+ *可以使用源代码安装
+ *使用和SSH相同的证书系统
+ *使用的是系统的账号 添加git账号
+ *gitosis使用git进行配置管理
+  *gitosis.conf使用INI方式进行配置
+  *keydir/ 存相关证书文件
+ *使用前要先push？？？
+ *使用[repo]来定义公用只读版本库
+  *需要启动git daemon
+== Appendixes ==
+=== Git Command Quick Reference ===
+=== Other Resources and Tools ===
+=== Bibliography ===
+}}}
+----
+ [[Category Book]]

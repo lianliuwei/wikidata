@@ -1,0 +1,7 @@
+= 结构体 =
+ *初始化
+  *[[http://blog.csdn.net/zhsxcn/archive/2008/02/27/2125211.aspx| 2.6版Linux内核中涉及的结构体指定初始化项目解析]]
+  *[[http://www.kerneltravel.net/newbie/gcc_man.html|C语言家族扩展]] 
+ *对齐
+  *[[http://www.cppblog.com/iuranus/archive/2009/01/06/71388.html|结构体对齐那点事 熟练c/c++(四) ]]
+  *[[http://blog.chinaunix.net/u1/49467/showart_424793.html|结构体字节对齐问题]]

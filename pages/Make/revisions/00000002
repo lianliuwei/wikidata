@@ -1,0 +1,22 @@
+= make =
+ *构建工具
+ *GNU make 为标准
+ *[[http://en.wikipedia.org/wiki/Make_(software)]]介绍
+== 心得 ==
+ *和文件同名的伪目标, 会出错 用.PHONY申明为伪目标
+ *可以将构建过程和依赖看成一棵树,每条make语句只是一个节点和起子节点的关系
+ *只有文件才有时间, 用来判断是否要更新, 来节省编译时间
+ *由Rule组成
+ *默认很重要 用GNU的新Rule
+ *变量 如同C语言 =和:= 用于赋值 但是:=防止递归 不要和Shell混在一起 变量中的空格和换行需要小心
+  *只有一次定义
+ *make -p 看规则
+ *先显后隐
+ *有自变量
+ *文本替换 用GNU函数
+ *要了解make的运行
+ *可以自定义函数
+ *有条件结构
+== 模板 ==
+ *[[http://hi.baidu.com/s_yqguo/blog/item/49b4e6ec77f7f32563d09f37.html]]通用模板
+ *[[http://blog.chinaunix.net/u/3038/showart_1842582.html]]

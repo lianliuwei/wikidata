@@ -1,0 +1,69 @@
+= bochs =
+ *你可以 用这个虚拟机来进行操作系统的调试，你可以随时让时间停住，然后钻进这台计算机的内部，CPU的寄存器、内存、硬盘，一切的一 切都尽收眼底。这正是进行操作系统的开发实验所需要的。
+== Bochs的安装和使用 ==
+ *ubuntu里下的包是没有调试功能的，所以要自己编译。
+ *编译命令
+  *$ tar vxzf bochs-2.3.5.tar.gz
+  *$ cd bochs-2.3.5
+  *$ ./configure --enable-debugger --enable-disasm
+  *$ make
+  *$ sudo make install
+ *要记得每次编译失败，需要先make clean一下
+ *在ubuntu 8.10下安装成功,分为以下四步：
+  *1、准备工作
+   *bochs是由C++编写的，我们要安装相应的编译环境
+
+
+sudo apt-get install build-essential
+如果要图形界面，
+
+
+sudo apt-get install xorg-dev
+   *安装bison,
+
+
+sudo apt-get install bison
+   *到bochs官方网站下载源码包bochs-2.3.7.tar.gz, 解压产生文件夹bochs-2.3.7
+
+  *2、configure
+   *在目录/home/ubuntu/Desktop/bochs-2.3.7/下执行
+
+
+./configure --with-x11 --enable-debugger --enable-disasm --enable-pci --enable-pcidev --enable-plugins --enable-ne2000 --enable-pnic
+
+
+configure后的选项作为参考，你可以用./configure --help查看全部选项，bochs官方网站上有详细说明。
+
+  *3、make
+   *在运行make之前需要修改两个文件
+第一个文件是/home/ubuntu/Desktop/bochs-2.3.7/bx_debug/symbols.cc
+在97行之后加入代码如下,
+using namespace std;
+
+#ifdef __GNUC__ //修改
+
+
+using namespace __gnu_cxx; //修改
+
+
+#endif //修改
+
+struct symbol_entry_t
+
+
+第二个文件是/home/ubuntu/Desktop/bochs-2.3.7/Makefile
+将其中有关docbook的部分删除或注释掉，
+
+
+其实用不着改 Makefile 文件喔，只要 configure 的时候，加
+代码:
+--enable-docbook=no
+
+   *文件修改完毕，在目录/home/ubuntu/Desktop/bochs-2.3.7/下执行
+sudo make
+
+  *4、make install
+   *在目录/home/ubuntu/Desktop/bochs-2.3.7/下执行
+sudo make install
+
+ *[[http://osfromscratch.org/bookscn/7-achapter02cn|搭建工作环境]]

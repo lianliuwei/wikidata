@@ -1,0 +1,24 @@
+= 自己动手写操作系统 =
+ *已经出第二版 <Orange'S：一个操作系统的实现>
+== 首次编译流程 ==
+{{{
+nasm boot.asm -o boot.bin
+bximage //制造映像
+dd if=boot.bin of=a.img bs=512 count=1 conv=notrunc//参数“conv=notrunc”，如果不用它的话软盘映像文件a.img会被截断（truncated）
+bochs
+}}}
+== 工具 ==
+ *bximage [[bochs]]自带的产生映像的工具
+ *[[dd]] 命令 用于向软盘里写文件
+ *[[bochs]]模拟器 调试版本
+ *[[nasm]]
+ *[[make]]
+ *[[vi]]
+ *[[emacs]]
+ *[[GCC]]
+ *gas gnu的汇编器
+== 资源 ==
+ *[[http://osfromscratch.org/homecn]] 官网
+ *[[http://groups.google.com/group/osfromscratch]]讨论区
+ */archive/北大操作系统实验.tar.gz 相同的任务 还有北大上有详细的介绍
+ *[[http://solrex.cn/]]使用开源软件版本作者

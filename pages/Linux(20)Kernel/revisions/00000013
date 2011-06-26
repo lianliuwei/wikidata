@@ -1,0 +1,74 @@
+<<TableOfContents>>
+
+== 问题 ==
+ *2.6是否分离源代码和二进制
+ *非递归构建
+== 任务 ==
+== 计划 ==
+== 代码的组织和构造 ==
+ ＊
+== modules ==
+ *使用 EXPORT 才能成为全局变量 
+ *2.4使用modutils
+ *2.5以后使用in-kernel loader
+ *内核不保证二进制接口不变 但是有源代码就可以从编译后使用 很轻松
+=== versioning ===
+ *防止不品配的内核和module
+ *使用genksums程序
+ *符号输出带版本
+ *2.5以后分成两步 .o->.ko
+  *Compling 产生crc在obj中
+  *Postprocessing 为未决议的符号添加crc
+   *用一C程序搜集所有导出符号 为每一个module没有的符号产生module.mod.c. 而后和原.o生成.ko
+== 构建 ==
+ */doc/Kernel configuration and building in Linux 2.5.pdf
+ *处理的方面
+  *按需要编译
+  *自动依赖生成
+  *配置
+  *不同架构和交叉编译
+  *可加载模块
+ *使用Make技术
+ *没有使用autoconf进行配置
+ *配置
+  *menuconfig
+  *xconfig
+  *gconfig
+ *使用的是递归makefile
+ *Kconfig用于配置阶段 替代了旧的Config.in/Config.help
+ *使用 gcc 和 makdep 产生依赖关系
+=== users 使用 ===
+ *会先生成配置用的程序再进行配置
+ *在scripts/kconfig/下有相应的程序
+ *使用/.config作为配置文件
+ *使用外来的配置文件要运行 oldconfig 进行适配
+ *默认会生成bzImage或zImage
+ *使用zdisk和fdimage产生磁盘可用的印象需要mtools和syslinux
+ *使用本地installkernel程序安装内核
+ *make modules_install 安装modules
+ *重改架构需要make disclean
+=== developers 使用 ===
+ *make some/path/file.o 使用配置标志编译文件
+ *make some/path/file.i 使用配置产生预处理文件
+ *make some/path/file.lst C和汇编对应文件
+ *make SUBDIRS=drivers/isdn/hisax modules 只会处理这个路径
+ *增加驱动
+{{{
+config TIGON3 
+   tristate ""
+   deponds on PCI
+   help
+       this driver....
+}}}
+  *会出现相应的配置项CONFIG_TIGON3
+  *makefile会使用 obj-$(CONFIG_TIGON3) += tg3.o
+  *obj-y 会被默认构建入内核 obj-m 会变成module obj- 忽略
+  *tg3.ko是相应的module名字
+  *mekefile会处理重复的情况
+  *使用 obj-$(CONFIG_TIGON3) += e100/ 表示使用 e100目录下的Makefile
+  *使用 e100-objs 这种Rule来产生多文件集成obj 也可使用 e100-y代替
+=== 内部实现 ===
+ */scripts/Makefile.* 有相应的示例
+ *用到FORCE关键字
+ *用到static pattern rules
+ *使用$^来唯一化约束

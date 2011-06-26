@@ -1,0 +1,29 @@
+= Linux操作系统之奥秘 =
+{{{#!Wiki
+ <<TableOfContents>>
+ 
+ *台湾人写的就是好
+ *主要讲的是初始化, 硬件检测, X Window的概念
+== initrd中的init ==
+ *和init指令不一样
+ *是nash脚本
+ *initrd中没有通过mount挂载/
+ *proc: process file system
+  *PID 对应进程的信息
+  *partitions硬盘分区
+ *sys
+  *以分类的方法存放
+  *文件要是单一的值
+ *tmpfs
+ *udev
+  *和/etc/udev/rules.d 有关
+  *可以改设备名字和设备链接
+ *dev/pts: pseudo terminal slave
+  *dev/ptms产生的
+  *ssh和xterm需要使用
+  *telnet使用的是真正的tty
+ *dev/shm tmpfs
+  *和dev下文件不一样 作为缓存使用
+ *dev/mapper
+  *LVM使用
+}}}

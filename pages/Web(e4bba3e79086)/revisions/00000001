@@ -1,0 +1,20 @@
+= Web代理 =
+ *[[http://tech.idv2.com/2004/12/04/create-proxy-with-apache/]]教程
+ *配置
+{{{
+LoadModule proxy_module /usr/lib/apache2/modules/mod_proxy.so
+LoadModule proxy_http_module /usr/lib/apache2/modules/mod_proxy_http.so
+LoadModule proxy_connect_module /usr/lib/apache2/modules/mod_proxy_connect.so
+LoadModule proxy_ftp_module /usr/lib/apache2/modules/mod_proxy_ftp.so
+ProxyRequests On
+<Proxy *>
+ Order deny,allow
+ Deny from all
+</Proxy>
+<Proxy http://74.117.56.229>
+ Order allow,deny
+ Allow from all
+</Proxy>
+
+ProxyBlock org com cn edu
+}}}

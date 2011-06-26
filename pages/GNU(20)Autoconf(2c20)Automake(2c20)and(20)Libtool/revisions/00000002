@@ -1,0 +1,5 @@
+= GNU Autoconf, Automake, and Libtool =
+== Introduction ==
+ *Autoconf用于配置
+ *Automake用于构建
+ *Libtool用于生产库文件

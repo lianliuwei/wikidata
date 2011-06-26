@@ -1,0 +1,14 @@
+= 自己动手写操作系统 =
+ *已经出第二版 <Orange'S：一个操作系统的实现>
+== 工具 ==
+ *bximage [[bochs]]自带的产生映像的工具
+ *[[dd]] 命令 用于向软盘里写文件
+ *[[bochs]]模拟器 调试版本
+ *[[nasm]]
+ *[[make]]
+ *[[vi]]
+ *[[emacs]]
+ *[[GCC]]
+== 资源 ==
+ *[[http://osfromscratch.org/homecn]] 官网
+ */archive/北大操作系统实验.tar.gz 相同的任务 还有北大上有详细的介绍

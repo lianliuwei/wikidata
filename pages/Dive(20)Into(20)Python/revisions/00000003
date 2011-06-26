@@ -1,0 +1,12 @@
+= Dive Into Python =
+== Installing Python ==
+== Your First Python Program ==
+ *sys是内置模块 使用C语言写成
+ *万物皆对象
+ *Python 使用硬回车来分割语句，冒号和缩进来分割代码块。C++ 和 Java 使用分号来分割语句，花括号来分割代码块。 
+ *使用 if __name__ 方法来进行单元测试
+== Native Datatypes ==
+ *Dictionary 键值对 无序
+ *List 有序 循环特性 负数索引
+----
+ [[Category Book]]

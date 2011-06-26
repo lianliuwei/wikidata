@@ -1,0 +1,49 @@
+= elf-load-analyse =
+ *工具 file ldd strace
+ *内存分配两阶段
+  *execve()中 有ld
+  *execve()后 系统调用动态链接库 
+ *论文是内核转载的部分
+
+== 代码和注释 ==
+ *[[elf-load-analyse/sys_execve()|sys_execve()]]
+ *[[elf-load-analyse/do_execve()|do_execve()]]
+ *[[elf-load-analyse/prepare_binprm()|prepare_binprm()]]
+ *[[elf-load-analyse/search_binary_handler()|search_binary_handler()]]
+ *[[elf-load-analyse/copy_strings()|copy_strings()]]
+== 文件地址 ==
+ */arch/i386/kernel/process.c: 
+ */fs/exec.c
+== 杂 ==
+ ＊内核版本 2.6.7
+ ＊i386架构
+  *单CPU
+== execve总的执行过程 ==
+ 1. 系统调用execve() 用户态
+  1. 陷入内核对应的sys_execve() 内核态
+   1. do_execve()
+    1. prepare_binprm()
+    1. search_binary_handler()
+     1. 调用对应格式的加载函数如load_elf_binary()
+ 1. 进入动态链接器入口 用户态
+  1. 装载动态链接库
+ 1. 程序的入口
+ *到search_binary_handler()是第一部分 这是总的一般的装载过程 和架构有关 但和文件格式无关
+ *相应的elf相关的load_elf_binary()load_elf_interp()create_elf_tables() 对应于elf格式的装载过程
+ *动态链接器以后的代码不涉及 是libc的内容
+== 一般执行过程 ==
+ 1. [[elf-load-analyse/sys_execve()|sys_execve()]]
+   1. [[elf-load-analyse/do_execve()|do_execve()]]
+    1. [[elf-load-analyse/prepare_binprm()|prepare_binprm()]]
+    1. [[elf-load-analyse/search_binary_handler()|search_binary_handler()]]
+== 参数和环境变量的传递 ==
+== elf格式转载 ==
+== 相关内容 ==
+ 1. bash shell “fork”一个与自身一模一样的 process。
+该 process 执行系统调用 execve(),也就是你看到的 strace 输出的第一行
+execve("./hello", ["./hello"], [/* 22 vars */]) = 0。由于无论是读取文件,还是文件映
+射(File Mapping)都发生在 Kernel 里,所以 strace 不能监控到这一步的任何东
+西。本文要分析的即是该过程。
+ 2. 系统调用 execve()以后, process 的真正入口被设置成动态链接器的入口该(如
+果是静态链接的话,就比较简单,设置的入口就是该可执行文件 hello 的入口).
+当该新 process 返回到用户态(也就是从 execve 执行完后从内核态返回到用户态,不是对该函数调用的返回。因为只有该函数调用失败才会有返回,成功的话,就进入了另一个“世界”,控制转移到动态链接器(/lib/ld-2.3.4.so))。

@@ -1,0 +1,18 @@
+= GNU Autoconf, Automake, and Libtool =
+ *三部分： 历史 使用 高级特性
+ *入门书籍
+== Introduction ==
+ *Autoconf用于配置
+ *Automake用于构建
+ *Libtool用于生产库文件
+== History ==
+ *都是为了解决相应问题而生的
+== How to run configure and make ==
+ *构建最好有三棵树：a source tree, a build tree and an install tree.
+ *运行configure要可以添加参数，有很多常见的参数
+ *configure会产生相应的生成文件，有很多常见的生成
+ *使用configure产生文件的原文件一般后缀为.in
+ *使用make有很多常见的Target
+ *Configuration Names用来标示运行环境，由cpu-manufacturer-operating_system组成
+ *编译平台选项有build host target决定，host决定生成软件运行环境，target决定生成软件工作目标，多用于交叉编译器
+== Introducing `Makefile's ==

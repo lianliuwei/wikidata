@@ -1,0 +1,14 @@
+= Firefox =
+ *火狐浏览器很好, 什么时候能研究一下浏览器的源代码就好了
+ *[[http://en-us.www.mozilla.com/en-US/firefox/central/]]官方入门教程
+ *[[http://en.wikipedia.org/wiki/Firefox]]
+ *[[http://www.mozdev.org/index.html]]插件开发
+ *[[https://developer.mozilla.org/Special:Tags?tag=Developing+Mozilla|开发者文档]]
+ *[[https://developer.mozilla.org/en/docs]] 文档中心
+ *[[https://developer.mozilla.org/en/Mozilla_Source_Code_Directory_Structure|Mozilla Source Code Directory Structure]]
+== XUL ==
+ *火狐使用的界面技术
+ *[[http://www.ibm.com/developerworks/cn/xml/x-xul/|XUL － 快速开发跨平台易用用户接口的新途径]] 网页技术用于本地客户端
+ *[[http://en.wikipedia.org/wiki/XUL]]
+ *[[http://fionawzh.blog.163.com/blog/static/1157948202010322105315817/|XUL用户界面编程]]
+ *[[https://developer.mozilla.org/En/XUL]]

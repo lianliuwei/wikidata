@@ -1,0 +1,7 @@
+= grub =
+ *引导程序
+ *stage 1.5 原理 [[http://blog.csdn.net/dongliheng/archive/2007/07/08/1682522.aspx|GRUB装载原理]]
+== 资源 ==
+ *[[http://hi.baidu.com/wch20088082008/blog/item/017b4955c7aece5d574e0064.html]]学习笔记 初级学习用
+ *[[http://www.linuxsir.org/main/?q=node/130]] 可以作为索引
+ *[[http://hi.baidu.com/duangonghua/blog/item/0ee8bb099a311d87d0581bc1.html]]双硬盘启动

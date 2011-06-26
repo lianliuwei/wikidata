@@ -1,0 +1,65 @@
+= Visual C++ =
+ *[[http://www.cnblogs.com/xcj26/archive/2010/03/17/1688455.html|深入理解 resx文件]]
+ *在Visual C++中定制AppWizard
+  *[[http://www.vckbase.com/document/viewdoc/?id=276]]
+  *[[http://www.vckbase.com/document/viewdoc/?id=286]]
+  *[[http://www.vckbase.com/document/viewdoc/?id=287]]
+ *窥探PE文件内幕：Win32 PE 文件格式之旅
+  *[[http://www.cnblogs.com/jasonsun/archive/2010/08/13/1799029.html]]
+ *[[http://hi.baidu.com/aztack/blog/item/7fbc82cbfcc258f752664fee.html|VC的对话框模板原理]]
+ *2008中使用ctrl+f5运行控制台程序就不会一闪而过
+ *[[http://msdn.microsoft.com/en-us/library/x93ctkx8.aspx|Debug Interface Access SDK]] 用于查询pdb的COM
+ *[[http://msdn.microsoft.com/en-us/library/yd4f8bd1.aspx|Program Database Files (C++)]]
+ *[[http://sourceforge.net/projects/wtl/]] Windows下的UI库
+ *[[http://blog.sina.com.cn/s/blog_403ba3dd01000aue.html|不再经受"Warning C4819"的摧残]] 多语言支持怎么就这么差
+ *Visual Studio中的Samples目录有很多有用的示例
+ *[[http://msdn.microsoft.com/zh-tw/library/1370z17c%28v=VS.90%29.aspx|Visual C++ 範例應用程式]]
+ *[[http://stackoverflow.com/questions/1116465/how-do-you-share-code-between-projects-solutions-in-visual-studio|How do you share code between projects/solutions in Visual Studio?]]
+== 远程调试 ==
+ *[[http://v8ynkq.dev3.webenabled.net/archives/285|VS2008 远程调试环境搭建]]
+ *[[http://www.cnblogs.com/OpenCoder/archive/2010/02/17/1668983.html|Visual Studio 2008 远程调试]]
+ *[[http://msdn.microsoft.com/en-us/library/y7f5zaaa.aspx|Remote Debugging Setup]]
+ *权限是个大问题
+== 运行程序 ==
+ *[[http://stackoverflow.com/questions/42531/how-do-i-call-createprocess-in-c-to-launch-a-windows-executable]]
+ *[[http://www.vckbase.com/document/viewdoc/?id=416|深入浅出ShellExecute]]
+== atlrx.h missing ==
+ *Visual C++ 2008以后会出现 因为微软改变了库为开源的了
+ *[[http://blog.csdn.net/wu_huiwen/archive/2010/04/24/5523128.aspx|MFC 中正则表达式的使用，找不到atlrx.h解决办法]]
+ *[[http://atlserver.codeplex.com/releases/view/3754|ATL Server Library and Tools]] 相关库位置
+== GDI+ ==
+ *这个[[C++]]封装的绘图库比GDI好用
+ *CustomLineCap可以用来实现自定义的线头 AdjustableArrowCap为系统自带的箭头 最好不要从CustomLineCap来派生 只使用最好
+ *[[http://support.microsoft.com/kb/818444/zh-cn|如何： 使用 GDI + 区域在窗体上功能来创建自定义的形状]]
+ *[[http://www.vckbase.com/document/viewdoc/?id=1440|GDI+编程基础（一）GDI+ Vs GDI]]
+ *[[http://hi.baidu.com/gopher2008/blog/item/570d6bed2f0de0d5b21cb15d.html|奇怪的CustomLineCap]]
+ *[[http://msdn.microsoft.com/en-us/library/ms533798%28v=VS.85%29.aspx|GDI+]] MSDN
+ *[[http://www.codeproject.com/KB/GDI-plus/OutlineText.aspx|Outline Text]] 用GDI+画文字的外围
+ *[[http://www.codeproject.com/KB/GDI-plus/gdiplush.aspx|GDI+ and MFC memory leak detection]]
+ *[[http://www.codeproject.com/KB/GDI-plus/gdiplusbrushes.aspx|GDI+ Brushes and Matrices]]
+== 预编译头文件 ==
+ *[[http://blog.csdn.net/Nhsoft/archive/2003/07/07/11558.aspx|预编译头文件的使用]] 节省常见头文件的处理
+ *[[http://lmsjack.blog.163.com/blog/static/134484720091026102919815/|预编译头文件来自编译器的早期版本，或者预编译头为 C++ 而在 C 中使用它(或相反)]] 混合编程可能出现的错误
+== 插件 ==
+ *[[http://www.wholetomato.com/|Visual Assist X]]
+== 快捷键 ==
+ *[[http://www.microsoft.com/downloads/en/details.aspx?FamilyID=4411BBFC-0E3C-42B3-BD05-AF1D292C986F|Visual C++ 2008 Keybinding Reference Poster ]]
+ *工具 -> 选项 -> 环境 -> 键盘 可以查找对应的快捷键对应的命令
+ *Ctrl + Shift + V 查看剪切板
+ *Ctrl + Enter 上方插入一行 Ctrl + Shift + Enter 下方插一行
+ *Alt + o 头文件和源文件切换
+ *Ctrl + - 向后定位 Ctrl + shift + - 先前定位
+ *Ctrl + Delete Ctrl + Backspace 删除词 Ctrl + L 剪切行
+ *Ctrl + k, Ctrl + \ 删除空白行
+ *Ctrl + r, Ctrl + w 切换是否显示空白字符
+ *F4 下一个错误
+ *Ctrl + F6 Ctrl + Shift + F6 在标签页中跳转  Ctrl + F4关闭当前标签页
+ *Alt + Shift + 光标移动 选择区域
+ *Ctrl + = 选择到最后一个返回标记的代码 Ctrl + k， Ctrl + A 交换当前定位点位置
+ *编辑注册表可以获得引导线
+ *Ctrl + k，Ctrl + C Ctrl + k，Ctrl + U 注释和反注释代码
+ *Ctrl + k, Ctrl + F 整理选择或当前行的格式
+ *不要在代码中使用制表符
+ *Ctrl + M, Ctrl + M 折叠指点代码块 Ctrl + M, Ctrl + L整个大纲视图折叠 Ctrl + M, Ctrl + P 关闭大纲显示 Ctrl + M, Ctrl + O折叠到定义
+ 停止大纲视图可以用撤销命令取消
+ *Alt + M 到快速命令切换行

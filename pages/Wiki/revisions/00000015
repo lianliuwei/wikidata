@@ -1,0 +1,11 @@
+wiki试验田
+
+----
+[[file:///bin]]
+----
+{{#!FORMAT cpulspuls
+int main(int argv, char ＊argv[])
+{
+return 0;
+}
+}}

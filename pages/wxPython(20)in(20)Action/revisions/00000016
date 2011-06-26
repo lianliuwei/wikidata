@@ -1,0 +1,71 @@
+= wxPython in Action =
+ *wxPython作者写的
+{{{#!wiki
+<<TableOfContents(3)>>
+== Introduction to wxPython ==
+=== Welcome to wxPython ===
+ *一切能在屏幕上显示的都是window 别的系统也叫widget
+ *wxPython使用[[http://www.swig.org/|SWIG]]来进行接口封装
+ *使用其他的子包时一定要先倒入wx包
+ *MainLoop()后就进入wxPython的控制
+ *有些widget是直接用[[Python]]写成的
+ *wx中的w代表Windows x代表Unix
+ *wxPython中可以动态绑定响应事件
+=== Giving your wxPython program a solid foundation ===
+ *程序都需要application对象和top-level window对象
+ *一般初始化放在OnInit()中
+ *窗口不一定要在OnInit()中创建 只要创建窗口前创建了App对象
+ *wx.PySimpleApp实现了简单的OnInit() 可以在不想继承wx.App时候使用
+ *C++对wxPython的影响：使用不同的方法命名 使用Get和Set方法 不能直接使用属性
+ *默认不同平台的输出从定向是不同的 最好统一设置
+ *wx.App对象的输出重定向在它的生存期中
+ *OnExit()处理退出
+ *App.SetExitOnFrameDelete(flag)设置窗口都关闭的时候时候要退出
+ *对于wx.EVT_QUERY_END_SESSION 可以使用wx.CloseEvent.CanVeto() wx.CloseEvent.Veto()来否决关闭
+ *top-level window是wx.Frame的子类
+ *frame的parent属性代表如果parent不存在的情况下当前的窗口也要关闭
+ *window要有ID，而且ID最好是独一的
+ *使用wx.NewId()可以获得ID
+ *wx.Point wx.Size
+ *Table 2.2 Frame的style
+ *还有扩展属性
+ *wx.Panel会相应tab键
+ *toolbar中的按键和menu是使用一样的事件 触发相同的功能
+ *event的类型比event多
+ *wx.MouseEvent有14总类型
+=== Working in an event-driven environment ===
+ *Table 3.1 event术语
+ *wx.EvtHandler.ProcessEvent()用来分发event
+ *响应事件使用使用On<event>()命名
+ *图3.3 表示处理事件处理流程
+ *wx.Event.Skip() 表示要继续处理
+ *只有wx.CommandEvent会向上传递
+ *在进行长时间计算的时候要中途进行消息处理
+ *Py版本的类可以让wxWidgets看到，可以覆盖相应的C++方法
+ *可以自定义自己的一套event 但要创建相应的event eventType eventBinder
+ *要处理event要自己调用自己的ProcessEvent()
+ *wxPython中也可以像其他widget对象注入自己的事件处理表
+=== Making wxPython easier to handle with PyCrust ===
+ *交互式学习现有的代码是最快的学习方法
+ *使用特定的GUI库的shell，很难在别的GUI库程序中应用
+ *PyCrust是用于wxPython中的shell
+ *PyCrust使用wx.stc.StyledTextCtrl控件做文本控件  wx.stc.StyledTextCtrl包装[[http://www.scintilla.org/|Scintilla]]控件
+ *4.2 PyCrust的编辑功能 不要使用无限循环 终止不了
+ *PyCrust有一个dispatcher对象可以发布消息 可用于动态处理消息
+ *PyCrust可以动态添加控件
+ *使用这章的PyWrap.py程序，可以给程序加个PyCrust, 可以交互式的修改界面
+ *wx.py库中有很多有用的代码块 PyCrust就是基于其完成的 其他Py开头的是应用程序
+ *buffer 充当编辑器和真实文件的中间层
+ *crust PyCrust的界面元素 添加到应用程序可以看到很多内部信息
+ *dispathcher 充当controller的角色 不过非常的灵活
+ *editor Python源代码编辑控件
+ *filling 用于显示namespaces里的objects
+ *interpreter 用于解析语言
+ *introspect 用于支持反省功能
+ *shell 提供shell功能
+=== Creating your blueprint ===
+ 
+== Essential wxPython ==
+== Advanced wxPython ==
+
+}}}

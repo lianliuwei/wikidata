@@ -1,0 +1,8 @@
+= Windows =
+ *[[http://www.china-pub.com/195486|Windows 内核情景分析--采用开源代码ReactOS]]
+ *WRK:Windows Research Kernel 微软开源内核
+ *[[http://www.unifiedkernel.com/]] 在Linux内核里模拟Windows 内核
+ *[[http://www.reactos.org/]] 开源Windows内核仿造
+ *[[http://www.winehq.org/]] wine官网
+ *[[http://blog.csdn.net/fmddlmyy/archive/2005/05/03/371646.aspx|从subsystem开始概述NT内核]]
+ *[[http://support.microsoft.com/kb/310516/zh-cn|如何通过使用注册项 (.reg) 文件添加、修改或删除注册表子项和值]]

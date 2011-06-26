@@ -1,0 +1,57 @@
+== Rules ==
+{{{
+target : prereq
+(tab键)commands
+}}}
+ *Explicit Rules
+  *多target表示共同prerequistes
+  *可多条Rules重复定义一target
+ *Wildcard
+  *可使用和 bash一样的通配符
+  *注意make运行和shell运行的不同
+ *Phony Targets
+  *要显示的和别的Targets区别开来
+  *可以用来重用
+  *all install clean distclean TAGS info check 常用Target
+ *Empty Targets 用空文件做时间标签
+ *Variables $() 和 $单个字母
+ *Automatic 避免重复 $@=Target $<=第一个条件 $^=所有条件
+ *VPATH和path解决搜索路径 vpath %.c src精确
+ *VPATH下有同名文件就麻烦了
+ *Pattern Rules
+  *%.c:%.o
+  *能形成隐式规则链
+  *有些很难理解
+  *多个目标表示所以目标都有 只执行一次 和准确规则不一样(会执行多次)
+ *stem 没有后缀
+ *Static Pattern Rules 为固定的几个文件匹配 $(OBJECTS): %.o: %.c
+ *Suffix Rules 放弃使用
+ *默认会通过RCS和SCCS进行控制,但是这两种都不用了,而且版本控制相当复杂,要特别处理
+ *内建虚目标
+ *自动规则生成
+  *gcc -M 产生依赖关系
+  *手写头文件依赖是种灾难
+  *依赖的层次是: .O .C .h
+  *每个.o文件有一个.d依赖文件
+  *include 后的每一个文件都会更新
+  *%.d: ％.c规则
+  *-include取消无文件提示
+  *相当难于理解
+ *Libraries
+  *对外部的库应该打包在一起管理
+  *ar rv
+  *gcc -l用于添加库 省掉重复文件名
+  *默认使用的是动态链接库.so文件
+  *-L 指定库文件路径
+  *用最近更新列表$?来添加库中的obj
+  *有时重建比更新更快
+  *libgraphics.a(bitblt.o)有这种引用库中的obj
+  *用ranlib进行symbols更新
+   *新ar不用
+  *make可以识别－l选项
+  *linker 和obj的顺序有关 用重复来解决
+   *用$+来保持重复
+  *对于不同的依赖用不同的命令 过时
+=== Rules中可用变量 ===
+ *$@ 代表目标
+ *$< 前提条件的第一个

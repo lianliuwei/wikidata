@@ -1,0 +1,223 @@
+= elf-load-analyse =
+ *工具 file ldd strace
+ *内存分配两阶段
+  *execve()中 有ld
+  *execve()后 系统调用动态链接库 
+ *论文是内核转载的部分
+ 
+== 相关的源码 ==
+ *sys_execve()
+ *do_execve()
+ *prepare_binprm()
+ *search_binary_handler()
+== execve总的执行过程 ==
+ 1. 系统调用execve() 用户态
+  1. 陷入内核对应的sys_execve() 内核态
+   1. do_execve()
+    1. prepare_binprm()
+    1. search_binary_handler()
+     1. 调用对应格式的加载函数如load_elf_binary()
+ 1. 进入动态链接器入口 用户态
+  1. 装载动态链接库
+ 1. 程序的入口
+ *到search_binary_handler()是第一部分 这是总的一般的装载过程 和架构有关 但和文件格式无关
+ *相应的elf相关的load_elf_binary()load_elf_interp()create_elf_tables() 对应于elf格式的装载过程
+ *动态链接器以后的代码不涉及 是libc的内容
+== 一般执行过程 ==
+ 1. [[elf-load-analyse/sys_execve()|sys_execve()]]
+   1. [[elf-load-analyse/do_execve()|do_execve()]]
+    1. [[elf-load-analyse/prepare_binprm()|prepare_binprm()]]
+    1. [[elf-load-analyse/search_binary_handler()|search_binary_handler()]]
+== 参数和环境变量的传递 ==
+== elf格式转载 ==
+== 相关内容 ==
+ 1. bash shell “fork”一个与自身一模一样的 process。
+该 process 执行系统调用 execve(),也就是你看到的 strace 输出的第一行
+execve("./hello", ["./hello"], [/* 22 vars */]) = 0。由于无论是读取文件,还是文件映
+射(File Mapping)都发生在 Kernel 里,所以 strace 不能监控到这一步的任何东
+西。本文要分析的即是该过程。
+ 2. 系统调用 execve()以后, process 的真正入口被设置成动态链接器的入口该(如
+果是静态链接的话,就比较简单,设置的入口就是该可执行文件 hello 的入口).
+当该新 process 返回到用户态(也就是从 execve 执行完后从内核态返回到用户态,不是对该函数调用的返回。因为只有该函数调用失败才会有返回,成功的话,就进入了另一个“世界”,控制转移到动态链接器(/lib/ld-2.3.4.so))。
+== 函数地址 ==
+ */arch/i386/kernel/process.c: 
+ */fs/exec.c
+== copy_strings() ==
+{{{#! cplusplus
+
+/*
+ * 'copy_strings()' copies argument/environment strings from user
+ * memory to free pages in kernel mem. These are in a format ready
+ * to be put directly into the top of new user memory.
+ */
+int copy_strings(int argc,char __user * __user * argv, struct linux_binprm *bprm)
+{
+	struct page *kmapped_page = NULL;
+	char *kaddr = NULL;
+	int ret;
+
+	while (argc-- > 0) {
+		char __user *str;
+		int len;
+		unsigned long pos;
+
+		if (get_user(str, argv+argc) ||
+				!(len = strnlen_user(str, bprm->p))) {
+			ret = -EFAULT;
+			goto out;
+		}
+
+		if (bprm->p < len)  {
+			ret = -E2BIG;
+			goto out;
+		}
+
+		bprm->p -= len;
+		/* XXX: add architecture specific overflow check here. */
+		pos = bprm->p;
+
+		while (len > 0) {
+			int i, new, err;
+			int offset, bytes_to_copy;
+			struct page *page;
+
+			offset = pos % PAGE_SIZE;
+			i = pos/PAGE_SIZE;
+			page = bprm->page[i];
+			new = 0;
+			if (!page) {
+				page = alloc_page(GFP_HIGHUSER);
+				bprm->page[i] = page;
+				if (!page) {
+					ret = -ENOMEM;
+					goto out;
+				}
+				new = 1;
+			}
+
+			if (page != kmapped_page) {
+				if (kmapped_page)
+					kunmap(kmapped_page);
+				kmapped_page = page;
+				kaddr = kmap(kmapped_page);
+			}
+			if (new && offset)
+				memset(kaddr, 0, offset);
+			bytes_to_copy = PAGE_SIZE - offset;
+			if (bytes_to_copy > len) {
+				bytes_to_copy = len;
+				if (new)
+					memset(kaddr+offset+len, 0,
+						PAGE_SIZE-offset-len);
+			}
+			err = copy_from_user(kaddr+offset, str, bytes_to_copy);
+			if (err) {
+				ret = -EFAULT;
+				goto out;
+			}
+
+			pos += bytes_to_copy;
+			str += bytes_to_copy;
+			len -= bytes_to_copy;
+		}
+	}
+	ret = 0;
+out:
+	if (kmapped_page)
+		kunmap(kmapped_page);
+	return ret;
+}
+}}}
+== copy_strings()注释 ==
+{{{#! cplusplus
+
+/*
+ * 'copy_strings()' copies argument/environment strings from user
+ * memory to free pages in kernel mem. These are in a format ready
+ * to be put directly into the top of new user memory. 是用户的栈吗
+ */
+int copy_strings(int argc,char __user * __user * argv, struct linux_binprm *bprm)用户空间到内核空间
+{
+	struct page *kmapped_page = NULL;
+	char *kaddr = NULL;
+	int ret;
+
+	while (argc-- > 0) { 刚好可以用加的
+		char __user *str;
+		int len;
+		unsigned long pos;
+
+		if (get_user(str, argv+argc) || 用户态的
+				!(len = strnlen_user(str, bprm->p))) {
+			ret = -EFAULT;
+			goto out;
+		}
+
+		if (bprm->p < len)  {
+			ret = -E2BIG; two big
+			goto out;
+		}
+存放用户态的 argv[]与 envp[]的内核空间不够,表示用户态的参数列表与环境变量列表变态
+的长,总长超过 32 个叶面,128K,报错。系统最多预
+留 32 页。但这时还没有真正分配物理页面
+		bprm->p -= len;由后向前 
+		/* XXX: add architecture specific overflow check here. */
+		pos = bprm->p;
+
+		while (len > 0) {
+			int i, new, err;
+			int offset, bytes_to_copy;
+			struct page *page;
+
+			offset = pos % PAGE_SIZE;
+			i = pos/PAGE_SIZE; 在第几页
+			page = bprm->page[i];
+			new = 0;
+			if (!page) { 申请页
+如果该物理页面还没有分配,则通过物理页面分配器申请一页。这里的物理页面分配器是系统中
+所有内存分配之母,是最底层的内存管理器。一切内存管理都建立在其之上。
+
+				page = alloc_page(GFP_HIGHUSER);
+				bprm->page[i] = page;
+				if (!page) {
+					ret = -ENOMEM;
+					goto out;
+				}
+				new = 1;
+			}
+
+			if (page != kmapped_page) { 这是干什么的 page 只是物理页面,是不能寻址的,所以这里临时把它映射到 Virtual
+Address 中
+
+				if (kmapped_page)
+					kunmap(kmapped_page);
+				kmapped_page = page; 当前页吗
+				kaddr = kmap(kmapped_page);内存的地址
+			}
+			if (new && offset)
+				memset(kaddr, 0, offset); 清空 为什么要清空前面的字节
+			bytes_to_copy = PAGE_SIZE - offset;
+			if (bytes_to_copy > len) {
+				bytes_to_copy = len;
+				if (new)
+					memset(kaddr+offset+len, 0,
+						PAGE_SIZE-offset-len); 为什么要清空后面
+			}
+			err = copy_from_user(kaddr+offset, str, bytes_to_copy); 可能会拷贝一些不要的值
+			if (err) {
+				ret = -EFAULT; 为什么要用-
+				goto out;
+			}
+
+			pos += bytes_to_copy;
+			str += bytes_to_copy;
+			len -= bytes_to_copy;
+		}
+	}
+	ret = 0;
+out:
+	if (kmapped_page) 只释放一页吗 取消临时“门牌号码”
+		kunmap(kmapped_page);
+	return ret;
+}
+}}}

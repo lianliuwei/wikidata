@@ -1,0 +1,15 @@
+= 架构 =
+ *非常有意思的软件的一方面
+ *英文 Architecture
+ *从建筑业中引入的概念
+ *[[http://en.wikipedia.org/wiki/Architectural_pattern]]
+ *[[http://en.wikipedia.org/wiki/Software_architecture]]
+== 书籍 ==
+ *架构之美
+ *[[http://www.aosabook.org/|The Architecture of Open Source Applications ]]
+== MVC ==
+ *广泛应用的结构模式
+ *[[http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller]]
+== DCI ==
+ *新兴的行为模式
+ *[[http://en.wikipedia.org/wiki/Data,_Context_and_Interaction]]

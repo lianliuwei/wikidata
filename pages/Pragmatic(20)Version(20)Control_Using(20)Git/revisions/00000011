@@ -1,0 +1,12 @@
+= Pragmatic Version Control_Using Git =
+ *三部分：概念 日常操作 管理操作
+== Welcome to the Distributed World ==
+=== Version Control the Git Way　===
+ *Repository代表所有的变更的数据集合
+ *upstream Repository代表共同开发的repository
+ *pushing向服务器发送变更版本
+ *pulling = fetch + merge
+ *Git使用分布式模型，本地有repository
+ *Git的Repository放在.git文件夹里面
+
+ *看到19

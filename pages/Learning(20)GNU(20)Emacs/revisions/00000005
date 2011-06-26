@@ -1,0 +1,22 @@
+= Learning GNU Emacs =
+== Preface ==
+ *是一个工作环境
+ *GNU Emacs 和 XEmacs
+ *一 二章讲基础
+ *学习内容分类
+ *一点一点增量学
+ *各章概述
+ *meta key 是alt
+ *表示法
+== Emacs Basics ==
+ *学Emacs就是学键盘习惯
+ *每次少量多次复习的方法学
+ *buffer和file要分开
+ *不同的模式对应不同的使用环境
+ *一个buffer对应一种major mode
+ *major mode中可以开启关闭多种minor mode
+ *toolbar和menu是会根据内容进行变化
+ *M-`显示菜单，文本模式的
+ *The Mode Line: encoding scheme  修改标志 buffer名字 位置指示 mode
+ *Minibuffer 用于命令输入和回显状态
+== Editing ==

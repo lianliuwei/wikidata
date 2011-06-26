@@ -1,0 +1,8 @@
+= SSH =
+ *加密shell
+ *可以做机密通道和socks5代理
+== PuTTY ==
+ *Windows下客户端
+ *[[http://chaifeng.com/blog/2007/06/putty_200611.html|PuTTY 中文教程]]
+ *[[http://www.chiark.greenend.org.uk/~sgtatham/putty/|官网]]
+ *Software caused connection abort 加大服务器timeout,增加定时空TCP包发送

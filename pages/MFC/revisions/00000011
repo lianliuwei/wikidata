@@ -1,0 +1,32 @@
+= MFC =
+ *深入浅出MFC
+ *VC++深入详解
+ *绘图使用GDI+比GDI好一点
+ *GDI+是对GDI的C++封装
+== 问题 ==
+ *viewport和window是指两个不同的空间，通过原点和单位进行映射的吗？
+  *是的
+ *View里面为什么会在onMouseMove处理完调用setCursor方法。
+  *自己弄错的，使用官方的鼠标要用全局的变量加上参数NULL
+== 坐标 ==
+ *世界坐标系空间
+  *方便绘图用，可以旋转
+ *页面空间
+  *绘图的逻辑空间
+ *设备空间
+  *可以是客户区，桌面，完整窗口，打印机一页纸
+  *页面空间到设备空间由DC控制
+ *物理设备空间
+  *从设备空间到物理设备空间转换由内核负责
+ *[[http://www.vckbase.com/vckbase/vckbase12/vc/nonctrls/multimedia_22/1222003.htm|视图的缩放的完整论述]]
+== 保存图像 ==
+ *自己设计数据结构保存，并重新绘制
+ *使用MetaFileDC
+ *使用compatibleDC
+  *存到bmp中
+== 双缓冲 ==
+ *[[http://wenku.baidu.com/view/1d456ee79b89680203d825d9.html|MFC+GDI双缓冲避免图形闪烁]]
+== 资源 ==
+ *[[http://www.codeproject.com/Chapters/1/Desktop-Development.aspx]]codeproject中相关内容
+ *[[http://www.codeguru.com/cpp/]]codegurn中相关资源
+ *[[http://www.codeguru.com/Cpp/W-D/doc_view/scrolling/article.php/c3345|Add Zoom and Scale Capabilities to CScrollView]]

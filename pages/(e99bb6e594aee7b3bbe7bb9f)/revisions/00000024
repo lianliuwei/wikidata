@@ -1,0 +1,44 @@
+= 零售系统 =
+== 老师 ==
+ *李贵林
+  *电话 13850078033
+== 考勤 ==
+ *[[http://59.77.4.94:8080/warkaoqin/]] 每天最后考勤
+== 当前任务 ==
+ *看概述的书
+ *硬件原理图要看得懂
+ *汇编会看得懂
+ *Make等用到的构建工具
+ *构建过程
+ *Git和repo
+ *U-Boot修改过程
+== 时间 ==
+ *大四上学期
+== 系统参数 ==
+ *开发过程
+  1. 从底层开发，需要进行从bootloader->linux内核裁剪->根文件系统裁剪->应用程序开发的过程 
+  2. 直接从linux系统开发
+ *界面 miniGUI，后端数据库 sqlite，网络 socket
+== 学习内容 ==
+ *学构建, 根文件系统, 驱动编写, 启动过程, 应用工具, 脚本程序, 硬件基础
+ *[[U-Boot]]
+ *[[Android]]
+ *[[向UP-S3C2410-S移植环境]]
+ *技术
+  *C
+  *C++
+  *GUI
+   *MiniGUI
+  *数据库
+   *SQLite
+   *数据库设计
+  *Linux系统移植
+ *通用
+  *[[Vim]]
+  *SVN
+  *[[Make]]
+  *[[Git]]
+ *[[Linux/Device Drivers]] 触摸屏 鼠标 小键盘 键盘 打印机 扫描枪 (多为USB)
+== 书籍 ==
+ *Building Embedded Linux Systems
+ *Embedded Linux Primer

@@ -1,0 +1,49 @@
+= Git =
+ *为[[http://en.wikipedia.org/wiki/Source_Code_Management|SCM]] 源代码管理的一种
+ *用SHA计算 代表Object
+ *Objects
+  *blob
+  *tree
+  *commit某种状态
+  *tag
+ *在现有的文件系统上面构建新的文件系统 适合于版本控制
+ *git show SHA号 显示对应的文件内容
+ *git ls-tree SHA号 显示对应的文件目录内容
+ *这东西设计得很好呀
+ *commit可以有多个parent
+ *HEAD是当前tree
+ *正式开发要使用密钥
+ *[[http://book.git-scm.com/1_git_directory_and_working_directory.html]] git项目文件树介绍
+ *Working Directory 是正在工作的目录
+ *分支与合并
+  *
+ *.git后缀为git库
+ *Index为你想要提交的预备
+ *git-status 查看工作目录什么提交了 什么没有提交 什么根本没有记录
+ *提交的不是工作目录
+== 代理 ==
+ *可以使用http代理和Sock5代理
+ *[[http://thilo.cestona.ro/?p=23|Finally; git via ssh SOCKS proxy on windows]]使用这个方法可以
+ *[[http://bent.latency.net/bent/darcs/goto-san-connect-1.85/src/connect.html]]Sock5方法 使用的代理软件 Connect
+ *[[http://www.patthoyts.tk/blog/using-git-with-socks-proxy.html|Using Git with a SOCKS proxy]] 没有详细讲明在Windows上怎么做
+ *[[http://twopenguins.org/tips/git-through-proxy.php|Using GIT through a SOCKS proxy]] Linux上方法
+ *[[http://yegle.net/2008/08/06/git-via-a-http-proxy/|通过http代理git]]
+ *[[http://refractalize.blogspot.com/2010/09/git-over-socks-on-windows.html|Git over SOCKS on Windows]] 没试验成功 原理没有搞清楚
+== 更新方式 ==
+ *
+== 资料 ==
+ *[[http://book.git-scm.com/]]git书籍
+ *[[http://www.bitsun.com/documents/GitUserManualChinese.html]]中文手册
+ *[[http://en.wikipedia.org/wiki/Git_(software)]]
+ *[[http://www.china-pub.com/196738|版本控制之道——使用Git]]
+ *[[http://bbs.scmlife.com/index.php]]
+ *[[http://pragprog.com/|出版社]]
+ *[[Pragmatic Version Control_Using Git]]书籍阅读记录
+ *[[http://www.robinlu.com/blog/archives/194|如何在svn系统中使用git]]
+ *[[http://code.google.com/p/tortoisegit/]] 乌龟Git 还有待开发
+ *[[http://code.google.com/p/msysgit/]] Windows上Git版本 有再开发用的 一般使用的
+== 心得 ==
+ *[[http://plog.longwin.com.tw/my_note-app-setting/2010/01/26/git-ignore-howto-set-zim-2010|Git .gitignore 設定 與 注意事項 - 以 Zim 操作為範例]] 使用Git的常用忽略功能
+ *[[http://dwfeng.net/blog/2008/10/27/how-to-cancel-them-after-git-add.html|代码在git add之后如何取消]] 如何重置cache Git rm --cache -r .
+ *git checkout 使用-f选项不管cache和本地文件是否有更新，都强制更新
+ *git clone不支持断点续传 使用git fetch 和 git pull进行断点续传

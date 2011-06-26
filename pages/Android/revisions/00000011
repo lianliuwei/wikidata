@@ -1,0 +1,31 @@
+= Android =
+== 系统开发 ==
+ *移植适合Android的Linux
+ *将文件系统移植上去
+ *应用环境完整
+ *熟练调试
+ *[[http://www.codesourcery.com/downloads/public/gnu_toolchain/arm-none-linux-gnueabi]] 编译器
+ *[[http://code.google.com/p/android/]] android的Linux内核
+ *[[http://developer.android.com/index.html]]android SDK 这是要上网更新的
+ *[[http://benno.id.au/blog/2007/11/14/android-busybox]]android-busybox
+== x86 Android ==
+ *[[http://www.android-x86.org/]]
+ *[[http://code.google.com/p/android-x86/]]下载点
+== LiveCD Android ==
+ *[[http://code.google.com/p/live-android/]]
+== 移植 ==
+ *[[http://blog.csdn.net/tekkamanitachi]]
+ *[[http://blog.csdn.net/dongfengsun/archive/2009/10/16/4679902.aspx]]获得源代码
+== 资源 ==
+ *[[http://code.google.com/p/android/]] 内核工程
+ *[[http://blog.csdn.net/JiangBo_HIT/archive/2009/11/24/4860996.aspx]]更新不行
+ *[[http://wxmijl.blog.163.com/blog/static/13245928200910242415186/]]使用 SDK 2.0 emualtor 
+ *[[http://www.motobbs.com/thread-448821-1-1.html]]早期移植
+ *[[http://source.android.com/]]源代码
+ *[[http://android.git.kernel.org/]]代码区
+ *[[http://groups.google.com/group/android-platform]]kernel讨论区
+ *[[http://en.wikipedia.org/wiki/Android_(operating_system)]] wiki
+ *[[http://www.cevx.com/bbs/thread-15645-1-1.html]]开发者网站集合
+ *[[http://www.isandroid.com/android-emulator-emulator-super-detailed-instructions/]] emulator使用
+ 
+ *[[http://www.androidin.com/]]开发论坛

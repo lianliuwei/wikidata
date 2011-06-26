@@ -1,0 +1,316 @@
+== do_execve() ==
+{{{#! cplusplus
+/*
+ * sys_execve() executes a new program.
+ */
+int do_execve(char * filename,
+	char __user *__user *argv,
+	char __user *__user *envp,
+	struct pt_regs * regs)
+{
+	struct linux_binprm bprm;
+	struct file *file;
+	int retval;
+	int i;
+
+	file = open_exec(filename);
+
+	retval = PTR_ERR(file);
+	if (IS_ERR(file))
+		return retval;
+
+	sched_balance_exec();
+
+	bprm.p = PAGE_SIZE*MAX_ARG_PAGES-sizeof(void *);
+	memset(bprm.page, 0, MAX_ARG_PAGES*sizeof(bprm.page[0]));
+
+	bprm.file = file;
+	bprm.filename = filename;
+	bprm.interp = filename;
+	bprm.sh_bang = 0;
+	bprm.loader = 0;
+	bprm.exec = 0;
+	bprm.security = NULL;
+	bprm.mm = mm_alloc();
+	retval = -ENOMEM;
+	if (!bprm.mm)
+		goto out_file;
+
+	retval = init_new_context(current, bprm.mm);
+	if (retval < 0)
+		goto out_mm;
+
+	bprm.argc = count(argv, bprm.p / sizeof(void *));
+	if ((retval = bprm.argc) < 0)
+		goto out_mm;
+
+	bprm.envc = count(envp, bprm.p / sizeof(void *));
+	if ((retval = bprm.envc) < 0)
+		goto out_mm;
+
+	retval = security_bprm_alloc(&bprm);
+	if (retval)
+		goto out;
+
+	retval = prepare_binprm(&bprm);
+	if (retval < 0)
+		goto out;
+
+	retval = copy_strings_kernel(1, &bprm.filename, &bprm);
+	if (retval < 0)
+		goto out;
+
+	bprm.exec = bprm.p;
+	retval = copy_strings(bprm.envc, envp, &bprm);
+	if (retval < 0)
+		goto out;
+
+	retval = copy_strings(bprm.argc, argv, &bprm);
+	if (retval < 0)
+		goto out;
+
+	retval = search_binary_handler(&bprm,regs);
+	if (retval >= 0) {
+		free_arg_pages(&bprm);
+
+		/* execve success */
+		security_bprm_free(&bprm);
+		return retval;
+	}
+
+out:
+	/* Something went wrong, return the inode and free the argument pages*/
+	for (i = 0 ; i < MAX_ARG_PAGES ; i++) {
+		struct page * page = bprm.page[i];
+		if (page)
+			__free_page(page);
+	}
+
+	if (bprm.security)
+		security_bprm_free(&bprm);
+
+out_mm:
+	if (bprm.mm)
+		mmdrop(bprm.mm);
+
+out_file:
+	if (bprm.file) {
+		allow_write_access(bprm.file);
+		fput(bprm.file);
+	}
+	return retval;
+}
+}}}
+== do_execve()注释 ==
+{{{#! cplusplus
+/*
+ * sys_execve() executes a new program.
+ */
+int do_execve(char * filename,
+	char __user *__user *argv,
+	char __user *__user *envp,
+	struct pt_regs * regs)
+{
+这里的 filename 已经位于内核空间,但启动该可执行文件的参数列表 argv[]还在用户空间,
+同样该程序执行的环境列表 envp[]同样也在用户空间。
+
+	struct linux_binprm bprm; 
+见linux_binprm分析
+	struct file *file;
+	int retval;
+	int i;
+
+	file = open_exec(filename); 
+是一个在内核通用的打开文件的函数 文件的读写都是在内核态进行的 这里打开了exec指定的程序文件
+
+	retval = PTR_ERR(file);
+	if (IS_ERR(file))
+		return retval;
+常用的文件打开模式
+	sched_balance_exec();
+和调度有关 该函数与本执行文件的载入关系不大
+	bprm.p = PAGE_SIZE*MAX_ARG_PAGES-sizeof(void *);  
+实际上就是未来该 process的用户 stack 的栈顶. argv,envp 空间大小为 32 * 4K = 128K,而该栈顶为 128K - 4 = 0x1FFFC.
+ 为什么要减去一指针 可能和current指针 所以要减少1个指针
+
+	memset(bprm.page, 0, MAX_ARG_PAGES*sizeof(bprm.page[0]));
+清空bprm中指向stack的页的数组
+	bprm.file = file;
+纪录该可执行文件的打开的 file structure。
+	bprm.filename = filename;
+纪录该可执行文件的文件名。
+	bprm.interp = filename; 
+先假设该可执行文件可能用到的动态链接器的文件名与可执行文件相同。这个假设几乎 100%不
+成立。哪有可执行的动态链接库
+	bprm.sh_bang = 0;
+	bprm.loader = 0;
+	bprm.exec = 0;
+	bprm.security = NULL;
+	bprm.mm = mm_alloc();
+分配进程的内存管理的结构。
+	retval = -ENOMEM; 
+	if (!bprm.mm)
+		goto out_file;
+常用的资源申请模式
+	retval = init_new_context(current, bprm.mm);
+初始化刚分配的该进程的内存管理结构。和内存管理有关, 概略说明
+	if (retval < 0)
+		goto out_mm;
+
+	bprm.argc = count(argv, bprm.p / sizeof(void *)); 
+见count()分析
+这里 argc 即是 argv[]数组的个数,同 int main(int argc, char* argv[])中的 argc
+一样。 只不过由于 argv[]在用户空间,  而计数的动作在内核空间,计起来有点麻烦而已, 比如:
+$ /bin/ls -l -a
+这里 argc = 3,argv[0] = /bin/ls, argv[1] = -l, argv[2] = -a
+
+	if ((retval = bprm.argc) < 0)
+		goto out_mm;
+	bprm.envc = count(envp, bprm.p / sizeof(void *));
+环境变量个数, 环境变量和argv的原理是一样的
+同样 bprm->envc 计数当前 process 的环境变量数组的个数。学过 C 语言的 programmer 不
+知还记得吗,main()函数有多种形式,其中最完整的签名如下:
+int main(int argc, char *argv[],char *env[]);
+这里的 env[]即是环境变量数组。类似于你在 shell 里输入如下命令后看到的。
+lian@M77:~/workspace/linux内核与编程/论文$ env
+ORBIT_SOCKETDIR=/tmp/orbit-lian
+SSH_AGENT_PID=5351
+GPG_AGENT_INFO=/tmp/seahorse-ZkHL16/S.gpg-agent:5378:1
+SHELL=/bin/bash
+TERM=xterm
+XDG_SESSION_COOKIE=0261d2186f40c43ca160083949381818-1244507603.276529-968869555
+GTK_RC_FILES=/etc/gtk/gtkrc:/home/lian/.gtkrc-1.2-gnome2
+WINDOWID=60822162
+USER=lian
+LS_COLORS=no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.svgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:
+GNOME_KEYRING_SOCKET=/tmp/keyring-nXyA0E/socket
+SSH_AUTH_SOCK=/tmp/keyring-nXyA0E/ssh
+SESSION_MANAGER=local/M77:/tmp/.ICE-unix/5293
+USERNAME=lian
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+DESKTOP_SESSION=default
+QT_IM_MODULE=xim
+GDM_XSERVER_LOCATION=local
+PWD=/home/lian/workspace/linux内核与编程/论文
+XMODIFIERS=@im=SCIM
+LANG=zh_CN.UTF-8
+GNOME_KEYRING_PID=5460
+
+GDM_LANG=zh_CN.UTF-8
+GDMSESSION=default
+HISTCONTROL=ignoreboth
+SHLVL=1
+HOME=/home/lian
+GNOME_DESKTOP_SESSION_ID=this-is-deprecated
+LOGNAME=lian
+DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-gqGKKciai2,guid=4f2608390079e9c0f002c2c84a2dadd4
+XDG_DATA_DIRS=/usr/local/share/:/usr/share/:/usr/share/gdm/
+LESSOPEN=| /usr/bin/lesspipe %s
+WINDOWPATH=7
+DISPLAY=:0.0
+GTK_IM_MODULE=scim-bridge
+LESSCLOSE=/usr/bin/lesspipe %s %s
+COLORTERM=gnome-terminal
+XAUTHORITY=/home/lian/.Xauthority
+_=/usr/bin/env
+对,东西确实挺多的。
+
+	if ((retval = bprm.envc) < 0)
+		goto out_mm;
+
+	retval = security_bprm_alloc(&bprm); 
+看函数名与安全有关, 不予涉及
+	if (retval)
+		goto out;
+
+	retval = prepare_binprm(&bprm);
+见 prepare_binprm()的分析
+将文件头给装入, 用来判断要用什么格式装载和怎么执行
+	if (retval < 0)
+		goto out;
+
+	retval = copy_strings_kernel(1, &bprm.filename, &bprm); 
+	if (retval < 0)
+		goto out;
+copy_string_kernel的代码
+/*
+ * Like copy_strings, but get argv and its values from kernel memory.
+ */
+int copy_strings_kernel(int argc,char ** argv, struct linux_binprm *bprm)
+{
+	int r;
+	mm_segment_t oldfs = get_fs();
+	set_fs(KERNEL_DS);
+设为内核态
+	r = copy_strings(argc, (char __user * __user *)argv, bprm);
+从内核态得字符串
+	set_fs(oldfs);
+还原
+	return r;
+}
+拷贝可执行文件名 参数是从内核空间中获得的
+
+	bprm.exec = bprm.p;
+	retval = copy_strings(bprm.envc, envp, &bprm); 个数 源 目标 从用户空间到内核空间吗
+	if (retval < 0)
+		goto out;
+复制当前 envp[]的内容(注意,当前 process 的地址空间还是继承自父进程的,完全与父进
+程的相同,自然这里的 aregv[]的内存中的内容也与父进程的相同。   )这里特别说明一下,常规
+运行一个程序的步骤是这样的(当然从 programmer 的角度) :
+1. 先 fork()一个子进程,这个子进程的地址空间是与父进程相同的,自然父进程的 argv[]
+   与 envp[]也被子进程继承。
+2. 子进程会调用 execve()系统调用,以运行新程序。在 execve()中它当然会先废弃掉原来
+   的地址空间(可以理解吗,因为新执行的程序与父进程完全是两个不同的程序吗,自然有完
+   全不同的地址分配吗)   ,然后建立新的地址空间。我们先在正在分析 execve()调用,目前
+   还没到废弃父进程的地址空间的时候,所以现在整个地址空间还与父进程的相同。
+
+	retval = copy_strings(bprm.argc, argv, &bprm);
+	if (retval < 0)
+		goto out;
+
+	retval = search_binary_handler(&bprm,regs);
+在这里将进程空间更新了, 相单于所以的条件已经准备好了, 只等调度.
+
+所有的可执行文件的处理器都被链接在全局变量 formats 定义的链表里面。
+在 src/fs/exec.c 中的
+    static struct linux_binfmt *formats; 
+见 formats 和相关函数分析 
+search_binary_handler()函数在枚举该链表,依次让该链表上的处理器来辨认,具体见该
+函数的分析。
+
+	if (retval >= 0) {
+找到了执行的方法
+		free_arg_pages(&bprm);
+释放那存放 argv[]与 envp[]的最多 32 个页框(在 copy_strings 函数里分配)。
+
+		/* execve success */
+		security_bprm_free(&bprm);
+安全相关, 不涉及
+		return retval;
+	}
+找不到对应的 executable loader 来载入该可执行文件,则释放掉申请的资源,然后返
+回。
+out:
+	/* Something went wrong, return the inode and free the argument pages*/
+	for (i = 0 ; i < MAX_ARG_PAGES ; i++) { 
+		struct page * page = bprm.page[i];
+		if (page)
+			__free_page(page);
+	}
+  bprm->page[i]在 copy_strings()中申请,具体请见该函数的注释。
+	if (bprm.security)
+		security_bprm_free(&bprm);
+下面都是如果在某一步失败,对应的资源要释放
+out_mm:
+	if (bprm.mm)
+		mmdrop(bprm.mm);
+
+out_file:
+	if (bprm.file) {
+		allow_write_access(bprm.file);
+		fput(bprm.file);
+	}
+	return retval;
+linux常用的资源释放模型
+}
+}}}

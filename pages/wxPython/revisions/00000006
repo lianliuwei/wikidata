@@ -1,0 +1,11 @@
+= wxPython =
+ *[[wxWidgets]]的[[Python]]绑定
+ *[[wxPython in Action]]
+ *使用软件
+  *[[BitTorrent]]
+ *[[http://wiki.wxpython.org/wxPythonPit%20Apps]]使用wxPython的程序
+ *[[http://www.wxpython.org/]]官网
+== 资料 ==
+ *[[http://hi.baidu.com/_doc/blog/item/ef8f359b3ea801bec8eaf43e.html|wxpython 窗口一闪而过，怎么调试]]
+ *[[http://www.blogjava.net/HappyDog/archive/2006/07/26/60003.html|Python的GUI开发：小试wxPython]]
+ *[[http://marlonyao.javaeye.com/blog/875516|wxpython中工作线程与主线程交互]] 这种工作线程和主线程的交互方式很好，可以推广到其他语言

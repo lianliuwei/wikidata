@@ -1,0 +1,114 @@
+
+= Understanding Unix/Linux Programming =
+== A Guide to Theory and Practice ==
+<<TableOfContents>>
+UULP就是<Unix/Linux编程实践教程>
+== 任务 ==
+ *看光盘内容
+ *作记录
+ *看tty的man
+ *学GDB
+== 方法 ==
+ *它能做什么
+ *它是如何实现的
+ *能不能自己编一个
+ *为什么要这么实现
+== 目标 ==
+ *要把UULP的练习和章节例子都写了
+ *做记录
+ *理解 思想 设计
+ *掌握学习方法
+== 问题 ==
+ *可以用open来打开目录吗，用自己来解析目录
+ *dir和fd是一样的吗
+ *opendir后再opendir之后dir指针会变吗 man上说的问题
+ *如果一函数不想处理这异常 它还要return不是很烦吗
+ *文件系统的安全模型是什么
+ *为什么要在UULP 83里为什么要 4＋ctime（）
+ *八进制如果出现9怎么处理
+ *utime.h是什么意思
+ *pwd编写
+  *mount后的inode的值为1 还有好几个是不是特殊的用途
+  *如何显示在不同的文件系统中跳转 就是实现了getcwd（）的功能
+  *系统的pwd是如何实现的（应该是用多种方式实现的）
+ */dev/tty是如何实现对不同程序有不同返回文件 (到内核中去)
+ *C标准库和POSIX库 文件操作 有什么区别 是否可以混用
+ *文件操作是如何实现 c标准文件操作是如何实现
+  *所用的数据结构
+  *如何解决多进程访问
+  *缓存不一致问题
+ *printf是如何实现的
+ *utmp 和 wtmp 记录的有何不同 一个是所有的用户 一个是登录记录吗
+ *UNIX时区和时间是怎么处理的
+ *more 1.2 
+  *中输入 ' \n'时或输入很多字符时只是处理一个 (用 GDB调) 可能和标准输入缓存有关
+  *"more"上滚
+  *计算百分比
+  *行缓存模式消除
+ *标准输入输出是如何实现的
+ *管道如何调试
+ *tty代表什么
+ *如何获得终端的分辨率
+ *argv的最后一个是00 吗(用GDB看)
+ *信号是如何实现的
+ *wtmp和utmp是哪几个词的是什么意思
+ *头文件如何书写
+ *登录是如何实现的 命令行的 查getty
+ *头文件顺序有影响吗 有那种相互依赖的头文件吗
+ *open怎么会有两种定义
+=== 已解决 ===
+ *ctime() asctime() localtime() 返回值是如何处理的 是malloc()吗
+  *内有静态变量 很糟糕的设计
+ *为什么输出一行上面的文字会上卷
+== 目录 ==
+ *[[UULP/Unix系统编程概述|Unix系统编程概述]] 
+  *有学习的形式和方法 可以用于深入的技术学习 
+  *编写more
+ *[[UULP/文件操作|文件操作]]
+  *编写who
+  *编写cp
+ *[[UULP/目录与文件属性|目录与文件属性]]
+  *编写ls
+== 记录 ==
+ *内容 以API分
+  *文件与文件系统
+  *硬件
+  *进程与线程
+  *通信 IPC 管道 socket I/O重定向
+ *程序的标准输入输出和异常是可能用于重定向用的
+ *如要获得确定的输入和输出用/dev/tty
+ *输入和输出是有缓存的
+ *标准输入输出显然是用了管道的思想
+ *程序员应有的几方面: 系统(操作系统,数据库等) 应用和使用领域 理论(算法 数据结构等) 设计 工具
+ *系统方面要考虑 历史性 兼容性
+ *实践学习法: 分析功能->分析实现->编写 其中应用知识 核心就是要使用 要实践
+ *man 2 系统调用 3 库函数
+ *使用gnome的帮助可以 看man 和 info
+ *名词缩写的意思很有用 有历史性 容易记住
+== 实验 ==
+ 1. sigaction 7.1
+  *SA_RESTART会将中断前的数据丢掉,但中断中的数据会保存
+   *bbb
+   *input: bbb
+   *dddd^CCalled with signal 2
+   *sdfsd
+   *done handling signal 2
+   *input: sdfsd
+   *会重新开始fgets()但是sdfsd因为没有进输入缓存所以没有掉
+  *不用SA_RESTART出现
+   *ddd^CCalled with signal 2
+   *dfd
+   *done handling signal 2
+   *input: init
+   *input: dfd
+   *init是初始化的字符值 它是先返回
+== 资源 ==
+ *随书光盘
+ *中文PDF
+== misc ==
+ UCB 就是 加州伯克利大学
+ NIS 网络信息服务
+ 安全实现: 文件系统安全 角色安全分配 有限制的特权程序 三层
+== 资源 ==
+ *[[http://wps.prenhall.com/esm_molay_UNIXProg_1/7/2040/522376.cw/index.html]]UULP官网
+ *Linux Programming By Example The Fundamentals 有时间参考这本

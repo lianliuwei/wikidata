@@ -1,0 +1,8 @@
+= CAN分析仪项目 =
+ *波形视图 示波器视图 眼图
+ *[[http://jpkc.nwpu.edu.cn/dzjc/xiandaitongxin/jc/text/4.5.htm|眼图]]
+ *SJA1000 是CAN控制器
+== MiOsc源代码 ==
+ *最接近底层硬件的是MIcore.h MICore.cpp
+ *MiAdapter.h 中定义的类都没有用，有几个模板函数倒是有用到
+ *analog代表示波器 digital代表逻辑分析仪

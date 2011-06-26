@@ -1,0 +1,18 @@
+= UP-S3C2410-S移植X =
+{{{#!wiki
+<<TableOfContents>>
+
+== KDrive 或 TinyX ==
+== X协议 ==
+ *窗口管理 桌面 文件浏览器都对应一个应用程序
+ *X server统一管理硬件
+ *X client请求
+ *有XFree86 和 Xorg 两种
+ *X 并不控制应用程序的显示位置和内容
+ *Window manager 管理窗口
+ *Desktop environment 桌面环境
+  *KDE
+  *GNOME
+ *Scrathbox
+  *模拟开发版 用来编译
+}}}

@@ -1,0 +1,1049 @@
+= 鳥哥的 Linux 私房菜 =
+{{{#!wiki
+<<TableOfContents>>
+== 问题 ==
+ *如何实现nohup
+ *chroot如何实现
+  *是不是只是运行了一个shell进程并且这个shell进程的根目录是改变了的，而系统之前运行的进程不会收到影响，而派生于这个进程的进程继承了这个根目录。这样内核就不较好实现。
+ *列印佇列如何实现
+ *路由是如何实现的
+ *为什么要分那么大的网段给回路测试用 因为一个网卡可以多个IP
+ *为什么设定无线网络用iwconfig 而 启动用ifconfig
+ *dhcp时候需要网卡硬件支持
+ *关闭网卡是什么意思
+ *ip指令是如何实现的
+=== Linux 使用者管理 ===
+==== 程序管理與 SELinux 初探 ====
+ *工作管理 (job control)
+  *當我們登入系統取得 bash shell 之後，在單一終端機介面下同時進行多個工作的行為管理
+  *限制
+   *這些工作所觸發的程序必須來自於你 shell 的子程序(只管理自己的 bash)； 
+   *前景：你可以控制與下達指令的這個環境稱為前景的工作 (foreground)； 
+   *背景：可以自行運作的工作，你無法使用 [ctrl]+c 終止他，可使用 bg/fg 呼叫該工作； 
+   *背景中『執行』的程序不能等待 terminal/shell 的輸入(input)
+  *直接將指令丟到背景中『執行』的 &
+  *將『目前』的工作丟到背景中『暫停』：[ctrl]-z
+  *觀察目前的背景工作狀態： jobs
+  *將背景工作拿到前景來處理：fg
+  *讓工作在背景下的狀態變成運作中： bg
+  *管理背景當中的工作： kill
+  *離線管理問題 使用at 或 nohup
+  *+ 代表最近被放到背景的工作號碼， - 代表最近最後第二個被放置到背景中的工作號碼
+ *工作號碼 (job number) 只與你這個 bash 環境有
+ *程序管理
+  *程序的觀察
+   *ps ：將某個時間點的程序運作情況擷取下來
+   *top：動態觀察程序的變化
+   *pstree 显示程序树
+ *程序的管理
+  *kill -signal PID
+  *killall -signal 指令名稱
+ *關於程序的執行順序
+  *Priority 與 Nice 值 共同决定程序的优先级
+  *调整nice值
+   *nice ：新執行的指令即給予新的 nice 值
+   *renice ：已存在程序的 nice 重新調整
+ *系統資源的觀察
+  *free ：觀察記憶體使用情況
+  *uname：查閱系統與核心相關資訊
+  *uptime：觀察系統啟動時間與工作負載
+  *netstat ：追蹤網路或插槽檔
+   *可以查看 unix域 和 tcp/ip域 的socket
+  *dmesg ：分析核心產生的訊息
+  *vmstat ：偵測系統資源變化
+   *与读写有关
+ *特殊檔案與程序
+  */proc/* 代表的意義 看书
+ *查詢已開啟檔案或已執行程序開啟之檔案
+  *fuser：藉由檔案(或檔案系統)找出正在使用該檔案的程序
+  *lsof ：列出被程序所開啟的檔案檔名 ls open file
+  *pidof ：找出某支正在執行的程式的 PID
+ *SELinux 初探
+  *SELinux: Security Enhanced Linux
+  *SELinux 是在進行程序、檔案等細部權限設定依據的一個核心模組 由於啟動網路服務的也是程序，因此剛好也能夠控制網路服務能否存取系統資源的一道關卡
+  *傳統的檔案權限與帳號關係：自主式存取控制, DAC: Discretionary Access Control
+  *以政策規則訂定特定程序讀取特定檔案：委任式存取控制, MAC: Mandatory Access Control
+  *SELinux 的運作模式 看书
+  *主要解决程序权限的问题， 不知用户触发程序的控制是否有
+  *SELinux 的啟動、關閉與觀察
+   *SELinux 三種模式: enforcing, permissive, disabled
+   *getenforce 查看状态
+   *sestatus 状态
+   *SELinux 的啟動與關閉
+    *在 SELinux 運作下切換成為強制 (enforcing) 或寬容 (permissive) 模式，不能夠直接關閉 SELinux  同時，由 SELinux 關閉 (disable) 的狀態到開啟的狀態也需要重新開機
+    *传给内核的参数对SELinux的启动也有影响  selinux=0 为SELinux关闭
+  * -Z 选项表示显示SELinux的安全本文
+  *重設 SELinux 安全性本文
+   *设置安全本文: chcon
+   *使用預設的安全性本文來還原: restorecon
+  *SELinux 所需的服務
+   *setroubleshoot --> 錯誤訊息寫入 /var/log/messages 使用 sealert 处理错误代码
+   *auditd --> 詳細資料寫入 /var/log/audit/audit.log
+    *auditd 會將許多的 SELinux 資訊都記錄下來，不只是錯誤訊息 因此登錄檔 /var/log/audit/audit.log 非常的龐大。audit2why 指令來讓查詢錯誤訊息的回報
+  *AVC: access vector cache
+  *SELinux 的政策與規則管理
+   *規則 (Booleans) 里有 av rules
+   av rules 格式: allow  主體程序安全性本文類別  目標檔案安全性本文類別
+   *seinfo: 政策提供多少相關的規則
+   *sesearch: 知道詳細的規則
+   *getsebool: 布林值的查詢
+   *setsebool: 布林值的修改
+   *semanage fcontext 預設目錄的安全性本文查詢與修改
+    * 使用正規表示法去指定一個範圍
+=== Linux 系統管理員 ===
+==== 認識系統服務 (daemons) ====
+ *達成 service 的程式我們就稱呼為 daemon
+ *daemon 的主要分類
+  *stand_alone：此 daemon 可以自行單獨啟動服務
+  *super daemon： 一支特殊的 daemon 來統一管理
+   *當沒有用戶端的要求時，各項服務都是未啟動的情況，等到有來自用戶端的要求時， super daemon 才喚醒相對應的服務
+   *super daemon 可以具有安全控管的機制，就是類似網路防火牆的功能
+ *daemon 工作形態的類型: signal-control interval-control
+ *daemon 的命名規則: 程式檔名后加d，這個 d 代表的就是 daemon 的意思
+ *服務與埠口的對應: /etc/services 文件
+ *daemon 的啟動腳本與啟動方式
+  */etc/init.d/* ：啟動腳本放置處
+  */etc/sysconfig/* ：各服務的初始化環境設定檔
+  */etc/* : 各服務各自的設定檔
+  */var/lib/* ：各服務產生的資料庫
+  */var/run/* ：各服務的程序之 PID 記錄處
+ *Stand alone 使用 /etc/init.d/* 啟動
+  */etc/init.d/* {start|stop|status|restart|condrestart}
+  *service 命令 service为一脚本
+ *Super daemon 的啟動方式: 設定檔中設定為啟動該 daemon 設定檔就是 /etc/xinetd.d/* 的所有檔案
+ *解析 super daemon 的設定檔
+  *預設值設定檔：xinetd.conf 
+  *看书
+ *服務的防火牆管理 xinetd, TCP Wrappers
+  *任何以 xinetd 管理的服務，或者服務的程式支援 TCP Wrappers 函式的功能 都可以透過 /etc/hosts.allow, /etc/hosts.deny 來設定防火牆
+  */etc/hosts.allow 與 /etc/hosts.deny 也是 /usr/sbin/tcpd 的設定檔
+  * /usr/sbin/tcpd 則是用來分析進入系統的 TCP 網路封包的一個軟體
+  *使用ldd查看程序是否使用libwrap.so来判断是否支援 TCP Wrappers 函式的功能
+  *設定檔語法: 看书
+  *TCP Wrappers 特殊功能: 
+   *spawn (action) 用shell执行action
+   *twist (action) 执行action并終止該次連線的要求
+ *系統開啟的服務
+  *觀察: netstat 這個網路狀態觀察指令 看书
+  *設定開機後立即啟動服務的方法
+   *具体见开机流程分析
+   *chkconfig： 管理系統服務預設開機啟動與否 还可设定xinetd管理的服务 还可設定自己的系統服務
+   *ntsysv: 類圖形介面管理模式 分都有
+ *預設啟動的服務簡易說明 看书
+==== 認識與分析登錄檔 ====
+ *登錄檔: 記錄系統活動資訊的幾個檔案， 例如：何時、何地 (來源 IP)、何人 (什麼服務名稱)、做了什麼動作 (訊息登錄囉)。
+ *Linux 常見的登錄檔檔名
+  */var/log/cron
+  */var/log/dmesg
+  */var/log/lastlog
+  */var/log/maillog 或 /var/log/mail/*
+  */var/log/messages
+  */var/log/wtmp, /var/log/faillog
+  *var/log/httpd/*, /var/log/news/*, /var/log/samba/*:不同的網路服務會使用自己的登錄檔案
+ *登錄檔所需相關服務 (daemon) 與程式
+  *軟體開發商自行定義寫入的登錄檔與相關格式
+  *Linux distribution 提供的登錄檔管理服務
+   *syslogd：主要登錄系統與網路等服務的訊息 
+   *klogd：主要登錄核心產生的各項資訊
+   *logrotate：主要在進行登錄檔的輪替功能
+ *syslogd: 記錄登錄檔的服務
+  *syslog 的設定檔: /etc/syslog.conf
+   *規定: (1)什麼服務 (2)的什麼等級訊息 (3)需要被記錄在哪裡(裝置或檔案)
+   *服務名稱 看书
+   *訊息等級 看书
+   *CentOS 5.x 預設的 syslog.conf 內容 看书
+   *登錄檔的安全性設置: 用chattr +a设成不能更改, 但是和logrotate有冲突, 要改logrotate的设定
+   *登錄檔伺服器的設定: 使用一台机器做为总的服务器 看书
+  *登錄檔如果被改, syslogd就不会再往里写, 需要重启才能继续写
+ *登錄檔的輪替(logrotate)
+  * logrotate 是在規定的時間到了之後才來進行登錄檔的輪替， logrotate 是掛在 cron 底下進行
+  * 设定档
+   */etc/logrotate.conf 
+   */etc/logrotate.d/
+   *具体看书
+  *輪替的文档用.1 .2 .3 ... 代表輪替次数
+ *分析登錄檔
+  *CentOS 預設提供的 logwatch
+  *鳥哥自己寫的登錄檔分析工具
+==== 開機流程、模組管理與 Loader ====
+ *为 CentOS 5.x 的分析 个发行版差别很大
+ *Linux 的開機流程分析
+  *BIOS, boot loader 與 kernel 載入
+   *BIOS, 開機自我測試與 MBR
+   *Boot Loader 的功能
+   *載入核心偵測硬體與 initrd 的功能
+  *第一支程式 init 及設定檔 /etc/inittab 與 runlevel
+   *Run level: 執行等級有哪些？
+    *0 - halt (系統直接關機) 
+    *1 - single user mode (單人維護模式，用在系統出問題時的維護) 
+    *2 - Multi-user, without NFS (類似底下的 runlevel 3，但無 NFS 服務) 
+    *3 - Full multi-user mode (完整含有網路功能的純文字模式) 
+    *4 - unused (系統保留功能) 
+    *5 - X11 (與 runlevel 3 類似，但加載使用 X Window) 
+    *6 - reboot (重新開機)
+   */etc/inittab 的內容與語法
+   *init 的處理流程
+  *init 處理系統初始化流程 (/etc/rc.d/rc.sysinit)
+  *啟動系統服務與相關啟動設定檔 (/etc/rc.d/rc N & /etc/sysconfig)
+   *使用目录结构来表示各个執行等級需要启动和关闭的服务, 使用chkconfig维护
+  *使用者自訂開機啟動程序 (/etc/rc.d/rc.local)
+  *開機過程會用到的主要設定檔
+   *關於模組: /etc/modprobe.conf
+   */etc/sysconfig/*
+  *Run level 的切換
+   *預設改/etc/inittab
+   *暫時變更系統的 run level 执行init指令
+   *runlevel 查看当前运行级别
+ *核心與核心模組
+  *核心： /boot/vmlinuz 或 /boot/vmlinuz-version； 
+  *核心解壓縮所需 RAM Disk： /boot/initrd (/boot/initrd-version)； 
+  *核心模組： /lib/modules/version/kernel 或 /lib/modules/$(uname -r)/kernel； 
+  *核心原始碼： /usr/src/linux 或 /usr/src/kernels/ (要安裝才會有，預設不安裝) 
+  *核心版本： /proc/version 
+  *系統核心功能： /proc/sys/kernel
+  *核心模組與相依性: 使用depmod解决
+   *依赖寫入/lib/modules/$(uname -r)/modules.dep中
+  *核心模組的觀察: lsmod
+  *查阅核心模组信息:  modinfo
+  *核心模組的載入與移除
+   *原始的使用: insmod 和 lsmod
+   *自动克服模組的相依性問題: modprobe
+  *核心模組的額外參數設定: /etc/modprobe.conf
+  *自動可載入的模組
+   *經由設定/etc/modprobe.conf 或者是將自行做好的設定檔寫入到 /etc/sysconfig/modules/ 目錄中， 並且將檔名取為 filename.modules
+ *Boot Loader: Grub
+  *现在使用 Grub 2
+  *boot loader 的兩個 stage
+  *grub 的設定檔 /boot/grub/menu.lst 與選單類型
+  *硬碟與分割槽在 grub 中的代號 与在Linux中的不一样
+  *設定檔: /boot/grub/menu.lst  解析看书 
+  *initrd 的重要性與建立新 initrd 檔案
+   *initrd 可以將 /lib/modules/.... 內的『開機過程當中一定需要的模組』包成一個檔案 (檔名就是 initrd)， 然後在開機時透過主機的 INT 13 硬體功能將該檔案讀出來解壓縮，並且 initrd 在記憶體內會模擬成為根目錄， 此虛擬檔案系統 (Initial RAM Disk) 主要包含磁碟與檔案系統的模組
+   *mkinitrd 创建initrd
+  *測試與安裝 grub
+   *特別注意 grub 找到不是目錄樹，而是裝置內的檔案
+   *装分区stage1.5 会出错, 但是能用, 这是因为stage1 使用的是分区文件系统上的stage1.5
+  *開機前的額外功能修改 使用grub的在线修改功能
+  *關於核心功能當中的 vga 設定
+   *FRAMEBUFFER_CONSOLE 编译选项开通, 可以再 tty 使用高解析度
+  *BIOS 無法讀取大硬碟的問題
+  *為個別選單加上密碼
+ *開機過程的問題解決
+  *忘記 root 密碼的解決之道
+  *init 設定檔錯誤
+  *BIOS 磁碟對應的問題 (device.map)
+  *因檔案系統錯誤而無法開機
+  *用 chroot 切換到另一顆硬碟工作
+==== 系統設定工具(網路與印表機)與硬體偵測 ====
+ *CentOS 系統設定工具： setup
+  *使用者身份驗證設定: 修改 /etc/sysconfig/authconfig
+  *網路設定項目(手動設定IP與自動取得)
+  *防火牆設定
+  *鍵盤形式設定
+  *系統服務的啟動與否設定
+  *系統時鐘的時區設定: 與 /etc/sysconfig/clock usr/share/zoneinfo/有關
+  *X 視窗介面解析度設定
+   *不可以使用類似 ssh 通訊協定連線後，在遠端主機上執行這個設定項目
+   *修改 /etc/X11/xorg.conf
+ *利用 CUPS 設定 Linux 印表機
+  *硬體支援度: BIOS打开 到[[http://www.linuxfoundation.org/en/OpenPrinting]]查看
+  *列印元件: 看书
+  *CUPS 支援的連線模式: socket LPD(Line Pritner Daemon) IPP(Internet Printing Protocol) SMB(Server Message Block) parallel USB
+  *以 Web 介面控管印表機
+   *必須要啟動 CUPS 這個服務 (/etc/init.d/cups start) 
+   *具有 root 的權限 (需要 root 的密碼來設定)； 
+   *預設僅能在本機 (localhost) 管理，無法使用遠端連線連到此 Linux 管理； 
+   *nmap 可以用于測試印表機有沒有出現列印相關的服務埠口
+   *查詢你 Linux 主機是否啟動 CUPS 服務:  http://localhost:631 
+  *手動設定印表機
+   */etc/cups/printers.conf：印表機的設定值，都寫在這個檔案中； 
+   */etc/cups/cupsd.conf：CUPS 的主要設定檔，包括做為伺服器之用途的設定。 
+   */etc/cups/ppd/*.ppd：就是各個印表機的驅動程式 (PPD 設定檔)
+   *使用 lpadmin 進行印表機的建立與刪除
+   *印表機狀態的觀察: lpstat
+   *利用 lpr 與 lp 來產生列印工作
+   *列印工作的觀察 (lpq) 與刪除 (lprm)
+ *硬體資料收集與驅動，及 lm_sensors
+  *lspci：列出整個 PC 系統的 PCI 介面裝置！很有用的指令； 
+  *lsusb：列出目前系統上面各個 USB 埠口的狀態，與連接的 USB 裝置； 
+  *iostat：與 vmstat 類似，可即時列出整個 CPU 與周邊設備的 Input/Output 狀態。
+  *驅動 USB 裝置
+   *USB 1.1版本的控制器主要有兩種規格: OHCI(Open Host Controller Interface) UHCI(Universal Host Controller Interface)
+   *USB 2.0 在 Linux 上都以 Enahnced Host Controller Interface (EHCI)
+   *USB 磁碟裝置要啟動 usb-storage 模組
+   *要支援 SCSI 裝置
+   *快閃碟並不是傳統的硬碟，他並不是使用磁碟讀取頭與磁碟盤來記錄資料，因此你只能使用 /dev/sda1 之類的檔名來掛載， 理論上是無法進行額外分割
+  *使用 lm_sensors 取得溫度、電壓等資訊
+   *偵測主機板的型號: 	sensors-detect
+   *使用lm_sensors要加载相关的模组, 设定启动deamon
+   *利用 sensors 偵測溫度、電壓等硬體參數
+   *可以搭配 MRTG 來進行網頁繪圖
+  *udev 與 hal 簡介
+   *HAL 可以將系統目前的所有硬體進行快照，並持續檢視這個快照的內容 如果有新的 PnP 硬體插入時， HAL 就會發現目前的硬體與快照不同，此時就會通知 udev 進行新的裝置的建置了
+   *udev 建立裝置檔案的規則放置在 /etc/udev/rules.d/ 
+==== 軟體安裝：原始碼與 Tarball ====
+ *開放源碼的軟體安裝與升級簡介
+  *什麼是開放源碼、編譯器與可執行檔
+　*什麼是函式庫
+  *什麼是 make 與 configure
+  *什麼是 Tarball 的軟體
+  *如何安裝與升級軟體
+   *以原始碼透過編譯來安裝與升級； 
+   *直接以編譯好的 binary program 來安裝與升級。
+ *使用傳統程式語言進行編譯的簡單範例  看书
+ *用 make 進行巨集編譯  看书
+ *Tarball 的管理與建議 
+  *使用原始碼管理軟體所需要的基礎軟體
+   *gcc 或 cc 等 C 語言編譯器 (compiler)
+   *make 及 autoconfig 等軟體
+   *需要 Kernel 提供的 Library 以及相關的 Include 檔案 : kernel-source 或 kernel-header 
+  *Tarball 安裝的基本步驟
+   *取得原始檔：將 tarball 檔案在 /usr/local/src 目錄下解壓縮； 
+   *取得步驟流程：進入新建立的目錄底下，去查閱 INSTALL 與 README 等相關檔案內容 (很重要的步驟！)； 
+   *相依屬性軟體安裝：根據 INSTALL/README 的內容察看並安裝好一些相依的軟體 (非必要)； 
+   *建立 makefile：以自動偵測程式 (configure 或 config) 偵測作業環境，並建立 Makefile 這個檔案； 
+   *編譯：以 make 這個程式並使用該目錄下的 Makefile 做為他的參數設定檔，來進行 make (編譯或其他) 的動作； 
+   *安裝：以 make 這個程式，並以 Makefile 這個參數設定檔，依據 install 這個標的 (target) 的指定來安裝到正確的路徑！
+  *一般 Tarball 軟體安裝的建議事項 (如何移除？升級？) 
+   *最好將 tarball 的原始資料解壓縮到 /usr/local/src 當中；
+   *安裝時，最好安裝到 /usr/local 這個預設路徑下；
+   *考慮未來的反安裝步驟，最好可以將每個軟體單獨的安裝在 /usr/local 底下；
+   *為安裝到單獨目錄的軟體之 man page 加入 man path 搜尋：
+  *利用 patch 更新原始碼 
+   *patch -p數字 < patch_file  -pxx 那個 xx 代表『拿掉幾個斜線(/)』的意思
+ *函式庫管理
+  *ldconfig 與 /etc/ld.so.conf
+   *在 /etc/ld.so.conf 裡面寫下『 想要讀入快取記憶體當中的動態函式庫所在的目錄』，注意是目錄而不是檔案； 接下來利用 ldconfig 這個執行檔將 /etc/ld.so.conf 的資料讀入快取當中； 同時也將資料記錄一份在 /etc/ld.so.cache 這個檔案當中
+   *程式的動態函式庫解析：ldd
+ *檢驗軟體正確性: md5sum / sha1sum
+  *可用于防止篡改本地文件，达到安全目的
+==== 軟體安裝： RPM, SRPM 與 YUM 功能 ====
+ *軟體管理員簡介
+  *Linux 界的兩大主流: RPM 與 DPKG 
+  *使用的軟體管理機制為 RPM 機制，而用來作為線上升級的方式則為 yum
+  *什麼是 i386, i586, i686, noarch, x86_64 看书
+  *RPM 與 SRPM 的命名格式 看书
+ *RPM 軟體管理程式： rpm
+  *資料庫檔案：/var/lib/rpm/ 
+  *一般装在 /usr 目录下
+  *RPM 安裝 (install)
+  *RPM 升級與更新 (upgrade/freshen) 
+  *RPM 查詢 (query) 
+  *RPM 驗證與數位簽章 (Verify/signature) 
+   *數位簽章 (digital signature) 使用GPG
+   *RPM 反安裝與重建資料庫 (erase/rebuilddb) 
+ *SRPM 的使用 ： rpmbuild 
+  *利用預設值安裝 SRPM 檔案 (--rebuid/--recompile) 
+  *SRPM 使用的路徑與需要的軟體  看书
+  *設定檔的主要內容 (*.spec)  看书
+  *SRPM 的編譯指令 (-ba/-bb) 用于自己打包
+ *YUM 線上升級機制
+  *利用 yum 進行查詢、安裝、升級與移除功能
+   *查詢功能：yum [list|info|search|provides|whatprovides] 參數
+   *安裝/升級功能：yum [install|update] 軟體
+   *移除功能：yum [remove] 軟體
+  *yum 的設定檔
+   * /etc/yum.repos.d/ 设定容器所在網址
+   * 缓存位置 var/cache/yum/
+  *yum 的軟體群組功能
+  *全系統自動升級
+   *使用cron的功能
+ *管理的抉擇：RPM 還是 Tarball 
+  *優先選擇原廠的 RPM 功能：
+  *選擇軟體官網釋出的 RPM 或者是提供的容器網址
+  *利用 Tarball 安裝特殊軟體
+  *用 Tarball 測試新版軟體
+==== X Window 設定介紹 ====
+ *X Window 的發展簡史 看书
+ *主要元件： X Server/X Client/Window Manager/Display Manager
+  *X Server：硬體管理、螢幕繪製與提供字型功能
+  *X Client：負責 X Server 要求的『事件』之處理
+  *X Window Manager：特殊的 X Client ，負責管理所有的 X client 軟體
+  *Display Manager：提供登入需求
+   *display manager 最大的任務就是提供登入的環境， 並且載入使用者選擇的 Window Manager 與語系等資料
+   *CentOS 上面我們主要利用的是 GNOME 的 GNOME Display Manager (gdm) 這支程式來提供 tty7 的圖形介面登入
+   *startx 指令不启动Display Manager
+ *X Window 的啟動流程
+  *在文字介面啟動 X ：透過 startx 指令
+   *startx 後面接的參數以兩個減號『--』隔開，前面的是 X Client 的設定，後面的是 X Server 的設定
+   *startx 其實是一個 shell script ，他是一個比較親和的程式，會主動的幫忙使用者建立起他們的 X 所需要引用的設定檔
+    *X server 的參數方面： 
+     1.使用 startx 後面接的參數；
+     2.若無參數，則找尋使用者家目錄的檔案，亦即 ~/.xserverrc
+     3.若無上述兩者，則以 /etc/X11/xinit/xserverrc
+     4.若無上述三者，則單純執行 /usr/bin/X (此即 X server 執行檔)
+    *X client 的參數方面： 
+     1.使用 startx 後面接的參數；
+     2.若無參數，則找尋使用者家目錄的檔案，亦即 ~/.xinitrc
+     3.若無上述兩者，則以 /etc/X11/xinit/xinitrc
+     4.若無上述三者，則單純執行 xterm (此為 X 底下的終端機軟體)
+  *由 startx 呼叫執行的 xinit
+   *『 -display :0 』表示這個虛擬終端機是啟動在『第 :0 號的 X 顯示介面』
+  *啟動 X server 的檔案： xserverrc 
+   *Linux 可以『同時啟動多個 X』喔！第一個 X 的畫面會在 :0 亦即是 tty7 ，第二個 X 則是 :1 亦即是 tty8 
+  *啟動 X Client 的檔案： xinitrc 
+   *桌面环境设定档：/etc/sysconfig/desktop 
+   *千萬注意將除了最後一個 window manager 或 X Client 之外，都放到背景裡面去執行
+  *X 啟動的埠口
+   *考慮 X 視窗是在本機上面運作，因此將埠口改為插槽檔 (socket) 了，因此你無法觀察到 X 啟動的埠口的
+   *X server 應該是要啟動一個 port 6000 來與 X client 進行溝通
+ *X Server 設定檔解析與設定
+  *提供的螢幕字型: /usr/share/X11/fonts/
+  *顯示卡的晶片組: /usr/lib/xorg/modules/drivers/
+  *設定檔: /etc/X11/xorg.conf
+   *內容是分成數個段落的，每個段落以 Section 開始，以 EndSection 結束， 裡面含有該 Section (段落) 的相關設定值
+   *section name 主要有:
+    1.Module: 被載入到 X Server 當中的模組 (某些功能的驅動程式)；
+    2.InputDevice: 包括輸入的 1. 鍵盤的格式 2. 滑鼠的格式，以及其他相關輸入設備；
+    3.Files: 設定字型所在的目錄位置等；
+    4.Monitor: 監視器的格式， 主要是設定水平、垂直的更新頻率，與硬體有關；
+    5.Device: 這個重要，就是顯示卡晶片組的相關設定了；
+    6.Screen: 這個是在螢幕上顯示的相關解析度與色彩深度的設定項目，與顯示的行為有關；
+    7.ServerLayout: 上述的每個項目都可以重覆設定，這裡則是此一 X server 要取用的哪個項目值的設定囉。
+  *X Font Server (XFS) 與加入額外中文字形
+   *主設定檔在 /etc/X11/fs/config 
+   *字型檔則在 /usr/share/X11/fonts/ 
+   *相关指令 mkfontdir chkfontpath xlsofnts fc-cache 
+   *fontconfig軟體 方便设定
+  *讓視窗管理員可以使用額外的字型
+  *設定檔重建與顯示器參數微調
+  *關於螢幕解析度與更新率  
+   *使用 gtf 指令来调整
+  *顯示卡驅動程式安裝範例 看书
+==== Linux 備份策略 ====
+ *備份要點
+  *備份資料的考量
+   *主機角色不同，備份任務也不同
+   *備份因素考量
+    *備份哪些檔案
+    *選擇什麼備份的媒介
+    *考慮備份的方式
+    *備份的頻率
+    *備份使用的工具為何
+  *哪些 Linux 資料具有備份的意義
+   *作業系統本身需要備份的檔案
+    */etc/ 整個目錄
+    */home 整個目錄
+    */var/spool/mail
+    */boot
+    */root
+    *如果你自行安裝過其他的套件，那麼 /usr/local/ 或 /opt 也最好備份
+   *網路服務的資料庫方面
+    *軟體本身的設定檔案，例如：/etc/ 整個目錄，/usr/local/ 整個目錄
+    *軟體服務提供的資料，以 WWW 及 MySQL 為例：WWW 資料：/var/www 整個目錄或 /srv/www 整個目錄，及系統的使用者家目錄MySQL ： /var/lib/mysql 整個目錄
+    *其他在 Linux 主機上面提供的服務之資料庫檔案！
+   *不需要備份的目錄
+    */dev ：這個隨便你要不要備份
+    */proc：這個真的不需要備份啦！
+    */mnt 與 /media：如果你沒有在這個目錄內放置你自己系統的東西，也不需要備份
+    */tmp ：幹嘛存暫存檔！不需要備份！
+  *備份用儲存媒體的選擇 看书
+  *備份的種類、頻率與工具的選擇  dd, cpio, dump/restore, rsync
+   *具体看书
+  *鳥哥的備份策略 看书
+   *備份 MySQL 資料庫防止出错：備份前，將該服務先關掉， 備份完成後，再啟動該服務即可
+==== Linux 核心編譯與管理 ====
+ *編譯前的任務：認識核心與取得核心原始碼 看书
+  *核心原始碼下的次目錄
+   *arch ：與硬體平台有關的項目，大部分指的是 CPU 的類別，例如 x86, x86_64, Xen 虛擬支援等； 
+   *block ：與區塊裝置較相關的設定資料，區塊資料通常指的是大量儲存媒體！還包括類似 ext3 等檔案系統的支援是否允許等。 
+   *crypto ：核心所支援的加密的技術，例如 md5 或者是 des 等等； 
+   *Documentation ：與核心有關的一堆說明文件，若對核心有極大的興趣，要瞧瞧這裡！ 
+   *drivers ：一些硬體的驅動程式，例如顯示卡、網路卡、PCI 相關硬體等等； 
+   *firmware ：一些舊式硬體的微指令碼 (韌體) 資料； 
+   *fs ：核心所支援的 filesystems ，例如 vfat, reiserfs, nfs 等等； 
+   *include ：一些可讓其他程序呼叫的標頭 (header) 定義資料； 
+   *init ：一些核心初始化的定義功能，包括掛載與 init 程式的呼叫等； 
+   *ipc ：定義 Linux 作業系統內各程序的溝通； 
+   *kernel ：定義核心的程序、核心狀態、執行緒、程序的排程 (schedule)、程序的訊號 (signle) 等 
+   *lib ：一些函式庫； 
+   *mm ：與記憶體單元有關的各項資料，包括 swap 與虛擬記憶體等； 
+   *net ：與網路有關的各項協定資料，還有防火牆模組 (net/ipv4/netfilter/*) 等等； 
+   *security ：包括 selinux 等在內的安全性設定； 
+   *sound ：與音效有關的各項模組； 
+   *virt ：與虛擬化機器有關的資訊，目前核心支援的是 KVM (Kernel base Virtual Machine) 
+ *核心編譯的前處理與核心功能選擇
+  *保持乾淨原始碼： make mrproper 會將你以前進行過的核心功能選擇檔案也刪除掉
+   * make clean 僅會刪除類似目標檔之類的編譯過程產生的中間檔案
+  *開始挑選核心功能： make XXconfig 看书
+  *核心功能細項選擇 看书
+   a. 一般設定(General setup)：附加版本名稱、IPC 通訊、程序相關等
+   b. 核心模組與 block layer 支援
+   c. CPU 的類型與功能選擇(含虛擬化技術)
+   d. 電源管理功能
+   e. 一些匯流排 (bus) 的選項
+   f. 編譯後執行檔的格式
+   g. 核心的網路功能
+   h. 各項裝置的驅動程式
+   i. 檔案系統的支援
+   j. 核心駭客、資訊安全、密碼應用
+   k. 虛擬化與函式庫
+  *核心的編譯與安裝 看书
+   *移動核心到 /boot 且保留舊核心檔案
+   *建立相對應的 Initial Ram Disk (initrd)
+   *編輯開機選單 (grub)
+   *重新以新核心開機、測試、修改
+ *額外(單一)核心模組編譯 看书 深入研究
+  *以 /lib/modules/$(uname -r)/build 及 /lib/modules/$(uname -r)/source 這兩個連結檔來指向正確的核心原始碼放置目錄
+  *modules.dep 檔案也挺有趣的， 那個檔案是記錄了核心模組的相依屬性的地方
+  *需要的就是 kernel-devel 這個軟體
+  *需要 make, gcc 以及核心所提供的 include 標頭檔與函式庫等等
+== 伺服器架設篇 ==
+ *使用預設的套件管理方式來安裝所有的伺服器 比自己手動使用 Tarball 的安裝方式來的方便且安全
+ *在架站的過程當中，無論出現任何問題，第一個步驟就是察看登錄檔 (log file)，那是克服問題的地方
+=== 架站前的進修專區 ===
+ *對於網路伺服器來說最重要的是基礎檔案權限、程序之啟動關閉與管理、 Bash shell 之操作與 script 、使用者帳號的管理等等
+==== 作者再版序 ====
+ *需要『一貫作業程序』的，什麼是 『一貫』作業程序呢？其實就是上面所有的工作都需要 『全部一起搭配來思考』的意思，您不能單純的只想到某個比較重要的地方而已。
+ *具備有 Linux 作業系統的相關知識，以及文字介面 ( BASH Shell ) 的相關技巧，還有，必需要能夠瞭解一些 Unix-Like 的工作流程，例如登錄檔的產生與放置的地點、服務的啟動與關閉方式、 工作排程的使用方法、以及其他種種相關的事項。
+ * DNS 是所有伺服器能否正常工作的基礎，因此，您雖然不需要架設 DNS 伺服器，但是得瞭解 DNS 的整體運作流程
+ *主要分為三大部分，分別是『網路基礎篇』、 『簡易防火措施篇』與『伺服器架設篇』，前兩篇的所有內容與『伺服器架設篇』都具有很高的相關性， 所以，您在開始伺服器的架設之前，請務必將前面兩篇共十二章先唸過一遍才好
+==== 架站之前所需的技能分析 ====
+ *架站容易維護難』啊！更深一層來說，『維護還好、除錯更難啊！』
+ *架站之前還是有一些基本的技能需要學會的！而且這些技能是『一旦學會之後，真正是終身受用啊！』 
+ *基本功課
+  *該作業系統的簡易操作，以及登錄分析、帳號管理、文書編輯器的使用等等的技巧； 
+  *網路的基本概念； 
+  *防火牆方面的相關知識等等。
+ *基本架站流程
+  *瞭解網路基礎
+   *硬體與設備的等級與好壞
+   *TCP/IP 與封包的概念
+   *路由 (route)
+   *領域名稱系統 (Domain Name System, DNS )
+   *各種網路設備的選擇與搭配
+  *瞭解架站的目的
+  *Linux 安裝硬碟規劃
+  *瞭解欲架設的網站服務原理
+  *服務的套件安裝、漏洞修補、套件升級
+  *主機設定、啟動、觀察與除錯
+   *找出設定檔
+   *編輯設定檔
+   *啟動伺服器
+   *觀察啟動的狀態
+   *設定開機啟動該伺服器
+   *Server 與 Client 的權限問題
+  *用戶端設定、觀察與除錯
+   *教育 Client 端的使用者，正確的使用網路與主機提供的服務』就是一個相當重要的工作
+  *安全性設定
+   *嚴格規範使用者的密碼設定規則
+   *利用 Super daemon 與 TCP Wrappers 管理服務權限
+   *利用 netfilter 防火牆
+   *持續進行套件修補
+  *服務日誌、登錄檔與備份管理
+ *定位在已經具有 Linux 知識的朋友的工具書
+ *自我評估是否已經具有架站的能力
+  *如何維護一個網站的安全
+  *是否具有 Linux 的基礎概念
+  *是否具備基礎網路知識
+  *是否已經身心活化了
+  *是否具有道德感與責任感
+==== 網路基礎概念 ====
+ *網路(Network)
+  *如果沒有一些網路基礎方面的認知的話，那麼在 Linux 上面設定網路或者是進行網路除錯將是您一生當中最大的夢魘
+  *熟悉 Linux 操作與 Linux 基礎
+  *花幾晚的時間將網路基礎看一看
+  *隨時掌握主機資訊
+  *什麼是網路 看书
+  *乙太網路
+   *整個網路世界並非僅有乙太網路這個硬體介面
+   *早先 IEEE 所制訂的乙太網路標準為 802.3 的 IEEE 10BASE5 后制訂 10BASE-T 的標準 後來更制訂了 802.3u 這個支援到 100Mbps 傳輸速度的 100BASE-T 標準
+   *目前在乙太網路上最常見到的接頭就是 RJ-45 的網路接頭
+   * RJ-45 接頭网线 看书
+   *為了杜絕這種訊號碰撞產生的問題，乙太網路使用一種名為 CSMA/CD (Carrier-Sense Multiple Access with Collision Detection) 的技術
+   *以 MAC (Media Access Control, 媒體存取控制)來管理資料傳送
+   *MAC地址介绍 看书
+   *目前的 Gigabit Ethernet 通常都已經支援大的訊框架構，那就是 Jumbo Frame
+   *一些常見的乙太網路技術
+    *自動協調速度機制
+    *Auto MDI/MDIX
+   *結構化佈線
+  *OSI 七層協定
+ *IP 與 MAC 看书
+  * 傳輸單位與 MAC
+  * IP 的組成
+  * 網域的概念與 IP 的分級
+  * Netmask 的用途與子網路的切分
+  * IP 的種類與取得方式
+   *內部迴圈網路 127.0.0.0/8 這個 A Class 
+   *Public IP 
+   *Private IP
+  * IP 封包的表頭
+ *網路層之路由概念
+  *路徑選擇 (routing) 
+  *每部主機都有自己的路由表
+  *Gateway / Router ：網關/路由器的功能就是在負責不同網域之間的封包轉遞 ( IP Forwarder )
+  *Internet 上面的路由協定與變化是相當複雜的，因為 Internet 上面的路由並不是靜態的，他可以隨時因為環境的變化而修訂每個封包的傳送方向。
+  *觀察主機的路由
+   *route [-n]
+ *常見的通訊協定
+  *TCP 協定
+   *TCP 封包 看书
+   *通訊埠口與 Socket 
+    *各網路服務與 port number 的對應預設給他寫在 /etc/services 檔案內
+    *小於 1023 以下的埠口要啟動時， 啟動者的身份必須要是 root 才行
+    *Socket Pair ( 成對的端口 )
+   *封包的傳送
+    *三向交握(Three-way handshake)
+    *『網路是雙向的』所以不論是伺服器端還是用戶端，都必須要透過一次 SYN 與 ACK 來建立連線， 所以總共會進行三次的交談
+    *設定防火牆或者是追蹤網路連線的問題時，這個『雙向』的概念最容易被忽略
+  *UDP 協定
+   *『User Datagram Protocol, 用戶資料流協定』
+   * UDP 封包由於不需要確認對方是否有正確的收到資料
+   *很多的軟體其實是同時提供 TCP 與 UDP 的傳輸協定
+  *ICMP 協定
+   *『 Internet Control Message Protocol, 網際網路訊息控制協定 』
+   *最簡單的指令 ping 與 traceroute利用 ICMP 來檢驗網路的狀態
+  *MTU 的限制
+   *最大傳輸單元 (Maximum Transmission Unit, MTU)
+   *不論您的網路媒體支援 MTU 到多大，您必須要考量到您的封包需要傳到目的地時， 所需要經過的所有網路媒體，然後再來決定您的 MTU 設定才行
+   *MTU 就會比標準乙太網路容量的 1500 小一些
+ *連上 Internet 前的準備事項
+  *什麼是主機名稱與 DNS
+   * Domain Name System (DNS)
+   *DNS 服務的最大功能就是在進行『主機名稱與該主機的 IP 的對應』
+   *DNS 主機 IP 的設定在 /etc/resolv.conf
+  *一組可以連上 Internet 的必要網路參數
+   *IP 
+   *Netmask 
+   *Network 
+   *Broadcast 
+   *Gateway 
+   *DNS 
+==== 區域網路架構簡介與 Linux 版本選擇 ====
+ *區域網路的連線
+  *什麼是區域網路
+  *區域網路的佈線規劃
+   *Linux 主機直接連到 Internet 的環境
+    *讓 Linux 與一般 PC 在同等地位
+    *讓 Linux 與一般 PC 分開
+    *讓 Linux 直接管理 LAN
+   *Linux 主機放在 LAN 裡面
+  *網路媒體選購建議 看书
+  *內部連線的網路參數與通訊協定
+   *一張網路卡可以設定多個 IP 在 Linux 當中一張網路卡可以具有一個以上的 IP 呢！由於一個 IP 即為一個網路介面，因此只要兩個網路介面 ( 不論有幾張網路卡 ) 即可進行 NAT 的設定啦
+   * NetBEUI 就是一個常見的簡易通訊協定
+   *在 Windows Client 系統裡面，最常見的兩個通訊協定就是 TCP/IP 以及 NetBEUI 這兩個通訊協定了
+ *Linux distributions 的選擇
+  *主機硬體的選擇
+   *省不省電有所謂
+   *虛擬化技術
+  *distributions
+   *多功能新鮮貨
+   *強調性能穩定但軟體功能較舊的企業用途貨
+ *Windows 個人電腦網路設定範例
+  *在 Windows 系統上所需要的網路參數除了 IP, netmask, DNS 之外，還需要『工作群組, workgroup』與 『電腦名稱, Netbios name』此外，也可以加上 LAN 裡面很常見的 NetBIOS ( NetBEUI ) 這個通訊協定
+==== 連上 Internet ====
+ *Linux 連上 Internet 前的注意事項
+  *Linux 的網路卡
+   *如果您的網路卡是自行編譯安裝的， 那麼每次重新安裝其他版本的核心時，您都必須要自行重新手動編譯過該模組
+   *編譯網路卡驅動程式 看书
+   *Linux 網路相關設定檔案
+    */etc/sysconfig/network 設定『主機名稱( HOSTNAME )與啟動 Network 與否』
+    */etc/sysconfig/network-scripts/ifcfg-eth0 設定網路卡參數的檔案
+    */etc/modprobe.conf 用來設定開機時載入核心模組的檔案
+    */etc/resolv.conf 設定 DNS IP (名稱解析伺服器) 的檔案
+    */etc/hosts 記錄電腦的 IP 對應主機的名稱或者主機的別名
+     *在區域網路內有些服務需要反查 Client 的身份，此時就會動用到主機名稱對應 IP 的資料
+    */etc/services 記錄架構在 TCP/IP 上面的總總協定，包括 http, ftp, ssh, telnet 等等服務所定義的 port number
+    */etc/protocols 定義出 IP 封包協定的相關資料
+    */etc/init.d/network restart 一口氣重新啟動整個網路的參數
+    *ifup eth0 (ifdown eth0) 啟動或者是關閉某張網路介面
+ *連上 Internet 的方法
+  *固定 IP 上網方式
+   *修改主機名稱： /etc/sysconfig/network
+   *設定網路參數： /etc/sysconfig/network-scripts/ifcfg-eth0 看书
+    *可以參考 /sbin/ifup 這個 script 的內容， 這個 script 對於每個項目的應用都記錄的挺清楚
+   *啟動與關閉網卡
+   *設定 DNS 的 IP： /etc/resolv.conf
+   *可自動取得 IP 的環境
+  *ADSL 撥接上網 看书
+   *rp-pppoe 使用的是 Point to Point (ppp) 的點對點協定所產生的網路介面，因此當您順利的撥接成功之後， 會多產生一個實體網路介面『 ppp0 』
+  *由於 ppp0 是架構在乙太網路上的，所以 eth0 也不能關掉
+  *關閉接在 ADSL 數據機上面的那張網卡
+  *設定帳號與密碼之連線設定 adsl-setup
+   *ifcfg-ppp0  ：亦即是 ppp0 這個網路介面的設定檔案；
+   *resolv.conf ：這個檔案會被備份後，然後以剛剛我們上面輸入的資料取代；
+   *pap-secrets, chap-secrets：我們輸入的密碼就放在這裡！
+  *開始撥接上網 adsl-start
+  *察看 IP 啦！
+  *特殊狀況
+ *無線網路--以筆記型電腦為例
+  *無線網路所需要的硬體
+   *無線基地台 (Wireless Access Point, 簡稱 AP) 
+   *安裝在電腦主機上面的無線網卡
+  *網路安全方面 看书
+   *關於 ESSID/SSID 
+    *每部 AP 都會有一個連線的名字，那就是 ESSID ，這個 ESSID 可以提供給 client 端， 當 client 端需要進行無線連線時，他必須要說明他要利用哪一部 AP 
+  *開始連線
+   *取得驅動程式並實際安裝
+   *測試模組，並且對應網路卡與模組：(modprobe 與 iwconfig)
+   *利用 iwlist 偵測 AP
+   *設定網路卡設定檔 (ifcfg-ethn)
+   *啟動與觀察無線網卡
+ *常見問題說明 看书
+  *內部網域使用某些連線服務(如 FTP, POP3)所遇到的連線延遲問題
+  *網址列無法解析問題
+  *預設路由的問題
+   *default gateway 應該只能有一個
+==== Linux 常用網路指令介紹 =====
+ *網路參數設定指令
+  *ifconfig
+   *可以透過 eth0:0 這種虛擬的網路介面來設定好一張網路卡上面的多個 IP
+   *要啟動某個網路介面，但又不讓他具有 IP 參數時，直接給他 ifconfig eth0 up 即可
+  *ifup, ifdown
+   *直接以設定檔， 亦即是在 /etc/sysconfig/network-scripts 裡面的 ifcfg-ethx 等檔案的設定參數來啟動
+   *兩支程式其實是 script 而已
+   *如果以 ifconfig eth0 .... 來設定或者是修改了網路介面後， 那就無法再以 ifdown eth0 的方式來關閉 應該要以 ifconfig eth0 down 才能夠關閉該介面喔
+  *路由修改 route
+   *依序是由小網域 逐漸到大網域最後則是預設路由
+   *路由是依照順序來排列與傳送的
+   *在一部主機上面設定兩個相同網域的 IP 本身沒有什麼意義
+   *當出現『SIOCADDRT: Network is unreachable』 這個錯誤時，肯定是由於 gw 後面接的 IP 無法直接與您的網域溝通 (Gateway 並不在你的網域內)
+  *ip
+   *sbin/ifup 就是利用 ip 這個指令來達成
+   *關於裝置介面 (device) 的相關設定： ip link 
+    *可以更改『網路卡代號、 MAC 位址的資訊』
+   *關於額外的 IP 相關設定： ip address 
+    *可以新增虛擬的網路介面
+   *關於路由的相關設定： ip route 
+    *可以進行額外的參數設計，例如 MTU 的規劃
+   *有興趣的話，也可以自行參考 ethtool 這個指令
+  *iwlist, iwconfig
+   *必須要有無線網卡才能夠進行
+  *dhclient
+   *真正發送 dhcp 要求工作的程式
+   * dhcpcd 這支程式，與 dhclient 是相同
+ *網路偵錯與觀察指令
+  *ping
+   *TTL (Time To Live) 
+   *用 ping 追蹤最大 MTU 數值
+  *traceroute
+   *這個指令會針對欲連接的目的地之所有 router 進行 ICMP 的逾時等待
+   *有些防火牆或者主機可能會將 ICMP 可通過的權力拿掉，因此就會造成等不到回聲的狀態
+   *有些 gateway 本來就不支援 traceroute 的功能
+  *netstat
+   *觀察網路的連線狀態
+   *觀察『我目前開了多少的 port 在等待用戶端的連線』 netstat -tulnp
+   *觀察『目前我的網路連線狀態中，有多少連線已建立或產生問題』 netstat -atunp
+   * Unix socket 通常是用在一些僅在本機上運作的程式所開啟的插槽介面檔
+  *host
+   *查出某個主機名稱的 IP
+  *nslookup
+   *可以由 IP 找出主機名稱
+   *目前大家都建議使用 dig 這個指令來取代 nslookup 
+ *遠端連線指令
+  *telnet
+   *不但可以直接連接到伺服器上頭，還可以用來連結 BBS 
+   *Linux 上的 telnet 軟體還提供了 Kerberos 的認證方式
+   *可以用來連結到某個 port (服務) 上頭
+  *ftp
+   *FTP 其實算是一個很麻煩的協定，因為他使用兩個 port 分別進行命令與資料的交流
+  *lftp
+   *早期當我們要登入提供匿名登入的主機時，很多時候都是使用 ncftp 這個軟體， 不過，現在有更棒的選擇，那就是 lftp 
+   *圖形介面的 gftp 
+  *gaim
+   *MSN 或 Yahoo 即時通 即時通訊工具
+ *文字介面網頁瀏覽
+  *lynx
+   *查閱 Linux 本機上面以 HTML 語法寫成的文件資料 (document)
+   *設定檔 /etc/lynx.cfg  設定语系
+  *wget
+   *進行『網頁資料的取得』
+   *設定檔: /etc/wgetrc
+   *可以透過 proxy 來下載資料
+  *封包擷取功能
+   *截包和抓包是不一样的概念
+   *tcpdump
+    *其實就是個駭客軟體
+    *執行 tcpdump 時網路介面會啟動在 『錯亂模式 (promiscuous)』
+    *有助於我們瞭解到封包的運作，同時瞭解到主機的防火牆設定規則是否有需要修訂的地方。
+   *ethereal
+    *ethereal 分為文字介面與圖形介面，文字介面的用法與 tcpdump 相當的類似，不過他的指令名稱為 tethereal 
+   *nc, netcat
+    *可以用來作為某些服務的檢測，因為他可以連接到某個 port 來進行溝通， 此外，還可以自行啟動一個 port 來傾聽其他用戶的連線
+    *編譯的時候給予『GAPING_SECURITY_HOLE』參數的話，可以用來取得用戶端的 bash 能夠用來作為駭客軟體
+    *可用来建立链接
+    *用途: /usr/share/doc/nc-1.10/scripts 目錄下的 script 
+==== Linux 網路偵錯 ====
+ *無法連線原因分析 看书
+　*硬體問題
+　*軟體問題
+　*問題的處理
+ *處理流程
+  1. 網路卡工作確認
+  1. 區域網路內各項連接設備檢測
+  1. 取得正確的 IP 參數
+  1. 確認路由表的規則
+  1. 主機名稱與 IP 查詢的 DNS 錯誤
+  1. Linux 的 NAT 伺服器或 IP 分享器出問題
+  1. Internet 的問題
+  1. 步驟八：主機的問題
+=== 主機的簡易防火措施 ===
+==== 主機基本安全之一：限制 Linux 對外連線的埠口 ====
+ *Linux 的埠口 (port)
+  *什麼是 port
+   *共 65536 個 port
+   *只有 root 才能啟動的保留的 port
+   *大於 1024 用於 client 端的 port
+   *沒有所謂的 port 的安全性！因為『Port 的啟用是由服務軟體所造成的』， 也就是說，真正影響網路安全的並不是 port ，而是啟動 port 的那個軟體 (程式)！ 
+  *觀察 port
+   *netstat
+    *列出在監聽的網路服務 netstat -tunl
+    *列出已連線的網路連線狀態 netstat -tun
+    *刪除已建立或在監聽當中的連線 netstat -tunp 加 kill
+  *nmap
+   *掃瞄 port
+   *『Network exploration tool and security scanner』
+ *Port 的啟動與關閉  看书
+  *其實 port 是由某些程式所啟動的，所以要關閉某些 port 時，那就直接將某個程式給他關閉就是
+  *stand alone 與 super daemon
+  *設定開機時啟動服務
+  *安全性的考量
+==== 主機基本安全之二： Linux 線上自動升級 ====
+ *安裝 Linux 完畢後的第一項工作那就是..... 立刻進行整體軟體的升級
+ *為何需要進行軟體升級 看书
+  *如何進行軟體升級
+  *各種 distributions 的自動升級機制
+ *CentOS 的 yum 自動升級
+  *yum 的設定檔
+  *yum 的安裝、升級、移除、查詢等功能與安裝套件群組
+  *不同版本間的升級
+   *CentOS 4.2 to 4.3
+   *FC1 to CentOS 4.3
+ *Debian 的 apt 自動升級：以 B2D 為例
+  *[[http://apt.freshrpms.net/|apt主机查询]]
+  *APT 的設定檔
+   *APT 的設定檔都放在 /etc/apt 目錄下
+   *規範 APT 主機的設定則放到 /etc/apt/sources.list 當中
+   */etc/apt/apt.conf 還可以提供其他額外的設定
+   *APT將套件表頭的下載與實際的安裝分成兩個動作分別執行
+   *套件会下載到 /var/cache/apt/archives/
+  *實際使用 APT
+   *查詢: apt-cache 
+==== 路由器 Router 設定 ====
+ *路由
+  *路由表
+   *可以用 traceroute 來嘗試瞭解一下每個 router 的封包流向
+   *路由表主要幾種情況
+    *依據介面而存在的路由
+    *手動或預設路由(default route)
+    *動態路由
+     *額外的軟體支援 例如： zebra  或 Quagga
+   *在 Linux 的路由規則都是透過核心來達成的， 所以這些路由表的規則都是在核心功能內 也就是在記憶體當中 
+  *IP Alias 的測試用途
+   *用途
+    *測試用
+    *在一個實體網域中含有多個 IP 網域
+    *既有設備無法提供更多實體網卡時
+   *所有的 IP Alias 都是由實體網卡模擬來的， 所以當要啟動 eth0:0 時，eth0 必須要先被啟動才行。而當 eth0 被關閉後， 所以 eth0:n 的模擬網卡將同時也被關閉
+   *開機的時候就啟動 IP alias
+    *透過 /etc/rc.d/rc.local
+    *透過 /etc/sysconfig/network-scripts/ifcfg-eth0:0
+   *只要 ifcfg-eth0 這個實體網卡的設定檔中， ONBOOT 為 yes 時，開機就會將全部的 eth0:n 都啟動
+   *由於 ifup 及 /etc/init.d/network 這兩個 script 內程式碼撰寫的方式 导致使用 DHCP 來取得 eth0 的 IP 時，只能使用手動方式 (用 ifconfig) 來設定 IP Alias 
+  *重複路由的問題
+   *參考 [[http://www.study-area.org/tips/multipath.htm|頻寬負載平衡]]
+   *一般來說， 不應該設定同一的網段的不同 IP 在同一部主機上面
+ *路由器架設
+  *什麼是路由器
+   *如何啟動這個封包轉遞
+    *echo "1" > /proc/sys/net/ipv4/ip_forward
+    *修改 /etc/sysctl.conf
+  *何時需要路由器？
+   *實體線路之佈線及效能的考量
+   *部門獨立與保護資料的考量
+  *靜態路由之路由器
+   *路由是雙向的，你必須要瞭解出去的路由與回來時的規則
+   *如果你的 Linux Router 有設定防火牆的話， 而且還有設定類似 NAT 主機的 IP 偽裝技術，那可得特別留意，因為還可能會造成路由誤判的問題
+  *動態路由之路由器設定：zebra
+   *目前常見的動態路由協定有：RIPv1, RIPv2, OSPF, BGP
+   *可以說， quagga 就是 zebra 
+   *各項動態路由協定都放置到 /etc/quagga/ 目錄內
+   *zebra 這個 daemon 的功能在更新核心的路由規則； 
+   *RIP 這個 daemon 則是在向附近的其他 Router 溝通協調路由規則的傳送與否。
+   *可以用telnet使用zebra的服务
+   *設定 zebra 看书
+   *設定 ripd 服務 看书
+ *ARP Proxy 讓路由器兩端在同一網域
+  *只用 arp 和 route 实现
+==== 認識網路安全 ====
+ *網路封包連線進入主機的流程
+  *封包進入主機的流程
+   *封包過濾防火牆：IP Filtering 或 Net Filter
+   *第二層防火牆：TCP Wrappers
+   *服務 (daemon) 的功能
+   *使用主機的檔案系統資源
+  *主機能作的保護： 權限設定、套件更新、SELinux
+ *主機的細部權限規劃：ACL 的使用  复习
+  *什麼是 ACL？
+  *如何啟動 ACL
+  *ACL 的設定技巧： getfacl, setfacl
+  *ACL 內的 mask 項目
+ *一些常見的攻擊手法與主機的保護方式
+  *取得帳號資訊後猜密碼
+  *利用系統的程式漏洞『主動』攻擊
+  *利用社交工程作欺騙
+  *利用程式功能的『被動』攻擊
+  *蠕蟲或木馬的 rootkit
+   *可以定時以 rkhunter 之類的軟體來追查：有個網站提供 rootkit 程式的檢查，你可以前往下載與分析你的主機：[[http://www.rootkit.nl/projects/rootkit_hunter.html]]
+  *DoS 攻擊法 ( Denial of Service )
+  *其他 例如 IP 欺騙
+  *主機防護小結語
+   1. 建立完善的登入密碼規則限制； 
+   1. 完善的主機權限設定； 
+   1. 設定自動升級與修補套件漏洞、及移除危險套件； 
+   1. 在每項系統服務的設定當中，強化安全設定的項目； 
+   1. 利用 iptables, TCP_Wrappers 強化網路防火牆； 
+   1. 利用主機監控軟體如 MRTG 與 logwatch 來分析主機狀況與登錄檔
+ *被入侵後的修復工作
+  *網管人員需要對於作業系統有一定程度的熟悉， 對於程序的運作 (process) 與權限概念，則需要更瞭解
+  *網管人員的額外技巧與任務
+   *瞭解什麼是需要保護的內容
+   *預防黑客( Black hats )的入侵
+   *主機環境安全化
+   *防火牆規則的訂定
+   *即時維護您的主機
+    * PortSentry 就是蠻不錯的即時偵測软件
+   *良好的教育訓練課程
+   *完善的備份計畫
+    * rsync 工具
+  *入侵恢復工作
+   *主機被入侵了，最好的方法還是『重新安裝Linux 』會比較乾淨
+   1. 立即拔除網路線
+   1. 分析登錄檔資訊，搜尋可能的入侵途徑
+   1. 重要資料備份
+    * 重要的資料應該是『非 Linux 系統上面原有的資料』
+   1. 重新全新安裝
+   1. 套件的漏洞修補
+   1. 關閉或移除不需要的服務
+   1. 資料回復與恢復服務設定
+   1. 連上 Internet
+==== Linux 防火牆與 NAT 主機 ====
+ *認識防火牆
+  *防火牆就是在管制進入到我們網域內的主機(或者可以說是網域)的資料封包的一種機制
+  *iptables 與 TCP Wrappers 都可以稱為軟體防火牆
+  *防火牆最大的功能就是幫助你『限制某些服務的存取來源』！ 
+  *Linux 系統上防火牆的主要類別
+   *代理伺服器 (Proxy)
+   *IP Filter
+  *防火牆的一般線路佈線與抵擋技巧 看书
+   *單一 Linux 主機兼任防火牆功能
+   *單一 Linux 防火牆，但 LAN 內另設防火牆
+   *在防火牆後端的主機設定
+    *將提供網路服務的伺服器放在防火牆後面
+    *將網路伺服器獨立放置在兩個防火牆中間的網路， 我們稱之為非軍事區域 (DMZ)
+  *防火牆的使用限制
+   *防火牆並不能很有效的抵擋病毒或木馬程式
+   *防火牆對於來自內部 LAN 的攻擊較無承受力
+ *Linux 的封包過濾機制：iptables
+  *由 Linux kernel 所提供， 由於直接經過核心來處理，因此效能非常好
+  *不同 Linux 核心版本的防火牆軟體
+   *Version 2.0：使用 ipfwadm 這個防火牆機制； 
+   *Version 2.2：使用的是 ipchains 這個防火牆機制； 
+   *Version 2.4 與 2.6 ：主要是使用 iptables 這個防火牆機制，不過在某些早期的 Version 2.4 版本的 distributions 當中，亦同時支援 ipchains (編譯成為模組)，好讓使用者仍然可以使用來自 2.2 版的 ipchains 的防火牆規劃。不過，不建議在 2.4 以上的核心版本使用 ipchains
+  *iptables 的表格與封包進入流程
+   *根據封包的分析資料 "比對" 你預先定義的規則內容， 若封包資料與規則內容相同則進行動作，否則就繼續下一條規則的比對
+   *當您的規則順序排列錯誤時，就會產生很嚴重的錯誤了
+  *iptables 的表格與鏈 (chain)
+   *這個防火牆軟體裡面有多個表格 (table) ，每個表格都定義出自己的預設政策與規則， 且每個表格都用途都不相同
+   *Linux 的 iptables 至少就有三個表格，包括管理本機進出的 filter 、管理後端主機 (防火牆內部的其他電腦) 的 nat 、 管理特殊旗標使用的 mangle (較少使用) 。更有甚者，我們還可以自訂額外的鏈
+   *各個表格與鏈的相關性 看图
+   *事實上與本機最有關的其實是 filter 這個表格內的 INPUT 與 OUTPUT 這兩條鏈
+  *本機的 iptables 語法
+   *請不要在遠端主機上進行防火牆的練習，因為您很有可能一不小心將自己關在家門外
+   *規則的清除與觀察
+    *-t ：後面接 table ，例如 nat 或 filter ，若省略此項目，則使用預設的 filter
+    *-L ：列出目前的 table 的規則
+    *-n ：不進行 IP 與 HOSTNAME 的反查
+    *每個 chain 後面括號內的 policy 項目，那就是『預設動作(政策)』
+    *-F ：清除所有的已訂定的規則；
+    *-X ：殺掉所有使用者 "自訂" 的 chain (應該說的是 tables ）囉；
+    *-Z ：將所有的 chain 的計數與流量統計都歸零
+    *這三個指令會將本機防火牆的所有規則都清除，但卻不會改變預設政策 (policy) 
+   *定義預設政策 (policy)
+    *iptables [-t nat] -P [INPUT,OUTPUT,FORWARD] [ACCEPT,DROP]
+   *封包的基礎比對 IP/netmask I/O 裝置
+    *iptables [-AI 鏈] [-io 網路介面] [-p 協定] [-s 來源IP/網域] [-d 目標IP/網域] -j [ACCEPT|DROP]
+   *TCP, UDP 的規則比對
+    *iptables [-AI 鏈] [-io 網路介面] [-p tcp,udp] [-s 來源IP/網域] [--sport 埠口範圍] [-d 目標IP/網域] [--dport 埠口範圍] -j [ACCEPT|DROP]
+    *TCP 還有特殊的旗標 最常見的就是主動連線的 SYN 旗標, 在 iptables 裡面還支援『 --syn 』的處理方式
+   *狀態模組：MAC 與 RELATED
+    *可以透過一個狀態模組來分析 『這個想要進入的封包是否為剛剛我發出去的回應？』 如果是剛剛我發出去的回應，那麼就可以予以接受放行
+    *iptables -A INPUT -m state --state 狀態
+    *iptables -A INPUT -m mac --mac-source aa:bb:cc:dd:ee:ff -j ACCEPT
+  *防火牆的記錄、回復與測試
+   *iptables-save > filename
+   *iptables-restore < filename
+   *如果你將那個 filename 檔案存成『 /etc/sysconfig/iptables 』，並且利用 chkconfig 將 iptables 在開機時預設啟動的話，那麼一開機系統就會主動的幫你把防火牆的規則給載入
+   *測試
+    1. 先由主機向外面主動連線試看看； 
+    1. 再由私有網域內的 PC 向外面主動連線試看看； 
+    1. 最後，由 Internet 上面的主機，主動連線到您的 Linux 主機試看看
+  *IPv4 的核心管理功能： /proc/sys/net/ipv4/*
+   *設定資料都是放置在 /proc/sys/net/ipv4/ 這個目錄當中
+   *參考核心的說明文件 /usr/src/linux-{version}/networking/ip-sysctl.txt
+   */proc/sys/net/ipv4/tcp_syncookies 看书
+   */proc/sys/net/ipv4/icmp_echo_ignore_broadcasts 看书
+   */proc/sys/net/ipv4/conf/網路介面/* 看书
+ *本機防火牆的一個實例 看书有相关的shell script
+ *NAT 主機的設定
+  *什麼是 NAT？ SNAT？ DNAT？
+   *POSTROUTING 在修改來源 IP ，PREROUTING 則在修改目標 IP
+   *來源 NAT (Source NAT, SNAT) 看书
+   *目標 NAT, DNAT
+  *最陽春 NAT 主機： IP 分享功能   看书
+   *iptables -t nat -A POSTROUTING -s $innet -o $EXTIF -j MASQUERADE
+  *iptables 的額外核心模組功能
+   * 這些模組可以輔助封包的過濾用途，讓我們可以節省很多 iptables 的規則擬定
+  *在防火牆後端之網路伺服器 DNAT 設定
+   *將連接到 eth1 介面的 port 80 傳導到內部的 192.168.1.210: iptables -t nat -A PREROUTING -p tcp -i eth1 --dport 80 -j DNAT --to 192.168.1.210:80 
+   *80 連線的封包轉遞到 8080 這個 port: iptables -t nat -A PREROUTING -p tcp  --dport 80 -j REDIRECT --to-ports 8080
+==== 申請合法的主機名稱 ====
+ *為何需要主機名稱
+  *主機名稱的由來
+   *每部電腦的 /etc/hosts 裡面設定好主機名稱與 IP 的對應表
+  *重點在合法授權
+  *申請靜態還是動態 DNS 主機名稱
+ *註冊一個合法的主機名稱 看书
+  *靜態 DNS 註冊：以 Hinet 為例
+  *動態 DNS 註冊：以 no-ip 為例
+==== 遠端連線伺服器 Telnet / SSH / VNC / XDMCP / RSH ====
+ *要取消 SELinux 才行
+ *遠端連線伺服器
+  *伺服器類型( Server )
+  *工作站類型( Workstation )
+  *目前我們通常都希望使用可以將這些在網路上面跑的資料加密的技術，以增加資料在 Internet 上面傳送的安全性啊！
+ *Telnet 伺服器
+  *telnet，這個套件提供的是 telnet 用戶端的連線程式；
+  *telnet-server 套件，這個才是真正的 Telnet server 軟體喔！
+  *好用的連線軟體
+   *最常見到的應該就是 netterm 這個鼎鼎大名的連線軟體
+   *我們是沒有辦法看到中文的！ 除非安裝某些特殊的中文介面才行！比如 JMCCE 之類的咚咚！
+   *預設的 telnet 是『不允許』使用 root 這個帳號登入
+  *iptables, TCP_Wrappers, 純建議 看书
+   *要開放 root 以 telnet 登入 Linux 主機的話，請直接將 /etc/securetty 更改檔名即可, 也可以藉由修改 pam 模組來達成同樣的功能！修改 /etc/pam.d/login 這個檔案
+=== 區域網路內與小型企業常見的伺服器架設 ===
+==== DHCP 伺服器 ====
+ *DHCP 運作的原理
+  *DHCP (Dynamic Host Configuration Protocol) 
+  *自動的將網路參數正確的分配給網域中的每部電腦， 讓用戶端的電腦可以在開機的時候就立即自動的設定好網路的參數值，這些參數值可以包括了 IP、netmask、network、gateway 與 DNS 的位址等等
+  *DHCP 通常是用區域網路內的一個通訊協定，他主要藉由用戶端傳送廣播封包給整個物理網段內的所有主機 所以DHCP 伺服器與用戶端是應該要在同一個物理網段內
+  *DHCP 的運作方式
+   *用戶端利用廣播封包發送 DHCP 需求
+   *DHCP 主機回應訊息
+    *到伺服器的登錄檔中尋找該用戶之前是否曾經用過某個 IP ，若有且該 IP 目前無人使用，則提供此 IP 給用戶端； 
+    *若設定檔針對該 MAC 提供額外的固定 IP (static IP) 時，則給予該 IP 的設定； 
+    *若不符合上述兩個條件，則隨機取用目前沒有被使用的 IP 給用戶，並記錄下來
+   *用戶端接受 DHCP 伺服器提供的參數並設定本身的網路環境
+   *DHCP 伺服器記錄該次租約行為
+  *租約何時會到期而被解約 
+   *用戶端離線
+   *用戶端租約到期
+  *DHCP 伺服器給予用戶端的 IP 類型
+   *固定 (Static) IP
+  *動態 (dynamic) IP
+ *DHCP 伺服器端的設定
+ *参考
+  *[[http://zh.wikipedia.org/wiki/DHCP]]
+}}}

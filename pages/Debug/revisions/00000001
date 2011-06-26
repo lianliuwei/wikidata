@@ -1,0 +1,3 @@
+= Debug =
+ *[[http://blog.csdn.net/wind_xu/archive/2010/07/25/5764528.aspx|C++内存调试技术]] 如何调内存泄露
+ *调试器运行的时候需要修改代码

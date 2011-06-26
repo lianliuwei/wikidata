@@ -1,0 +1,28 @@
+= Linux内核完全剖析-基于0.12内核/实验环境设置与使用方法 =
+ *SLS Linux 用来制作新的硬盘映像
+ *Bochs需要条件
+  *Bochs执行文件
+  *BIOS映像
+  *VGA BIOS映像
+  *键盘映像
+  *磁盘映像
+ *配置文件 .bxrc
+ *文件系统既可以在文件中 也可以在磁盘中
+== 运行Linux 0.1X系统 ==
+ *Linux运行条件
+  *内核映像 bootimage
+  *根文件系统 可以做成映像加载到内存中 或作为刻盘的映像 就是rootimage
+ *放在官网bochs目录下的软件包
+  *bochsrc-0.12-fd.bxrc 用bootimage-0.12-fd 硬盘A启动 由A换成根文件系统盘 rootimage-0.12-fd(这里的映像是对bochs来讲的)
+  *bochsrc-0.12-hd.bxrc 用bootimage-0.12-hd 硬盘A启动 使用硬盘做文件系统rootimage-0.12-hd
+  *diska.img diskb.img 工具文件 使用mcopy访问
+  *rootimage-0.12-hd 三分区 其它2分区有实验用源代码
+  *SYSTEM.MAP调试用
+== 访问映像文件 ==
+ *mount方法 通过loop设备
+ *硬盘映像要考虑偏移量
+== 调试 ==
+=== bochs自带调试 ===
+ *编译带调试功能的bochs
+=== gdb调试 ===
+ *重编译带gdbstub的Bochs

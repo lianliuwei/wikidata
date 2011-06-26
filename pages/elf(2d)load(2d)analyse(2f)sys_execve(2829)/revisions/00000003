@@ -1,0 +1,58 @@
+== sys_execve() ==
+{{{#! cplusplus
+/*
+ * sys_execve() executes a new program.
+ */
+asmlinkage int sys_execve(struct pt_regs regs)
+{
+	int error;
+	char * filename;
+
+	filename = getname((char __user *) regs.ebx);
+	error = PTR_ERR(filename);
+	if (IS_ERR(filename))
+		goto out;
+	error = do_execve(filename,
+			(char __user * __user *) regs.ecx,
+			(char __user * __user *) regs.edx,
+			&regs);
+	if (error == 0) {
+		current->ptrace &= ~PT_DTRACE;
+		/* Make sure we don't return using sysenter.. */
+		set_thread_flag(TIF_IRET);
+	}
+	putname(filename);
+out:
+	return error;
+}
+}}}
+== sys_execve()注释 ==
+{{{#! cplusplus
+/*
+ * sys_execve() executes a new program.
+ */
+asmlinkage int sys_execve(struct pt_regs regs) 用寄存器来传 这么来的 这是包装的函数
+{
+	int error;
+	char * filename;
+
+	filename = getname((char __user *) regs.ebx);有使用内核空间 是怎么回事 getname()完成从用户空间拷贝可执行文件的文件名到内核空间,在该函数中会分配 kernel
+space,所以在该函数退出前要"putname(filename)"。
+
+	error = PTR_ERR(filename);
+	if (IS_ERR(filename))
+		goto out;
+	error = do_execve(filename, 处理的 见 do_execve()的分析
+			(char __user * __user *) regs.ecx, 这是什么类型
+			(char __user * __user *) regs.edx,
+			&regs);
+	if (error == 0) {单处理器 成功 execute 该程序。
+		current->ptrace &= ~PT_DTRACE;
+		/* Make sure we don't return using sysenter.. */ 什么意思
+		set_thread_flag(TIF_IRET); 什么用
+	}
+	putname(filename);
+out:
+	return error; 成功的话 还有用吗
+}
+}}}

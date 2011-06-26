@@ -1,0 +1,179 @@
+## page was renamed from make
+= Managing Projects with GNU make = 
+<<TableOfContents>>
+ *构建工具
+ *GNU make 为标准
+ *[[http://en.wikipedia.org/wiki/Make_(software)]]介绍
+ *对于依赖树要进行研究
+== 变量 ==
+ *$@ 代表目标
+ *$< 前提条件的第一个
+
+
+
+<<Include(/Rules,,editlink)>>
+== Variables and Marcos ==
+ *Make的宏语言是用来定义用的
+ *宏语言有CPP, m4, tex, 宏汇编
+ *大写用于常量
+ *小写_ 用于内部变量
+ *大写- 用于函数
+ *末尾的空格不去除
+ *两种Variables
+  *Simply expanded variable
+   *扫描文件时就产生好了
+   *和顺序有关
+   *用 := 赋值
+  *recursively expanded variable
+   *和顺序无关
+   *先记录后扩展
+   *用 = 赋值
+ *conditional assignment
+  *用 ?=
+  *常用于默认赋值
+ *assignment operator
+  *简单赋值容易理解
+  *用于为recursively variable 使用
+  *用 +=
+ *不赋值是一种重要的应用
+ *Macros 或 define directive
+  *用 define endif
+  *用于包含空格 换行 这要小心
+  *使用@符号禁止make打印
+ *左值也能进行expansion
+ *Target-specific variable
+  *target: 赋值
+ *赋值可以从命令行来 最为重要 会覆盖其他的
+  *override 可以 防止被覆盖
+ *环境变量级别最低 会被 makefile覆盖
+  *使用 -e 或 --environment-overides 防止覆盖
+ *递归使用make时 只有原来的环境变量会传过去
+  *使用export输出
+  *使用unexport不输出环境变量
+ *ifndef endif 和 ?= 有区别 在为空定义的时候
+ *conditional processing directives
+{{{
+ifdef variable-name
+else
+endif
+}}}
+  *variable-name不加$()
+  *ifeq (a, b) 使用 ifeq "a" "b" 代替防止空格问题
+  *可以使用strip()函数去掉前后空格
+ *include Directive
+  *include 可以使用 shell类似的文件名方案
+  *make如果遇到更新include文件的target会重新执行
+  *makefile 和 include 文件的反应是一样的
+  *用-I 或--include-dir来指定加载路径
+  *会搜索默认路径
+  *-include 如果加载不成功 不会报错
+ *standard make Variables
+  *MAKE_VERSION
+  *CURDIR 当前目录
+  *--directory或-C会改变make执行目录
+  *MAKEFILE_LIST
+  *MAKECOMGOALS 命令行目标
+  *.VARIABLES 当前变量值
+  *有相当多的为编译用的变量
+  *ACTION.suffix suffix代表源文件类型
+== functions ==
+ *$$1 make会解释为$1 
+ *$1 代表函数的第一个参数
+ *User-Defined Functions
+  *用define endef 定义
+  *使用$(call macro-name[,param1...])调用方式 就是一种特殊的marco
+  *名字也是可以扩展
+  *对数量没有检测
+  *嵌套很有问题
+ *Built-in Functions
+  *$(function-name arg1[, argn])
+  *使用Pattern Rules相同的模式规则
+  *filter 选择符合的字符串
+  *只可以有一个%
+  *filter-out
+  *findstring string,text 没有%功能 有只能返回text
+  *subst search-string,replace-string,text 没有%功能 用于替换后缀
+  *空格要小心
+  *patsubst search-string,replace-string,text 有%功能
+  *words text 数字数
+  *word n,text 返回第几个字数 从1开始
+  *firstword text
+  *wordlist start,end,text
+  *sort list 排列 移出重复
+  *shell command 标准输入返回 错误返回终端
+== Commands ==
+ *在一subshell运行 或者 自己执行(节省时间 但要判断)
+== Managing Large Projects ==
+ *Recursive make
+  *--print-directory或-w 会打印目录信息并make调用级别
+  *make会自动把命令行的参数放入$(MAKE)中 所以Recursive make 要用$(MAKE)项
+  *使用override不会被改写
+  *--keep-going或-k 忽略失败继续进行无关的构建
+  *--question或-q是每有要更新都要询问
+  *使用TARGET传递构建目标
+  *模块将文件依赖和代码生成器的使用使得Recursive make相当复杂 要使用重复执行的方法
+ *Nonrecursive make
+  *要注意变量的类型 如果要复用的话就要用Simply variable
+  *初始化Simply variable 要用 := 明确初始化
+  *加入模块前在前面加all的无条件版本 确认默认任务
+  *路径是个很大的问题
+  *复用也是个困难
+ *Components of Large Systems
+  *源代码和二进制文件区分
+  *可引用
+ *Filesystem Layout
+  *二进制文件用 vendor, hardware platform, operating system, build parameter 命名文件夹
+== Portable Makefiles ==
+== C and C++ ==
+ *The Easy Way
+  *在二进制目录中执行
+ *The Hard Way
+  *在源代码执行
+  *分离产生了隐式规则不可用
+ *Dependency Generation
+  *在文件更新时候产生依赖文件就可以了
+ *还能使用makedepend程序进行
+ *GCC支持最好
+ *Partial Source Trees
+== Java ==
+ *不知道Java用的命令行是否标准
+ *Java下的工具Ant和Make使用的是不同的方法
+ *用Make管理Java是可以的
+ *Java的动态载入是如何进行版本管理的
+== Example Makefiles ==
+ *The Linux Kernel Makefile
+  *使用的是用make自己实现的configure脚本
+  *版本信息放在version.o中
+
+== 心得 ==
+ *#注释 \连接多行文字
+ *--just-print -n 只打印不执行命令
+ *--no-buildin-rules -r不使用内部规则
+ *--print-data-base -p 输出内部规则
+ *makefile编写原则避免重复, 减少错误, 易于修改
+ *C语言文件头文件和库位置问题, 通过gcc设置来解决
+ *和文件同名的伪目标, 会出错 用.PHONY申明为伪目标
+ *可以将构建过程和依赖看成一棵树,每条make语句只是一个节点和起子节点的关系
+ *只有文件才有时间, 用来判断是否要更新, 来节省编译时间
+ *由Rule组成
+ *默认很重要 用GNU的新Rule
+ *变量 如同C语言 =和:= 用于赋值 但是:=防止递归 不要和Shell混在一起 变量中的空格和换行需要小心
+  *只有一次定义
+ *make -p 看规则
+ *先显后隐
+ *有自变量
+ *文本替换 用GNU函数
+ *要了解make的运行
+ *可以自定义函数
+ *有条件结构
+ *执行脚本前先打印输出
+ *少依赖于环境变量
+ *非常注意递归定义
+ *空格会惹出大麻烦
+ *不要将以来建立在prerequisite上
+== 资料 ==
+ *Managing Projects with GNU make
+ *GNU Make 
+== 模板 ==
+ *[[http://hi.baidu.com/s_yqguo/blog/item/49b4e6ec77f7f32563d09f37.html]]通用模板
+ *[[http://blog.chinaunix.net/u/3038/showart_1842582.html]]

@@ -1,0 +1,17 @@
+= 设备状态栏 =
+ *做显示设备状态信息的提示文字
+ *YT -> 长方形表示
+ *DYT -> 双长方形表示
+ *YT -> 正方形表示
+ *获取数据使用MI_DEVICE_STATUS结构体和IMiDevice::MI_GetDevStatus()来获得
+== 要点 ==
+ *更新机制
+ *可以利用UPDATE_CMD_UI消息来进行界面的更新
+ *menu的更新和界面和toolbar statusbar的更新是不一样的 menu的更新直接使用消息来进行 其他的更新是主程序空闲的时候发送的
+ *COMMAND消息的流动过程和其他的消息是不一样的
+ *windows的这套本质是加上效率控制的轮询机制
+== 资料 ==
+ *[[http://www.codeproject.com/KB/statusbar/statusbar.aspx]]Statusbar – it’s just so easy to use in MFC
+ *[[http://msdn.microsoft.com/en-us/library/a9ys3wsb%28VS.80%29.aspx]]Updating the Text of a Status-Bar Pane
+ *[[http://awc.al-williams.com/tips/tip28.htm]]Making the Status Bar Update Continually
+ *[[http://wenku.baidu.com/view/c39c5269a45177232f60a2bd.html]] MFC中用户界面元素更新原理(UPDATE_COMMAND_UI) 

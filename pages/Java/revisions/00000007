@@ -1,0 +1,14 @@
+= Java =
+ *Java语言反面
+ *Java虚拟机
+ *JavaEE是怎么回事
+ *JavaBean是怎么回事
+ *Java进步的路线
+== 问题 ==
+ *java import怎么实现
+ *为什么要设计package
+== 资源 ==
+ *doc/Java Application Development on Linux.pdf
+ *archive/jdk-6u12-linux-i586.bin
+----
+ [[Category Programming Language]] 

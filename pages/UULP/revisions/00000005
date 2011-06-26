@@ -1,0 +1,24 @@
+= UULP =
+UULP就是<Unix/Linux编程实践教程>
+== 实验 ==
+ 1. sigaction
+  *SA_RESTART会将中断前的数据丢掉,但中断中的数据会保存
+   *bbb
+   *input: bbb
+   *dddd^CCalled with signal 2
+   *sdfsd
+   *done handling signal 2
+   *input: sdfsd
+   *会重新开始fgets()但是sdfsd因为没有进输入缓存所以没有掉
+  *不用SA_RESTART出现
+   *ddd^CCalled with signal 2
+   *dfd
+   *done handling signal 2
+   *input: init
+   *input: dfd
+   *init是初始化的字符值 它是先返回
+
+== 心得 ==
+ UCB 就是 加州伯克利大学
+== 任务 ==
+要把UULP的练习和章节例子都写了

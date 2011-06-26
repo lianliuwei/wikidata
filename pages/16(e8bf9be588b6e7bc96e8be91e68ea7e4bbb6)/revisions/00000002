@@ -1,0 +1,8 @@
+= 16进制编辑控件 =
+ *[[http://www.codeproject.com/KB/applications/hexeditor.aspx]]不是控件
+== Hex Edit Control ==
+ *[[http://www.codeguru.com/Cpp/controls/editctrl/article.php/c539|Hex edit control]]
+  *有一些Bug 看网页后面的评论
+ *使用了VC6的非标准C++特性
+ *OnPaint()
+  *使用双缓冲技术

@@ -1,0 +1,49 @@
+=== 學習 Shell 與 Shell scripts ===
+ *BASH shell
+==== vim 程式編輯器 ====
+ *远程和设置字符界面
+ *emacs, pico, nano, joe, 與 vim
+ *标准界面
+ *Vim功能强大
+ *基本上 vi 共分為三種模式，分別是『一般模式』、『編輯模式』與『指令列命令模式』
+ *第一部份：一般模式可用的按鈕說明，游標移動、複製貼上、搜尋取代等
+  *看资料
+ *第二部份：一般模式切換到編輯模式的可用的按鈕說明
+  *看资料
+ *第三部份：一般模式切換到指令列模式的可用的按鈕說明
+  *看资料 
+ *『數字』是很有意義的！數字通常代表重複做幾次的意思！ 也有可能是代表去到第幾個什麼什麼的意思
+ *救援回復
+  *Vim建立一個名為 .filename.swp 的檔案 作为救援恢复用
+  *发生情况
+   *可能有其他人或程式同時在編輯這個檔案
+   *在前一個 vim 的環境中，可能因為某些不知名原因導致 vim 中斷 (crashed)
+ *區塊選擇(Visual Block)
+  *可以用方块的方式操纵
+  *看资料
+ *多檔案編輯
+  *看资料
+ *多視窗功能
+  *看资料
+ *檔案和視窗的概念是不同的
+ *vim 環境設定與記錄： ~/.vimrc, ~/.viminfo
+  *记录编辑选项在~/.viminfo
+  */.vimrc 使用『 set hlsearch 』或『 :set hlsearch 』，亦即最前面有沒有冒號『 : 』是一样的
+ *vim 常用指令示意圖
+  *看资料
+ *中文編碼的問題
+  *来源
+   1.  你的 Linux 系統預設支援的語系資料：這與 /etc/sysconfig/i18n 有關；
+   2. 你的終端介面 (bash) 的語系： 這與 LANG 這個變數有關；
+   3. 你的檔案原本的編碼；
+   4. 開啟終端機的軟體，例如在 GNOME 底下的視窗介面。
+   *其中 3 和 4最重要   
+   *終端機』-->『設定字元編碼』 -->『中文 (正體) (BIG5)』 修正
+  *DOS 與 Linux 的斷行字元
+   *cat -A 查看所以的字符
+   *dos2unix [-kn] file [newfile]
+   *unix2dos [-kn] file [newfile]
+  *語系編碼轉換
+   *iconv -f 原本編碼 -t 新編碼 filename [-o newfile]
+   *简体utf8转为繁体utf8:iconv -f utf8 -t big5 vi.utf8 | iconv -f big5 -t gb2312 | iconv -f gb2312 -t utf8 -o vi.gb.utf8
+==== 認識與學習 BASH  ====

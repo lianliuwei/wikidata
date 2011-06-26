@@ -1,0 +1,55 @@
+= VPN项目 =
+ *4月23号前结束
+ *VPN可用于手机CRM等高级功能
+ *要重写
+ *和VTun有很多的相似性
+ *服务器要了解：内存池 连接池 Erlang ACE windows了解IOCP Linux了解epoll
+== 问题 ==
+ *到底要不要包括路由功能
+ *服务器平台要在 Linux 还是 windows 下
+ *使用TCP还是UDP 使用UDP要自己控制很是麻烦 TCP太慢
+ *采用P2P架构如果两台机器都在NAT后面怎么办，TCP一半的NAT机器不支持穿透
+== 项目目标 ==
+ *实现用于工业控制领域的VPN应用
+ *应用环境: 很多企业的厂房是分布得很分散的, 如果使用VPN软件进行管理的话，就会比较简单。比如：IP不容易改变
+ *先完成系统原型
+ *系统原型完成有限的功能 但是要有可靠性
+ *要有详细的文档: 需求 概要设计 详细设计 测试文档
+== 学习目标 ==
+ *团队合作
+ *学习能力
+ *自我调节
+ *工程化
+ *文档化
+ *需求分析
+== 总任务 ==
+ *负责安全 socket和router方面
+== 路由 ==
+ *[[http://www.java3z.com/cwbwebhome/article/article9/945.html?id=2238|透析Windows路由表透析]]
+ *[[http://blog.csdn.net/wangxing1018/archive/2009/06/20/4285489.aspx|Linux协议栈IP层的路由处理]]
+== 架构 ==
+== 当前任务 ==
+== 杂 ==
+ *[[http://hi.baidu.com/jywb_pub/blog/item/1bb0a30132f01d00738da5f3.html|利用GetPrivateProfileString读取配置文件(.ini)]]
+ *[[http://blog.csdn.net/lcj8/archive/2007/11/18/1891317.aspx|Windows线程函数概述]]
+ *[[http://topic.csdn.net/t/20011225/17/441476.html|windows下字符串]]
+ *[[http://network.51cto.com/art/200912/171698.htm|路由表原理和重叠路由设置]]
+ *windows 下socket编程要加ws2_32.lib这个库
+ *VS2008下WideCharToMutiByte不能用
+ *inet_addr要这样使用sin_addr.s_addr = inet_addr(IP)
+ *[[http://blog.csdn.net/HenryXueFeng/archive/2006/12/20/1451011.aspx|字符函数对照表]]
+ *[[http://www.docin.com/p-34102629.html|单网卡多IP]]
+ *windows下线程ID和handle是不同的概念
+ *多线程下用收的socket写 收的函数会收到同网段的数据包
+ *[[http://www.cppblog.com/liquidx/archive/2009/06/16/87811.aspx|windows下使用pthread库]]
+ *[[http://www.ibm.com/developerworks/cn/linux/l-cn-mthreadps/index.html?ca=drs-cn-0423|Linux 的多线程编程的高效开发经验]]
+ *[[http://blog.sina.com.cn/s/blog_56dee71a0100e335.html|Windows中的pthread程序]]
+
+== 资源 ==
+ *[[http://en.wikipedia.org/wiki/Virtual_private_network|VPN英文wiki]]
+ *[[http://www.arraynetworks.com.cn/|array VPN厂商]]
+ *\\192.168.27.208\  钟华的资料 用命令行上
+ *\\192.168.27.177\  项目的资源
+ *192.168.0.201/trainee2010/yzm/vpn grup  项目组总提交VPN
+ *[[OpenVPN]]
+ *[[OpenSSL]]

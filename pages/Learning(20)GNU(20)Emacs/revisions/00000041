@@ -1,0 +1,172 @@
+= Learning GNU Emacs =
+{{{#!wiki
+<<TableOfContents(3)>>
+== Preface ==
+ *是一个工作环境
+ *GNU Emacs 和 XEmacs
+ *一 二章讲基础
+ *学习内容分类
+ *一点一点增量学
+ *各章概述
+ *meta key 是alt
+ *表示法
+== Emacs Basics ==
+ *学Emacs就是学键盘习惯
+ *每次少量多次复习的方法学
+ *buffer和file要分开
+ *不同的模式对应不同的使用环境
+ *一个buffer对应一种major mode
+ *major mode中可以开启关闭多种minor mode
+ *toolbar和menu是会根据内容进行变化
+ *M-`显示菜单，文本模式的
+ *The Mode Line: encoding scheme  修改标志 buffer名字 位置指示 mode
+ *Minibuffer 用于命令输入和回显状态
+ *表1-4有总结
+== Editing ==
+ *多种方式
+ *Moving the Cursor
+  *Moving a Screen (or More) at a Time
+  *Emacs Commands and Your Keyboard
+  *如图所示
+  *表2-2有总结
+== Deleting Text ==
+ *两个C-k删掉一行
+ *kill ring用于存储删除的文字，会将几次连续删除的合并 单字符删除不放进去 用undo回复
+ *选择的部分叫 region
+ *cursor在字符上 point当前字符和前字符中
+ *mark有一个指针只是看不见
+ *M-w 复制数据到kill ring
+ *重复M-y 检索出历史被放在kill ring的数据
+ *Clipboard的表现在各平台上不一样
+ *clipboard-yank  C-y
+ *Table 2-9 交互功能
+ *Table 2-10 字符大小写功能
+ *取消命令功能 C-g
+ *C-_ or C-x u undo功能 移动鼠标后变redo
+ *使用加~的文件做备份
+ *#text#最近保存更改的文件名
+ *删除大段文字会导致auto-save功能失效
+ *.emacs配置文件 由lisp语言组成
+== Using Buffers, Windows, and Frames ==
+ *GUI windows 叫 frames
+ *C-x C-b 显示buffer  Ctrl+鼠标左键 显示buffer
+ *内部buffer名形式*buffer name*
+ *buffername 和 filename 默认是一样的
+ *C-x 加箭头 轮换buffer
+ *C-x k 关闭缓冲
+ *默认一定会有一个*scratch* buffer
+ *emacs的windows是不能覆盖的
+ *C-x 4 f在另外窗口执行打开文件
+ *C-M-v在另外窗口执行C-v
+ *C-x o切换window
+ *C-x 5 2 创建新的frame 和 C-2有关
+ *多frame时是用buffer命名
+ *Table 4-1 frame命令总结
+ *C-x C-s 保存一个buffer   C-x s 保存所有的buffer
+ *M-x rename-buffer 重命名一个buffer
+ *C-x C-v 替换当前buffer对应的文件
+ *C-x C-q 切换buffer只读和读写状态
+ *Ctrt + 鼠标左键 显示当前所有的buffer和对应的file
+ *C-x C-b 创建buffer List window来显示当前的所有buffer的信息
+ *4.5.5buffer list介绍 Table 4-3 buffer list的命令
+ *C-x 3 水平分裂window
+ *C-x < 和 C-x >在window中左右移动
+ *有最小窗口限制
+ *Table 4-4 window相关操作
+ *Emacs所用的书签文件 .emacs.bmk
+ *C-x r l 显示Bookmark List Table  4-5 Bookmark List命令
+ *可以给bookmark加注释
+ *Table 4-6 Bookmark命令
+== Emacs as a Work Environment ==
+ *最棒的集成方法
+ *M-! 执行单条命令
+ *M-| 使用选中的内容作为命令输入执行
+ *C-u M-! 使用选中的内容作为命令输入执行 并替换原来的内容
+ *M-x shell 进入命令行模式
+ *命令行模式下使用 C-c 加在给shell的快捷键前
+ *C-c C-r 到达上一次命令行的位置 C-c C-e回到输入命令行的位置
+ *C-c C-p 前一个命令行组 C-c C-n 下一个命令行组
+ *.emacs_shell-name文件 会在shell启动的时候启动
+ *Table 5-1 命令模式命令
+ *使用Dired来进行文件夹操作 和 buffer list很像
+ *Dired下还可以用来解压缩和压缩
+ *Dired下可以对文件执行命令
+ *Table 5-2 Dired的命令
+ *emacs支持打印 Table 5-3打印命令
+ *M-x man在emacs中查出manpage
+ *M-x calendar 显示日历
+ *emacs支持日历和日志(diary) Table 5-5日历和日志命令
+== Writing Macros ==
+ *Macro是一组按键
+ *不需要知道Lisp
+ *F3开始Macro F4结束Macro
+ *F4执行Macro
+ *C-_ 取消前一个Macro的执行效果
+ *C-x C-k e edit-kbd-macro(编辑宏)
+ *6.5  Macro Ring命令
+ *6.7  保存宏
+ *Marco可以添加中断编辑和查询继续功能
+ *Table 6-6 Marco命令
+== Simple Text Formatting and Specialized Editing ==
+ *emacs是一个text editor 而不是word processor
+ *Tab是常用的格式符
+ *使用edit-tab-stops来编辑tab
+ *7.1 修改Tab键
+ *Table 7-2 缩进文本命令
+ *Table 7-3 居中文本命令
+ *Table 7-5 矩阵操作命令  矩阵操作注意开始和结尾的判定 CUA模式也能进行矩阵操作
+ *Table 7-7 Picture mode命令 用键盘画图
+ *Table 7-8 Artist mode命令 用鼠标画图
+== Markup Language Support ==
+ *M-; 插入注释
+ *Font-Lock Mode 可以给关键字加颜色
+ *8.3 以后没有看
+== Computer Language Support ==
+ *使用Compilation mode可以自动保存 编译 分析错误信息
+ *Table 9-1  Compilation mode命令
+ *Emacs里的mode需要一个实现功能的Emacs Lisp package和一个调用它的function
+ *设置 auto-mode-alist interpreter-mode-alist 处理后缀和脚本的mode相关联
+ *C-h s 看当前mode的syntax
+ *具有合适的注释和缩减支持
+ *支持etag程序
+ *M-x font-lock-mode 给程序着色
+ *Table 9-3  C模式的移动命令
+ *Table 9-4 可用的代码风格
+ *C-c C-a 自动换行c-toggle-auto-state
+ *c-macro-expand 命令使用外部预编译器来选中的宏代码
+ *Java使用开发环境 JDEE
+== Customizing Emacs ==
+ *配置的方式：custom  Options menu  .emacs
+ *最好使用别人的配置
+ *setq-default 更改默认配置 如果有mode更改默认配置不会有影响
+ *一个字体和一个前后背景称为face
+ *custom中的face选项负责配置颜色和字体
+ *enriched-mode实现所见即所得的文档编辑器 但是支持不是很好
+ *按键其实触发的是命令
+ *一般的输入字符是执行self-insert-command
+ *使用global-map和local keymap用来实现按键绑定
+ *多按键命令C-x, Esc, and C-c都是使用global-map中绑定相应前缀的命令来实现的 如ESC-prefix，它们有自己的map 如ctl-x-map 和 esc-map
+ *eval-current-buffer 可以用来立即使用新的按键配置
+ *Table 10-3 使用特殊字符的方法
+ *使用setq来设置变量 setq-default来设置默认变量
+ *Boolean true是t false是nil
+ *字符使用？+ 字符 表示
+ *符号使用'开头
+ *全局和本地变量要区分
+ *10.7 如何设置关联模式
+== Emacs Lisp Programming ==
+ *单位是Lisp Entities
+ *Symbols 使用'+内部变量名
+ *-用来分词
+ *defun函数用来定义函数 可选参数名字前加&
+ *let函数用来注册变量 初始化变量 并执行函数体
+ *setq用来设置变量值
+ *save-excursion保存光标的位置 结束完就返回
+ *Message向MiniBuffer打印消息 和C的printf使用相同的格式化方法
+ *interactive方法 注册函数使得能用M-x调用 放在函数定义中 
+ *documentation string 在函数声明后用string类型声明
+== 备注 ==
+ *.emacs在 C:\Documents and Settings\Administrator\Application Data 下
+}}}
+----
+ [[Category Book]]

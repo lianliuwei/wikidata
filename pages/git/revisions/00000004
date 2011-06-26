@@ -1,0 +1,33 @@
+= git =
+ *[[http://www.china-pub.com/196738|版本控制之道——使用Git]]
+ *[[http://bbs.scmlife.com/index.php]]
+ *[[http://pragprog.com/|出版社]]
+= Git =
+ *为[[http://en.wikipedia.org/wiki/Source_Code_Management|SCM]] 源代码管理的一种
+ *用SHA计算 代表Object
+ *Objects
+  *blob
+  *tree
+  *commit某种状态
+  *tag
+ *在现有的文件系统上面构建新的文件系统 适合于版本控制
+ *git show SHA号 显示对应的文件内容
+ *git ls-tree SHA号 显示对应的文件目录内容
+ *这东西设计得很好呀
+ *commit可以有多个parent
+ *HEAD是当前tree
+ *正式开发要使用密钥
+ *[[http://book.git-scm.com/1_git_directory_and_working_directory.html]] git项目文件树介绍
+ *Working Directory 是正在工作的目录
+ *分支与合并
+  *
+ *.git后缀为git库
+ *Index为你想要提交的预备
+ *git-status 查看工作目录什么提交了 什么没有提交 什么根本没有记录
+ *提交的不是工作目录
+== 更新方式 ==
+ *
+== 资料 ==
+ *[[http://book.git-scm.com/]]git书籍
+ *[[http://www.bitsun.com/documents/GitUserManualChinese.html]]中文手册
+ *[[http://en.wikipedia.org/wiki/Git_(software)]]

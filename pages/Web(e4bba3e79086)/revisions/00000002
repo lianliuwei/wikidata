@@ -1,0 +1,23 @@
+= Web代理 =
+ *[[http://tech.idv2.com/2004/12/04/create-proxy-with-apache/]]教程
+ *配置
+{{{
+#加载模块
+LoadModule proxy_module /usr/lib/apache2/modules/mod_proxy.so
+LoadModule proxy_http_module /usr/lib/apache2/modules/mod_proxy_http.so
+LoadModule proxy_connect_module /usr/lib/apache2/modules/mod_proxy_connect.so
+LoadModule proxy_ftp_module /usr/lib/apache2/modules/mod_proxy_ftp.so
+ProxyRequests On
+#其他网站都不行
+<Proxy *>
+ Order deny,allow
+ Deny from all
+</Proxy>
+#用于本地管理用的IP 用于公司翻firewal用
+<Proxy http://74.117.56.229>
+ Order allow,deny
+ Allow from all
+</Proxy>
+#多重保护用于防止用于非法企图
+ProxyBlock org com cn edu
+}}}

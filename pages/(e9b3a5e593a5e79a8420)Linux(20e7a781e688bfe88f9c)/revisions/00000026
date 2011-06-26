@@ -1,0 +1,549 @@
+= 鳥哥的 Linux 私房菜 =
+{{{#!wiki
+<<TableOfContents>>
+== 问题 ==
+ *如何实现nohup
+ *chroot如何实现
+ *列印佇列如何实现
+=== Linux 使用者管理 ===
+==== 程序管理與 SELinux 初探 ====
+ *工作管理 (job control)
+  *當我們登入系統取得 bash shell 之後，在單一終端機介面下同時進行多個工作的行為管理
+  *限制
+   *這些工作所觸發的程序必須來自於你 shell 的子程序(只管理自己的 bash)； 
+   *前景：你可以控制與下達指令的這個環境稱為前景的工作 (foreground)； 
+   *背景：可以自行運作的工作，你無法使用 [ctrl]+c 終止他，可使用 bg/fg 呼叫該工作； 
+   *背景中『執行』的程序不能等待 terminal/shell 的輸入(input)
+  *直接將指令丟到背景中『執行』的 &
+  *將『目前』的工作丟到背景中『暫停』：[ctrl]-z
+  *觀察目前的背景工作狀態： jobs
+  *將背景工作拿到前景來處理：fg
+  *讓工作在背景下的狀態變成運作中： bg
+  *管理背景當中的工作： kill
+  *離線管理問題 使用at 或 nohup
+  *+ 代表最近被放到背景的工作號碼， - 代表最近最後第二個被放置到背景中的工作號碼
+ *工作號碼 (job number) 只與你這個 bash 環境有
+ *程序管理
+  *程序的觀察
+   *ps ：將某個時間點的程序運作情況擷取下來
+   *top：動態觀察程序的變化
+   *pstree 显示程序树
+ *程序的管理
+  *kill -signal PID
+  *killall -signal 指令名稱
+ *關於程序的執行順序
+  *Priority 與 Nice 值 共同决定程序的优先级
+  *调整nice值
+   *nice ：新執行的指令即給予新的 nice 值
+   *renice ：已存在程序的 nice 重新調整
+ *系統資源的觀察
+  *free ：觀察記憶體使用情況
+  *uname：查閱系統與核心相關資訊
+  *uptime：觀察系統啟動時間與工作負載
+  *netstat ：追蹤網路或插槽檔
+   *可以查看 unix域 和 tcp/ip域 的socket
+  *dmesg ：分析核心產生的訊息
+  *vmstat ：偵測系統資源變化
+   *与读写有关
+ *特殊檔案與程序
+  */proc/* 代表的意義 看书
+ *查詢已開啟檔案或已執行程序開啟之檔案
+  *fuser：藉由檔案(或檔案系統)找出正在使用該檔案的程序
+  *lsof ：列出被程序所開啟的檔案檔名 ls open file
+  *pidof ：找出某支正在執行的程式的 PID
+ *SELinux 初探
+  *SELinux: Security Enhanced Linux
+  *SELinux 是在進行程序、檔案等細部權限設定依據的一個核心模組 由於啟動網路服務的也是程序，因此剛好也能夠控制網路服務能否存取系統資源的一道關卡
+  *傳統的檔案權限與帳號關係：自主式存取控制, DAC: Discretionary Access Control
+  *以政策規則訂定特定程序讀取特定檔案：委任式存取控制, MAC: Mandatory Access Control
+  *SELinux 的運作模式 看书
+  *主要解决程序权限的问题， 不知用户触发程序的控制是否有
+  *SELinux 的啟動、關閉與觀察
+   *SELinux 三種模式: enforcing, permissive, disabled
+   *getenforce 查看状态
+   *sestatus 状态
+   *SELinux 的啟動與關閉
+    *在 SELinux 運作下切換成為強制 (enforcing) 或寬容 (permissive) 模式，不能夠直接關閉 SELinux  同時，由 SELinux 關閉 (disable) 的狀態到開啟的狀態也需要重新開機
+    *传给内核的参数对SELinux的启动也有影响  selinux=0 为SELinux关闭
+  * -Z 选项表示显示SELinux的安全本文
+  *重設 SELinux 安全性本文
+   *设置安全本文: chcon
+   *使用預設的安全性本文來還原: restorecon
+  *SELinux 所需的服務
+   *setroubleshoot --> 錯誤訊息寫入 /var/log/messages 使用 sealert 处理错误代码
+   *auditd --> 詳細資料寫入 /var/log/audit/audit.log
+    *auditd 會將許多的 SELinux 資訊都記錄下來，不只是錯誤訊息 因此登錄檔 /var/log/audit/audit.log 非常的龐大。audit2why 指令來讓查詢錯誤訊息的回報
+  *AVC: access vector cache
+  *SELinux 的政策與規則管理
+   *規則 (Booleans) 里有 av rules
+   av rules 格式: allow  主體程序安全性本文類別  目標檔案安全性本文類別
+   *seinfo: 政策提供多少相關的規則
+   *sesearch: 知道詳細的規則
+   *getsebool: 布林值的查詢
+   *setsebool: 布林值的修改
+   *semanage fcontext 預設目錄的安全性本文查詢與修改
+    * 使用正規表示法去指定一個範圍
+=== Linux 系統管理員 ===
+==== 認識系統服務 (daemons) ====
+ *達成 service 的程式我們就稱呼為 daemon
+ *daemon 的主要分類
+  *stand_alone：此 daemon 可以自行單獨啟動服務
+  *super daemon： 一支特殊的 daemon 來統一管理
+   *當沒有用戶端的要求時，各項服務都是未啟動的情況，等到有來自用戶端的要求時， super daemon 才喚醒相對應的服務
+   *super daemon 可以具有安全控管的機制，就是類似網路防火牆的功能
+ *daemon 工作形態的類型: signal-control interval-control
+ *daemon 的命名規則: 程式檔名后加d，這個 d 代表的就是 daemon 的意思
+ *服務與埠口的對應: /etc/services 文件
+ *daemon 的啟動腳本與啟動方式
+  */etc/init.d/* ：啟動腳本放置處
+  */etc/sysconfig/* ：各服務的初始化環境設定檔
+  */etc/* : 各服務各自的設定檔
+  */var/lib/* ：各服務產生的資料庫
+  */var/run/* ：各服務的程序之 PID 記錄處
+ *Stand alone 使用 /etc/init.d/* 啟動
+  */etc/init.d/* {start|stop|status|restart|condrestart}
+  *service 命令 service为一脚本
+ *Super daemon 的啟動方式: 設定檔中設定為啟動該 daemon 設定檔就是 /etc/xinetd.d/* 的所有檔案
+ *解析 super daemon 的設定檔
+  *預設值設定檔：xinetd.conf 
+  *看书
+ *服務的防火牆管理 xinetd, TCP Wrappers
+  *任何以 xinetd 管理的服務，或者服務的程式支援 TCP Wrappers 函式的功能 都可以透過 /etc/hosts.allow, /etc/hosts.deny 來設定防火牆
+  */etc/hosts.allow 與 /etc/hosts.deny 也是 /usr/sbin/tcpd 的設定檔
+  * /usr/sbin/tcpd 則是用來分析進入系統的 TCP 網路封包的一個軟體
+  *使用ldd查看程序是否使用libwrap.so来判断是否支援 TCP Wrappers 函式的功能
+  *設定檔語法: 看书
+  *TCP Wrappers 特殊功能: 
+   *spawn (action) 用shell执行action
+   *twist (action) 执行action并終止該次連線的要求
+ *系統開啟的服務
+  *觀察: netstat 這個網路狀態觀察指令 看书
+  *設定開機後立即啟動服務的方法
+   *具体见开机流程分析
+   *chkconfig： 管理系統服務預設開機啟動與否 还可设定xinetd管理的服务 还可設定自己的系統服務
+   *ntsysv: 類圖形介面管理模式 分都有
+ *預設啟動的服務簡易說明 看书
+==== 認識與分析登錄檔 ====
+ *登錄檔: 記錄系統活動資訊的幾個檔案， 例如：何時、何地 (來源 IP)、何人 (什麼服務名稱)、做了什麼動作 (訊息登錄囉)。
+ *Linux 常見的登錄檔檔名
+  */var/log/cron
+  */var/log/dmesg
+  */var/log/lastlog
+  */var/log/maillog 或 /var/log/mail/*
+  */var/log/messages
+  */var/log/wtmp, /var/log/faillog
+  *var/log/httpd/*, /var/log/news/*, /var/log/samba/*:不同的網路服務會使用自己的登錄檔案
+ *登錄檔所需相關服務 (daemon) 與程式
+  *軟體開發商自行定義寫入的登錄檔與相關格式
+  *Linux distribution 提供的登錄檔管理服務
+   *syslogd：主要登錄系統與網路等服務的訊息 
+   *klogd：主要登錄核心產生的各項資訊
+   *logrotate：主要在進行登錄檔的輪替功能
+ *syslogd: 記錄登錄檔的服務
+  *syslog 的設定檔: /etc/syslog.conf
+   *規定: (1)什麼服務 (2)的什麼等級訊息 (3)需要被記錄在哪裡(裝置或檔案)
+   *服務名稱 看书
+   *訊息等級 看书
+   *CentOS 5.x 預設的 syslog.conf 內容 看书
+   *登錄檔的安全性設置: 用chattr +a设成不能更改, 但是和logrotate有冲突, 要改logrotate的设定
+   *登錄檔伺服器的設定: 使用一台机器做为总的服务器 看书
+  *登錄檔如果被改, syslogd就不会再往里写, 需要重启才能继续写
+ *登錄檔的輪替(logrotate)
+  * logrotate 是在規定的時間到了之後才來進行登錄檔的輪替， logrotate 是掛在 cron 底下進行
+  * 设定档
+   */etc/logrotate.conf 
+   */etc/logrotate.d/
+   *具体看书
+  *輪替的文档用.1 .2 .3 ... 代表輪替次数
+ *分析登錄檔
+  *CentOS 預設提供的 logwatch
+  *鳥哥自己寫的登錄檔分析工具
+==== 開機流程、模組管理與 Loader ====
+ *为 CentOS 5.x 的分析 个发行版差别很大
+ *Linux 的開機流程分析
+  *BIOS, boot loader 與 kernel 載入
+   *BIOS, 開機自我測試與 MBR
+   *Boot Loader 的功能
+   *載入核心偵測硬體與 initrd 的功能
+  *第一支程式 init 及設定檔 /etc/inittab 與 runlevel
+   *Run level: 執行等級有哪些？
+    *0 - halt (系統直接關機) 
+    *1 - single user mode (單人維護模式，用在系統出問題時的維護) 
+    *2 - Multi-user, without NFS (類似底下的 runlevel 3，但無 NFS 服務) 
+    *3 - Full multi-user mode (完整含有網路功能的純文字模式) 
+    *4 - unused (系統保留功能) 
+    *5 - X11 (與 runlevel 3 類似，但加載使用 X Window) 
+    *6 - reboot (重新開機)
+   */etc/inittab 的內容與語法
+   *init 的處理流程
+  *init 處理系統初始化流程 (/etc/rc.d/rc.sysinit)
+  *啟動系統服務與相關啟動設定檔 (/etc/rc.d/rc N & /etc/sysconfig)
+   *使用目录结构来表示各个執行等級需要启动和关闭的服务, 使用chkconfig维护
+  *使用者自訂開機啟動程序 (/etc/rc.d/rc.local)
+  *開機過程會用到的主要設定檔
+   *關於模組: /etc/modprobe.conf
+   */etc/sysconfig/*
+  *Run level 的切換
+   *預設改/etc/inittab
+   *暫時變更系統的 run level 执行init指令
+   *runlevel 查看当前运行级别
+ *核心與核心模組
+  *核心： /boot/vmlinuz 或 /boot/vmlinuz-version； 
+  *核心解壓縮所需 RAM Disk： /boot/initrd (/boot/initrd-version)； 
+  *核心模組： /lib/modules/version/kernel 或 /lib/modules/$(uname -r)/kernel； 
+  *核心原始碼： /usr/src/linux 或 /usr/src/kernels/ (要安裝才會有，預設不安裝) 
+  *核心版本： /proc/version 
+  *系統核心功能： /proc/sys/kernel
+  *核心模組與相依性: 使用depmod解决
+   *依赖寫入/lib/modules/$(uname -r)/modules.dep中
+  *核心模組的觀察: lsmod
+  *查阅核心模组信息:  modinfo
+  *核心模組的載入與移除
+   *原始的使用: insmod 和 lsmod
+   *自动克服模組的相依性問題: modprobe
+  *核心模組的額外參數設定: /etc/modprobe.conf
+  *自動可載入的模組
+   *經由設定/etc/modprobe.conf 或者是將自行做好的設定檔寫入到 /etc/sysconfig/modules/ 目錄中， 並且將檔名取為 filename.modules
+ *Boot Loader: Grub
+  *现在使用 Grub 2
+  *boot loader 的兩個 stage
+  *grub 的設定檔 /boot/grub/menu.lst 與選單類型
+  *硬碟與分割槽在 grub 中的代號 与在Linux中的不一样
+  *設定檔: /boot/grub/menu.lst  解析看书 
+  *initrd 的重要性與建立新 initrd 檔案
+   *initrd 可以將 /lib/modules/.... 內的『開機過程當中一定需要的模組』包成一個檔案 (檔名就是 initrd)， 然後在開機時透過主機的 INT 13 硬體功能將該檔案讀出來解壓縮，並且 initrd 在記憶體內會模擬成為根目錄， 此虛擬檔案系統 (Initial RAM Disk) 主要包含磁碟與檔案系統的模組
+   *mkinitrd 创建initrd
+  *測試與安裝 grub
+   *特別注意 grub 找到不是目錄樹，而是裝置內的檔案
+   *装分区stage1.5 会出错, 但是能用, 这是因为stage1 使用的是分区文件系统上的stage1.5
+  *開機前的額外功能修改 使用grub的在线修改功能
+  *關於核心功能當中的 vga 設定
+   *FRAMEBUFFER_CONSOLE 编译选项开通, 可以再 tty 使用高解析度
+  *BIOS 無法讀取大硬碟的問題
+  *為個別選單加上密碼
+ *開機過程的問題解決
+  *忘記 root 密碼的解決之道
+  *init 設定檔錯誤
+  *BIOS 磁碟對應的問題 (device.map)
+  *因檔案系統錯誤而無法開機
+  *用 chroot 切換到另一顆硬碟工作
+==== 系統設定工具(網路與印表機)與硬體偵測 ====
+ *CentOS 系統設定工具： setup
+  *使用者身份驗證設定: 修改 /etc/sysconfig/authconfig
+  *網路設定項目(手動設定IP與自動取得)
+  *防火牆設定
+  *鍵盤形式設定
+  *系統服務的啟動與否設定
+  *系統時鐘的時區設定: 與 /etc/sysconfig/clock usr/share/zoneinfo/有關
+  *X 視窗介面解析度設定
+   *不可以使用類似 ssh 通訊協定連線後，在遠端主機上執行這個設定項目
+   *修改 /etc/X11/xorg.conf
+ *利用 CUPS 設定 Linux 印表機
+  *硬體支援度: BIOS打开 到[[http://www.linuxfoundation.org/en/OpenPrinting]]查看
+  *列印元件: 看书
+  *CUPS 支援的連線模式: socket LPD(Line Pritner Daemon) IPP(Internet Printing Protocol) SMB(Server Message Block) parallel USB
+  *以 Web 介面控管印表機
+   *必須要啟動 CUPS 這個服務 (/etc/init.d/cups start) 
+   *具有 root 的權限 (需要 root 的密碼來設定)； 
+   *預設僅能在本機 (localhost) 管理，無法使用遠端連線連到此 Linux 管理； 
+   *nmap 可以用于測試印表機有沒有出現列印相關的服務埠口
+   *查詢你 Linux 主機是否啟動 CUPS 服務:  http://localhost:631 
+  *手動設定印表機
+   */etc/cups/printers.conf：印表機的設定值，都寫在這個檔案中； 
+   */etc/cups/cupsd.conf：CUPS 的主要設定檔，包括做為伺服器之用途的設定。 
+   */etc/cups/ppd/*.ppd：就是各個印表機的驅動程式 (PPD 設定檔)
+   *使用 lpadmin 進行印表機的建立與刪除
+   *印表機狀態的觀察: lpstat
+   *利用 lpr 與 lp 來產生列印工作
+   *列印工作的觀察 (lpq) 與刪除 (lprm)
+ *硬體資料收集與驅動，及 lm_sensors
+  *lspci：列出整個 PC 系統的 PCI 介面裝置！很有用的指令； 
+  *lsusb：列出目前系統上面各個 USB 埠口的狀態，與連接的 USB 裝置； 
+  *iostat：與 vmstat 類似，可即時列出整個 CPU 與周邊設備的 Input/Output 狀態。
+  *驅動 USB 裝置
+   *USB 1.1版本的控制器主要有兩種規格: OHCI(Open Host Controller Interface) UHCI(Universal Host Controller Interface)
+   *USB 2.0 在 Linux 上都以 Enahnced Host Controller Interface (EHCI)
+   *USB 磁碟裝置要啟動 usb-storage 模組
+   *要支援 SCSI 裝置
+   *快閃碟並不是傳統的硬碟，他並不是使用磁碟讀取頭與磁碟盤來記錄資料，因此你只能使用 /dev/sda1 之類的檔名來掛載， 理論上是無法進行額外分割
+  *使用 lm_sensors 取得溫度、電壓等資訊
+   *偵測主機板的型號: 	sensors-detect
+   *使用lm_sensors要加载相关的模组, 设定启动deamon
+   *利用 sensors 偵測溫度、電壓等硬體參數
+   *可以搭配 MRTG 來進行網頁繪圖
+  *udev 與 hal 簡介
+   *HAL 可以將系統目前的所有硬體進行快照，並持續檢視這個快照的內容 如果有新的 PnP 硬體插入時， HAL 就會發現目前的硬體與快照不同，此時就會通知 udev 進行新的裝置的建置了
+   *udev 建立裝置檔案的規則放置在 /etc/udev/rules.d/ 
+==== 軟體安裝：原始碼與 Tarball ====
+ *開放源碼的軟體安裝與升級簡介
+  *什麼是開放源碼、編譯器與可執行檔
+　*什麼是函式庫
+  *什麼是 make 與 configure
+  *什麼是 Tarball 的軟體
+  *如何安裝與升級軟體
+   *以原始碼透過編譯來安裝與升級； 
+   *直接以編譯好的 binary program 來安裝與升級。
+ *使用傳統程式語言進行編譯的簡單範例  看书
+ *用 make 進行巨集編譯  看书
+ *Tarball 的管理與建議 
+  *使用原始碼管理軟體所需要的基礎軟體
+   *gcc 或 cc 等 C 語言編譯器 (compiler)
+   *make 及 autoconfig 等軟體
+   *需要 Kernel 提供的 Library 以及相關的 Include 檔案 : kernel-source 或 kernel-header 
+  *Tarball 安裝的基本步驟
+   *取得原始檔：將 tarball 檔案在 /usr/local/src 目錄下解壓縮； 
+   *取得步驟流程：進入新建立的目錄底下，去查閱 INSTALL 與 README 等相關檔案內容 (很重要的步驟！)； 
+   *相依屬性軟體安裝：根據 INSTALL/README 的內容察看並安裝好一些相依的軟體 (非必要)； 
+   *建立 makefile：以自動偵測程式 (configure 或 config) 偵測作業環境，並建立 Makefile 這個檔案； 
+   *編譯：以 make 這個程式並使用該目錄下的 Makefile 做為他的參數設定檔，來進行 make (編譯或其他) 的動作； 
+   *安裝：以 make 這個程式，並以 Makefile 這個參數設定檔，依據 install 這個標的 (target) 的指定來安裝到正確的路徑！
+  *一般 Tarball 軟體安裝的建議事項 (如何移除？升級？) 
+   *最好將 tarball 的原始資料解壓縮到 /usr/local/src 當中；
+   *安裝時，最好安裝到 /usr/local 這個預設路徑下；
+   *考慮未來的反安裝步驟，最好可以將每個軟體單獨的安裝在 /usr/local 底下；
+   *為安裝到單獨目錄的軟體之 man page 加入 man path 搜尋：
+  *利用 patch 更新原始碼 
+   *patch -p數字 < patch_file  -pxx 那個 xx 代表『拿掉幾個斜線(/)』的意思
+ *函式庫管理
+  *ldconfig 與 /etc/ld.so.conf
+   *在 /etc/ld.so.conf 裡面寫下『 想要讀入快取記憶體當中的動態函式庫所在的目錄』，注意是目錄而不是檔案； 接下來利用 ldconfig 這個執行檔將 /etc/ld.so.conf 的資料讀入快取當中； 同時也將資料記錄一份在 /etc/ld.so.cache 這個檔案當中
+   *程式的動態函式庫解析：ldd
+ *檢驗軟體正確性: md5sum / sha1sum
+  *可用于防止篡改本地文件，达到安全目的
+==== 軟體安裝： RPM, SRPM 與 YUM 功能 ====
+ *軟體管理員簡介
+  *Linux 界的兩大主流: RPM 與 DPKG 
+  *使用的軟體管理機制為 RPM 機制，而用來作為線上升級的方式則為 yum
+  *什麼是 i386, i586, i686, noarch, x86_64 看书
+  *RPM 與 SRPM 的命名格式 看书
+ *RPM 軟體管理程式： rpm
+  *資料庫檔案：/var/lib/rpm/ 
+  *一般装在 /usr 目录下
+  *RPM 安裝 (install)
+  *RPM 升級與更新 (upgrade/freshen) 
+  *RPM 查詢 (query) 
+  *RPM 驗證與數位簽章 (Verify/signature) 
+   *數位簽章 (digital signature) 使用GPG
+   *RPM 反安裝與重建資料庫 (erase/rebuilddb) 
+ *SRPM 的使用 ： rpmbuild 
+  *利用預設值安裝 SRPM 檔案 (--rebuid/--recompile) 
+  *SRPM 使用的路徑與需要的軟體  看书
+  *設定檔的主要內容 (*.spec)  看书
+  *SRPM 的編譯指令 (-ba/-bb) 用于自己打包
+ *YUM 線上升級機制
+  *利用 yum 進行查詢、安裝、升級與移除功能
+   *查詢功能：yum [list|info|search|provides|whatprovides] 參數
+   *安裝/升級功能：yum [install|update] 軟體
+   *移除功能：yum [remove] 軟體
+  *yum 的設定檔
+   * /etc/yum.repos.d/ 设定容器所在網址
+   * 缓存位置 var/cache/yum/
+  *yum 的軟體群組功能
+  *全系統自動升級
+   *使用cron的功能
+ *管理的抉擇：RPM 還是 Tarball 
+  *優先選擇原廠的 RPM 功能：
+  *選擇軟體官網釋出的 RPM 或者是提供的容器網址
+  *利用 Tarball 安裝特殊軟體
+  *用 Tarball 測試新版軟體
+==== X Window 設定介紹 ====
+ *X Window 的發展簡史 看书
+ *主要元件： X Server/X Client/Window Manager/Display Manager
+  *X Server：硬體管理、螢幕繪製與提供字型功能
+  *X Client：負責 X Server 要求的『事件』之處理
+  *X Window Manager：特殊的 X Client ，負責管理所有的 X client 軟體
+  *Display Manager：提供登入需求
+   *display manager 最大的任務就是提供登入的環境， 並且載入使用者選擇的 Window Manager 與語系等資料
+   *CentOS 上面我們主要利用的是 GNOME 的 GNOME Display Manager (gdm) 這支程式來提供 tty7 的圖形介面登入
+   *startx 指令不启动Display Manager
+ *X Window 的啟動流程
+  *在文字介面啟動 X ：透過 startx 指令
+   *startx 後面接的參數以兩個減號『--』隔開，前面的是 X Client 的設定，後面的是 X Server 的設定
+   *startx 其實是一個 shell script ，他是一個比較親和的程式，會主動的幫忙使用者建立起他們的 X 所需要引用的設定檔
+    *X server 的參數方面： 
+     1.使用 startx 後面接的參數；
+     2.若無參數，則找尋使用者家目錄的檔案，亦即 ~/.xserverrc
+     3.若無上述兩者，則以 /etc/X11/xinit/xserverrc
+     4.若無上述三者，則單純執行 /usr/bin/X (此即 X server 執行檔)
+    *X client 的參數方面： 
+     1.使用 startx 後面接的參數；
+     2.若無參數，則找尋使用者家目錄的檔案，亦即 ~/.xinitrc
+     3.若無上述兩者，則以 /etc/X11/xinit/xinitrc
+     4.若無上述三者，則單純執行 xterm (此為 X 底下的終端機軟體)
+  *由 startx 呼叫執行的 xinit
+   *『 -display :0 』表示這個虛擬終端機是啟動在『第 :0 號的 X 顯示介面』
+  *啟動 X server 的檔案： xserverrc 
+   *Linux 可以『同時啟動多個 X』喔！第一個 X 的畫面會在 :0 亦即是 tty7 ，第二個 X 則是 :1 亦即是 tty8 
+  *啟動 X Client 的檔案： xinitrc 
+   *桌面环境设定档：/etc/sysconfig/desktop 
+   *千萬注意將除了最後一個 window manager 或 X Client 之外，都放到背景裡面去執行
+  *X 啟動的埠口
+   *考慮 X 視窗是在本機上面運作，因此將埠口改為插槽檔 (socket) 了，因此你無法觀察到 X 啟動的埠口的
+   *X server 應該是要啟動一個 port 6000 來與 X client 進行溝通
+ *X Server 設定檔解析與設定
+  *提供的螢幕字型: /usr/share/X11/fonts/
+  *顯示卡的晶片組: /usr/lib/xorg/modules/drivers/
+  *設定檔: /etc/X11/xorg.conf
+   *內容是分成數個段落的，每個段落以 Section 開始，以 EndSection 結束， 裡面含有該 Section (段落) 的相關設定值
+   *section name 主要有:
+    1.Module: 被載入到 X Server 當中的模組 (某些功能的驅動程式)；
+    2.InputDevice: 包括輸入的 1. 鍵盤的格式 2. 滑鼠的格式，以及其他相關輸入設備；
+    3.Files: 設定字型所在的目錄位置等；
+    4.Monitor: 監視器的格式， 主要是設定水平、垂直的更新頻率，與硬體有關；
+    5.Device: 這個重要，就是顯示卡晶片組的相關設定了；
+    6.Screen: 這個是在螢幕上顯示的相關解析度與色彩深度的設定項目，與顯示的行為有關；
+    7.ServerLayout: 上述的每個項目都可以重覆設定，這裡則是此一 X server 要取用的哪個項目值的設定囉。
+  *X Font Server (XFS) 與加入額外中文字形
+   *主設定檔在 /etc/X11/fs/config 
+   *字型檔則在 /usr/share/X11/fonts/ 
+   *相关指令 mkfontdir chkfontpath xlsofnts fc-cache 
+   *fontconfig軟體 方便设定
+  *讓視窗管理員可以使用額外的字型
+  *設定檔重建與顯示器參數微調
+  *關於螢幕解析度與更新率  
+   *使用 gtf 指令来调整
+  *顯示卡驅動程式安裝範例 看书
+==== Linux 備份策略 ====
+ *備份要點
+  *備份資料的考量
+   *主機角色不同，備份任務也不同
+   *備份因素考量
+    *備份哪些檔案
+    *選擇什麼備份的媒介
+    *考慮備份的方式
+    *備份的頻率
+    *備份使用的工具為何
+  *哪些 Linux 資料具有備份的意義
+   *作業系統本身需要備份的檔案
+    */etc/ 整個目錄
+    */home 整個目錄
+    */var/spool/mail
+    */boot
+    */root
+    *如果你自行安裝過其他的套件，那麼 /usr/local/ 或 /opt 也最好備份
+   *網路服務的資料庫方面
+    *軟體本身的設定檔案，例如：/etc/ 整個目錄，/usr/local/ 整個目錄
+    *軟體服務提供的資料，以 WWW 及 MySQL 為例：WWW 資料：/var/www 整個目錄或 /srv/www 整個目錄，及系統的使用者家目錄MySQL ： /var/lib/mysql 整個目錄
+    *其他在 Linux 主機上面提供的服務之資料庫檔案！
+   *不需要備份的目錄
+    */dev ：這個隨便你要不要備份
+    */proc：這個真的不需要備份啦！
+    */mnt 與 /media：如果你沒有在這個目錄內放置你自己系統的東西，也不需要備份
+    */tmp ：幹嘛存暫存檔！不需要備份！
+  *備份用儲存媒體的選擇 看书
+  *備份的種類、頻率與工具的選擇  dd, cpio, dump/restore, rsync
+   *具体看书
+  *鳥哥的備份策略 看书
+   *備份 MySQL 資料庫防止出错：備份前，將該服務先關掉， 備份完成後，再啟動該服務即可
+==== Linux 核心編譯與管理 ====
+ *編譯前的任務：認識核心與取得核心原始碼 看书
+  *核心原始碼下的次目錄
+   *arch ：與硬體平台有關的項目，大部分指的是 CPU 的類別，例如 x86, x86_64, Xen 虛擬支援等； 
+   *block ：與區塊裝置較相關的設定資料，區塊資料通常指的是大量儲存媒體！還包括類似 ext3 等檔案系統的支援是否允許等。 
+   *crypto ：核心所支援的加密的技術，例如 md5 或者是 des 等等； 
+   *Documentation ：與核心有關的一堆說明文件，若對核心有極大的興趣，要瞧瞧這裡！ 
+   *drivers ：一些硬體的驅動程式，例如顯示卡、網路卡、PCI 相關硬體等等； 
+   *firmware ：一些舊式硬體的微指令碼 (韌體) 資料； 
+   *fs ：核心所支援的 filesystems ，例如 vfat, reiserfs, nfs 等等； 
+   *include ：一些可讓其他程序呼叫的標頭 (header) 定義資料； 
+   *init ：一些核心初始化的定義功能，包括掛載與 init 程式的呼叫等； 
+   *ipc ：定義 Linux 作業系統內各程序的溝通； 
+   *kernel ：定義核心的程序、核心狀態、執行緒、程序的排程 (schedule)、程序的訊號 (signle) 等 
+   *lib ：一些函式庫； 
+   *mm ：與記憶體單元有關的各項資料，包括 swap 與虛擬記憶體等； 
+   *net ：與網路有關的各項協定資料，還有防火牆模組 (net/ipv4/netfilter/*) 等等； 
+   *security ：包括 selinux 等在內的安全性設定； 
+   *sound ：與音效有關的各項模組； 
+   *virt ：與虛擬化機器有關的資訊，目前核心支援的是 KVM (Kernel base Virtual Machine) 
+ *核心編譯的前處理與核心功能選擇
+  *保持乾淨原始碼： make mrproper 會將你以前進行過的核心功能選擇檔案也刪除掉
+   * make clean 僅會刪除類似目標檔之類的編譯過程產生的中間檔案
+  *開始挑選核心功能： make XXconfig 看书
+  *核心功能細項選擇 看书
+   a. 一般設定(General setup)：附加版本名稱、IPC 通訊、程序相關等
+   b. 核心模組與 block layer 支援
+   c. CPU 的類型與功能選擇(含虛擬化技術)
+   d. 電源管理功能
+   e. 一些匯流排 (bus) 的選項
+   f. 編譯後執行檔的格式
+   g. 核心的網路功能
+   h. 各項裝置的驅動程式
+   i. 檔案系統的支援
+   j. 核心駭客、資訊安全、密碼應用
+   k. 虛擬化與函式庫
+  *核心的編譯與安裝 看书
+   *移動核心到 /boot 且保留舊核心檔案
+   *建立相對應的 Initial Ram Disk (initrd)
+   *編輯開機選單 (grub)
+   *重新以新核心開機、測試、修改
+ *額外(單一)核心模組編譯 看书 深入研究
+  *以 /lib/modules/$(uname -r)/build 及 /lib/modules/$(uname -r)/source 這兩個連結檔來指向正確的核心原始碼放置目錄
+  *modules.dep 檔案也挺有趣的， 那個檔案是記錄了核心模組的相依屬性的地方
+  *需要的就是 kernel-devel 這個軟體
+  *需要 make, gcc 以及核心所提供的 include 標頭檔與函式庫等等
+== 伺服器架設篇 ==
+ *使用預設的套件管理方式來安裝所有的伺服器 比自己手動使用 Tarball 的安裝方式來的方便且安全
+ *在架站的過程當中，無論出現任何問題，第一個步驟就是察看登錄檔 (log file)，那是克服問題的地方
+=== 架站前的進修專區 ===
+ *對於網路伺服器來說最重要的是基礎檔案權限、程序之啟動關閉與管理、 Bash shell 之操作與 script 、使用者帳號的管理等等
+==== 作者再版序 ====
+ *需要『一貫作業程序』的，什麼是 『一貫』作業程序呢？其實就是上面所有的工作都需要 『全部一起搭配來思考』的意思，您不能單純的只想到某個比較重要的地方而已。
+ *具備有 Linux 作業系統的相關知識，以及文字介面 ( BASH Shell ) 的相關技巧，還有，必需要能夠瞭解一些 Unix-Like 的工作流程，例如登錄檔的產生與放置的地點、服務的啟動與關閉方式、 工作排程的使用方法、以及其他種種相關的事項。
+ * DNS 是所有伺服器能否正常工作的基礎，因此，您雖然不需要架設 DNS 伺服器，但是得瞭解 DNS 的整體運作流程
+ *主要分為三大部分，分別是『網路基礎篇』、 『簡易防火措施篇』與『伺服器架設篇』，前兩篇的所有內容與『伺服器架設篇』都具有很高的相關性， 所以，您在開始伺服器的架設之前，請務必將前面兩篇共十二章先唸過一遍才好
+==== 架站之前所需的技能分析 ====
+ *架站容易維護難』啊！更深一層來說，『維護還好、除錯更難啊！』
+ *架站之前還是有一些基本的技能需要學會的！而且這些技能是『一旦學會之後，真正是終身受用啊！』 
+ *基本功課
+  *該作業系統的簡易操作，以及登錄分析、帳號管理、文書編輯器的使用等等的技巧； 
+  *網路的基本概念； 
+  *防火牆方面的相關知識等等。
+ *基本架站流程
+  *瞭解網路基礎
+   *硬體與設備的等級與好壞
+   *TCP/IP 與封包的概念
+   *路由 (route)
+   *領域名稱系統 (Domain Name System, DNS )
+   *各種網路設備的選擇與搭配
+  *瞭解架站的目的
+  *Linux 安裝硬碟規劃
+  *瞭解欲架設的網站服務原理
+  *服務的套件安裝、漏洞修補、套件升級
+  *主機設定、啟動、觀察與除錯
+   *找出設定檔
+   *編輯設定檔
+   *啟動伺服器
+   *觀察啟動的狀態
+   *設定開機啟動該伺服器
+   *Server 與 Client 的權限問題
+  *用戶端設定、觀察與除錯
+   *教育 Client 端的使用者，正確的使用網路與主機提供的服務』就是一個相當重要的工作
+  *安全性設定
+   *嚴格規範使用者的密碼設定規則
+   *利用 Super daemon 與 TCP Wrappers 管理服務權限
+   *利用 netfilter 防火牆
+   *持續進行套件修補
+  *服務日誌、登錄檔與備份管理
+ *定位在已經具有 Linux 知識的朋友的工具書
+ *自我評估是否已經具有架站的能力
+  *如何維護一個網站的安全
+  *是否具有 Linux 的基礎概念
+  *是否具備基礎網路知識
+  *是否已經身心活化了
+  *是否具有道德感與責任感
+==== 網路基礎概念 ====
+ *網路(Network)
+  *如果沒有一些網路基礎方面的認知的話，那麼在 Linux 上面設定網路或者是進行網路除錯將是您一生當中最大的夢魘
+  *熟悉 Linux 操作與 Linux 基礎
+  *花幾晚的時間將網路基礎看一看
+  *隨時掌握主機資訊
+  *什麼是網路 看书
+==== 網路基礎概念 ====
+ *網路層之路由概念
+  *路徑選擇 (routing) 
+  *每部主機都有自己的路由表
+  *Gateway / Router ：網關/路由器的功能就是在負責不同網域之間的封包轉遞 ( IP Forwarder )
+  *Internet 上面的路由協定與變化是相當複雜的，因為 Internet 上面的路由並不是靜態的，他可以隨時因為環境的變化而修訂每個封包的傳送方向。
+  *觀察主機的路由
+   *route [-n]
+}}}

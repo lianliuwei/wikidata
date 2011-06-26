@@ -1,0 +1,80 @@
+=== Linux 使用者管理 ===
+==== Linux 帳號管理與 ACL 權限設定 ====
+ *User ID ，簡稱 UID Group ID ，簡稱 GID
+ *用ID来区别用户和授权事件所对应的用户
+ *用户和组是多对多的关系
+ *记录的都是数字
+ *UID 有幾個限制
+  *0 (系統管理員)
+  *1~499 (系統帳號) 1~99：由 distributions 自行建立的系統帳號 100~499：若使用者有系統帳號需求時，可以使用的帳號 UID
+  *500~2^32-1 (可登入帳號)	
+ */etc/passwd
+  *记录用户帐号信息
+  *对应的密码文件是/etc/shadow
+  */etc/passwd 檔案結構 帳號名稱 密碼 UID GID 使用者資訊說明欄 家目錄 Shell
+  */etc/shadow 檔案結構 帳號名稱 密碼 最近更動密碼的日期 密碼不可被更動的天數 密碼需要重新變更的天數 密碼需要變更期限前的警告天數 密碼過期後的帳號寬限時間(密碼失效日) 帳號失效日期 保留
+  *Linux 日期的時間是以 1970 年 1 月 1 日作為 1 而累加的日期
+ */etc/group
+  *记录组信息
+  *对应的密码文件是/etc/gshadow
+  *有效群組(effective group) 为新建档案记录的组
+  *初始群組(initial group) 为帐号文件中记录的组
+  *groups: 有效與支援群組的觀察
+  *newgrp: 有效群組的切換 产生新的shell
+  */etc/group 檔案結構 群組名稱 群組密碼 GID 此群組支援的帳號名稱
+  */etc/gshadow檔案結構 群組名稱 群組名稱 群組管理員的帳號 該群組的所屬帳號
+  *使用 sudo 之類的工具， 群組管理員的功能已經很少使用了
+ *用户和组信息都是以用户帐号为关键 设计不好
+ *注意
+  *隨意修改系統上某些帳號的 UID 很可能會導致某些程序無法進行
+  */etc/passwd记录了系統正常運作必須的系統帳號
+  *一般用戶的密碼忘記了 利用 root 的身份使用 passwd 指令來處理即可
+  *root 密碼忘記了 重新開機進入單人維護模式 或者 Live CD 開機後掛載根目錄去修改 /etc/shadow
+ * 帳號管理
+  *新增與移除使用者
+   *useradd
+    *参考 /etc/default/useradd 配置
+    */etc/skel 使用者家目錄參考基準目錄
+    *参考 /etc/login.defs
+   *passwd 修改密码
+   *chage 修改密码
+    *可以让使用者在第一次登入時， 強制她們一定要更改密碼後才能夠使用系統資源
+   *usermod  modify用户
+   *userdel delete用户
+  *使用者功能
+   *finger 查閱很多使用者相關的資訊
+   *chfn   change finger的意思
+   *chsh   change shell 的簡寫
+   *id  查詢某人或自己的相關 UID/GID 等等的資訊
+  *新增與移除群組
+   *groupadd
+   *groupmod
+   *groupdel
+   *gpasswd：群組管理員功能
+  *帳號管理實例
+ *主機的細部權限規劃：ACL 的使用
+  *ACL 是 Access Control List 的縮寫
+  *如何啟動 ACL 
+   *使用 ACL 必須要有檔案系統的支援才行 
+   *重新挂载 mount -o remount,acl /
+   *修改 /etc/fstab
+  *ACL 的設定
+   * getfacl：取得某個檔案/目錄的 ACL 設定項目；
+   * setfacl：設定某個目錄/檔案的 ACL 規範。
+   *mask  使用者或群組所設定的權限必須要存在於 mask 的權限設定範圍內才會生效，此即『有效權限 (effective permission)』
+   *ACL 的權限可以設定被次目錄所『繼承？』
+ *使用者身份切換
+  *telnet 程式 ssh 可以設定拒絕 root 登入
+  *su   superuser 身份切換指令
+   *su - 使用 non-login shell 的方式
+   *su - -c "指令串" 僅執行一次 root 的指令
+   *缺點 大家都知道root的密码
+  *sudo
+   *su 需要瞭解新切換的使用者密碼 (常常是需要 root 的密碼)， sudo 的執行則僅需要自己的密碼即可
+   *设定档 /etc/sudoers
+    *使用者帳號  登入者的來源主機名稱=(可切換的身份)  可下達的指令
+    *利用群組以及免密碼的功能處理
+    *有限制的指令操作
+    *透過別名建置
+    *sudo 搭配 su 的使用方式 變成 root 的身份 但 root 密碼不會外流
+   *sh -c "一串指令" 执行一串指令

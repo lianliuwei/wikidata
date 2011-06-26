@@ -1,0 +1,239 @@
+= Cross-Platform GUI Programming with wxWidgets =
+{{{#!wiki
+<<TableOfContents(2)>>
+ *有点过时了
+== 介绍 ==
+ *是跨平台的
+ *内部组织
+  *通用代码
+  *一般代码
+  *wxUniversal
+  *平台相关代码
+  *外来代码   contrib/ 中
+  *第三方代码
+== 开始使用 ==
+ *从wxApp类的子类开始
+ *wxApp开始于OnInit()虚函数
+ *wxT _T 宏
+ *IMPLEMENT APP(MyApp)声明宏
+ *wxFrame类
+ *事件处理函数不是虚函数
+ *和MFC的事件处理宏是一样的
+ *可以动态改变事件表
+ *图标或者小图片使用XPM编码，可以直接include到C++中
+ *对快捷键有支持
+== 事件处理 ==
+ *wxEvtHandler的派生类都维护一个事件表
+ *事件处理函数的形式是统一的 只有一个事件对象作为参数
+ *事件可以不必被产生这个事件的控件所处理
+ *通过wxEvtHandler::ProcessEvent进行匹配
+ *只有Command事件会被递归传递
+ *wxEvent::Skip()继续寻找事件表
+ *wxWindow::PushEventHandler()动态添加处理事件表
+ *手动调用事件表使用wxWindow::GetEventHandler()
+ *wxEvtHandler::Connect()动态事件处理
+ *窗口标识符只要在在固定的上下文中是唯一的
+ *使用wxID_ANY，系统分配标识符，都是负数
+ *wxWidgets使用了很多自定义的标识符
+ *可以自定义事件
+== 窗口的基础知识 ==
+ *窗口的定义
+ *客户区和非客户区
+ *滚动条
+  *拥有wxHSCROLL和wxVSCROLL类型的窗口才会自动生成自己的滚动条
+ *光标和鼠标指针
+ *顶层窗口 
+  *延迟删除的
+ *坐标体系
+ *窗口绘制
+  *收到wxEVT_ERASE_BACKGROUND和wxEVT_PAINT
+ *颜色和字体
+ *窗口变体
+ *改变大小
+  *sizer类确定窗口的布局
+ *输入
+  *键盘只能对处于活动状态的窗口输入 和 wxEVT_SET_FOCUS和wxEVT_KILL_FOCUS
+ *空闲事件处理和用户界面更新
+  *wxEVT_IDLE
+ *窗口的创建和删除
+  *一般都是在堆上面new出来的
+  *一步创建和两步创建
+  *顶层用Destroy() 子窗口用delete()
+ *窗口类型
+ *窗口类
+  *基本窗口
+   *基本类型和扩展类型
+  *顶层窗口
+   *模式和非模式
+   *在show()调用之前不显示
+   *可以自己实现模态
+   *可以实现不规则的窗口
+  *容器窗口
+   *Notebook里包含Panel
+  *非静态控件
+   *wxChoice
+   *wxComboBox
+   *wxCheckBox
+   *wxListBox
+   *wxHtmlListBox
+   *wxRadioBox
+   *wxScrollBar
+   *wxSpinButton
+   *wxSpinCtrl
+   *wxSlider
+   *wxTextCtrl
+   *wxToggleButton 
+  *静态控件
+   *wxGauge
+   *wxStaticText
+   *wxStaticBitmap
+   *wxStaticLine
+   *wxStaticBox
+  *菜单
+   *wxMenu
+  *控件条
+   *wxMenuBar
+   *wxToolBar
+   *wxStaticBar
+== 绘图和打印 ==
+ *设备上下文 wxDC
+ *wxDC的子类代表特定的绘图设备的上下文
+ *wxPaintEvent绘制窗口客户区
+ *wxEraseEvent通知擦除背景
+ *wxPaintDC 会告诉窗口系统已经重绘完了 不要再发送重画消息
+ *wxWindow::IsExpose判断是否在重绘区域内
+ *使用wxWindow::Refresh和wxWindow::RefreshRect来指定重画区域
+ *使用wxWindow::Update来进行立刻更新
+ *减少闪烁 使用双缓冲 前景和背景统一绘制
+ *绘画工具：wxColour wxPen wxBrush wxFont wxPalette
+ *wxPen可以设置两端的表示
+ *绘图对象多使用引用计数
+ *wxBrush 决定图像的填充方式
+ *字体家族用来指一个系列的字体
+ *wxPalette已经很少用了
+ *绘制文本有单独的前景和背景
+ *线上的最后一个点将不会绘制
+ *这部分和MFC非常象
+ *打印的最小单位是页
+ *wxPrintout
+ *使用wxGLCanvas绘制三维图形
+== 处理用户输入 ==
+ *还是使用相应的event来处理的
+ *键盘按下和字符event是不同的
+ *在设置菜单时可以设置快捷键 在快捷键字符串前加\t
+ *使用wxAcceleratorEntry对象和wxWindow::SetAcceleratorTable()也可以用来设置快捷键
+ *wxJoystick处理游戏手柄
+== 使用布局控件进行窗口布局 ==
+ *可以使用XRC文件进行配置
+ *可以用wxrc将XRC文件编译成代码
+ *布局控件不是从wxWindow中继承来的
+ *使用DialogBlocks程序可以用来编辑对话框
+ *布局控件都是容器
+ *子元素要有最小大小 边界 对齐方式 比例(伸缩因子)
+ *用wxWindow::SetSizer来设置布局控件
+ *wxBoxSizer
+ *wxStaticBoxSizer
+ *wxGridSizer
+ *wxFlexGridSizer
+ *wxGridBagSizer
+ *wxStdDialogButtonSizer
+ *使用对话框单位可以很好的解决字体大小的问题
+ *支持动态布局
+== 使用标准对话框 ==
+ *标准并且节省时间
+ *信息对话框
+  *wxMessageDialog
+  *wxMessageBox
+  *wxProgressDialog
+  *wxBusyInfo
+  *wxShowTip
+ *文件和目录对话框
+  *wxFileDialog
+  *wxDirDialog
+ *选择和选项对话框
+  *wxColourDialog
+  *wxFontDialog
+  *wxSingleChoiceDialog
+  *wxMultiChoiceDialog
+ *输入对话框
+  *wxNumberEntryDialog
+  *wxTextEntryDialog
+  *wxPasswordEntryDialog
+  *wxFindReplaceDialog
+  *wxPageSetupDialog
+  *wxPrintDialog
+== 创建定制的对话框 ==
+ *对话框编辑器 wxDesigner(收费) DialogBlocks(收费) wxGlade
+ *使用transferDataToWindow()和transferDataFromWindow()进行数据的更新
+ *也可使用Validator(验证器)进行更新
+ *Validator会在窗口消失时和输入事件处理时被调用
+ *wxUpdateUIEvent用来空闲时候轮训设置UI的状态，并不是所有影响UI的消息都能会主动通知的
+ *wxHelpProvider帮助提供类
+ *对于掌上设备的对话框要区别对待
+ *使用一个如PersonalRecordData的类来进行统一数据交换
+ *非模式对话框不能独占数据
+ *wxXmlResource处理XRC资源，使用独子模式
+ *资源既可以创建实例在加载 也可以直接创建并加载
+ *XRCID()宏负责文字和ID的转换
+ *可以使用虚拟文件系统加载资源和图片
+ *可以定制自己的wxXmlResourceHandler来加载自己的控件
+ *也可以使用wxXmlResource::AttachUnknownControl()来替换未知控件
+== 使用图像编程 ==
+ *支持和位图相关的类：wxBitmap wxIcon wxCursor wxImage
+ *位图类使用计数器开销不大
+ *wxImage和平台不关，不能直接使用
+ *XPM支持直接编译到代码里
+ *应用程序显示的图标 不同平台需要不同处理
+ *光标图案没有设置则使用父窗口的
+ *wxSetCursorEvent在要更换鼠标的时候产生
+ *可以使用wxImage::AddHandler给wxImage支持更多的图片格式
+ *wxQuantize可以用来进行颜色消减
+ *wxImageList表示一组图片
+ *wxIconBundle表示多个分辨率的图标集
+ *wxArtProvider更改默认图片
+== 剪切板和拖放操作 ==
+ *wxDataObject代表拖放和剪切中的数据
+ *剪切板数据要用new产生而且不能释放 拖放只要在DoDragDrop期间存在就可以了
+ *wxTheClipboard全局剪切板指针
+ *wxDropSource 拖放源
+ *源代码11.7 拖放源的代码
+ *wxDropTarget 拖放目的
+ *数据格式带类型
+ *wxTreeCrtl wxListCtrl wxDragImage实现了拖放操作
+== 高级窗口控件 ==
+ *wxTreeCtrl
+ *wxListCtrl
+ *wxWizard
+ *wxHtmlWindow
+ *wxGrid
+ *wxTaskBarIcon 系统托盘区图标
+ *编写自定义的控件
+  *例子 wxFontSelectorCtrl
+  *例子 wxThumbnailCtrl
+== 使用文档/视图框架 ==
+ *wxDocManager 用于管理框架中所有视图和文档的对应
+ *wxDocTemplate 视图和文档的对应
+ *可以自己定义文档视图管理系统 但是非常费时间
+ *MDI界面使用wxDocMDIParentFrame和wxDocMDIChildFrame
+ *主窗口和文档窗口分离使用wxDocParentFrame和wxDocChildFrame
+ *单个窗口使用wxDocParentFrame
+ *wxCommand用来支持 do和undo操作
+ *DoodleCanvas是wxScrolledWindow
+ *支持很多默认标识符 大多是在wxDocManager中进行处理的
+ *wxConfig
+== 完善你的程序 ==
+ *单实例和多实例
+  *wxSingleInstanceChecker
+  *wxServer wxClient wxConnection 用于通信 可以实现复杂的单实例逻辑
+ *更改实际处理机制
+  *更改MainFrame::ProcessEvent()
+ *降低闪烁
+  *wxWindow::Freeze()和wxWindow::Thaw() 冻结屏幕 防止多次更新造成的闪烁
+ *实现联机帮助
+ *解析命令行参数
+ *存储应用程序资源
+ *调用别的应用程序
+ *管理应用程序设置
+ *应用程序安装
+ *遵循用户界面设计规范
+}}}

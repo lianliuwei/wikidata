@@ -1,0 +1,18 @@
+= Stunnel =
+ *用https端口建立的隧道
+ *[[http://www.stunnel.org/]]官网
+ *[[http://www.stunnel.org/examples/]]例子
+ *要研究一下
+ *既能翻越公司的firewall 又能过GFW
+ *[[http://en.wikipedia.org/wiki/Stunnel]]wiki百科
+ *[[http://www.ibm.com/developerworks/cn/security/s-stun/index.html]]使用 Stunnel 加密
+ *[[http://blog.cosrc.com/?action=show&id=21]]深入理解代理服务器
+ *[[http://blog.csdn.net/freexploit/archive/2005/08/27/466281.aspx]]Stunnel加密通道的架设指南
+ *[[http://blog.csdn.net/freexploit/archive/2005/08/26/466151.aspx]]
+ *[[http://blog.csdn.net/freexploit/archive/2005/08/26/466150.aspx]]
+
+== 用stunnel和apache合作 ==
+ *[[http://www.stunnel.org/examples/https_client.html]]
+ *[[http://www.docunext.com/blog/2008/02/stunnel-https-proxy.html]]
+ *[[http://www.agelog.net/?p=64]]Ubuntu 9.10 下 Apache2 SSL 的配置方法
+ *[[http://blog.chinaunix.net/u1/49674/showart_399365.html]]使用 Stunnel 建立加密隧道

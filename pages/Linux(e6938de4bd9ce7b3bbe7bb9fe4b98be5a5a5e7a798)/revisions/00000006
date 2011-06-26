@@ -1,0 +1,70 @@
+= Linux操作系统之奥秘 =
+{{{#!Wiki
+ <<TableOfContents>>
+ 
+ *台湾人写的就是好
+ *主要讲的是初始化, 硬件检测, X Window的概念
+== initrd中的init ==
+ *和init指令不一样
+ *是nash脚本
+ *initrd中没有通过mount挂载/
+ *proc: process file system
+  *PID 对应进程的信息
+  *partitions硬盘分区
+ *sys
+  *以分类的方法存放
+  *文件要是单一的值
+ *tmpfs
+ *udev
+  *和/etc/udev/rules.d 有关
+  *可以改设备名字和设备链接
+ *dev/pts: pseudo terminal slave
+  *dev/ptms产生的
+  *ssh和xterm需要使用
+  *telnet使用的是真正的tty
+ *dev/shm tmpfs
+  *和dev下文件不一样 作为缓存使用
+ *dev/mapper
+  *LVM使用
+== X Window System ==
+ *X Window是一组软件组成的
+  *可替换
+  *混淆观念
+ *X Client和X Server和正常的Client和Server位置对调
+ *X Server管理硬件
+ *通过X Window System core protocol协议进行交互 可以网络分布
+ *以图片方式更新 耗费网络资源
+ *X Server
+  *X 和 Xorg程序
+  *可以有好几个
+  *Server编号和console没有必然关系
+ *X Client
+  *xterm 和很多其他程序
+ *Window Manager
+  *metacity
+ *Widget
+  *GTK+
+  *QT
+ *Display Manager
+  *GNOME为gdm
+  *帮X server建立session
+  *使用XDMCP协议
+ *Desktop Manager
+  *对说有的进行整合
+  *GNOME
+  *KDE
+ *初始化过程
+  *startx 是对 xinit指令的前置操作`
+  *startx 是一个脚本 会分析参数传给xinit
+  *xinit启动 X Server
+  *startx方法尚未输入密码就进入GNOME环境
+  *init 5 使用prefdm 查找要启动的Desktop Manager
+  *init 5 会初始化语系和登录
+ *X Window的Client-Server
+  *由Client产生X Server
+  *有Server产生gdm
+  *Client端不用安装GNOME套件
+  *是一种集中管理架构 都由Server负责X Client
+  *Windows下X Server Xming
+ *VNC可以替代XDMCP进行远程联机
+}}}

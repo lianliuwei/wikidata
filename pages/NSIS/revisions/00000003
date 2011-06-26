@@ -1,0 +1,9 @@
+= NSIS =
+ *[[NSIS 源代码分析]]
+ *[[http://nsis.sourceforge.net]]
+ *[[http://en.wikipedia.org/wiki/Nullsoft_Scriptable_Install_System]]
+ *[[http://www.dreams8.com/]]NSIS论坛
+ *[[http://zlemon.com/category/program/nsis]]NSIS相关文章
+ *[[http://www.dreams8.com/redirect.php?tid=4213&goto=lastpost|NSIS怎样运行安装包里的程序?]] 先解压后安装
+ *NISIS连if else都没有
+ *使用file指令可以递归添加 并排除特定的文件

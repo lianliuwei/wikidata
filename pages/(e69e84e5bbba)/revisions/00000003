@@ -1,0 +1,8 @@
+= 构建 =
+ *传统上意味着编译出可执行文件，但是现在还联系[[编译]] [[测试]] [[代码检查和分析]]等方面
+ *持续集成有很多优势
+ *[[Scons]]的扩展性是其他工具说不能企及的
+ *[[Build automation]]
+== Buildbot ==
+ *[[Python]]写的持续集成工具
+ *[[http://www.ibm.com/developerworks/cn/linux/l-buildbot/index.html|使用 Buildot 实现持续集成]]

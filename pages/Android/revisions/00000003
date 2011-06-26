@@ -1,0 +1,11 @@
+= Android =
+== 系统开发 ==
+ *[[http://www.codesourcery.com/downloads/public/gnu_toolchain/arm-none-linux-gnueabi]] 编译器
+ *[[http://code.google.com/p/android/]] android的Linux内核
+ *[[http://developer.android.com/index.html]]android SDK 这是要上网更新的
+ *[[http://benno.id.au/blog/2007/11/14/android-busybox]]android-busybox
+== 资源 ==
+ *[[http://code.google.com/p/android/]] 内核工程
+ *[[http://blog.csdn.net/JiangBo_HIT/archive/2009/11/24/4860996.aspx]]更新不行
+ *[[http://wxmijl.blog.163.com/blog/static/13245928200910242415186/]]使用 SDK 2.0 emualtor 
+ *[[http://www.motobbs.com/thread-448821-1-1.html]]早期移植

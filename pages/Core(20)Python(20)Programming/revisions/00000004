@@ -1,0 +1,14 @@
+= Core Python Programming =
+ *看到 56
+== 欢迎来到Python世界 ==
+ *.py是Python的扩展名
+ *.pyc .pyo是编译完的文件
+ *#!/bin/env python 可以用于选择python的位置，不知这是什么原理
+ *标准版本的 Python 是用 C 来编译的， 又叫 CPython
+ *Stackless
+== Python起步 ==
+ *分语句和表达式
+ *使用空格当做代码块
+ *print后加，表示不换行 但是会自动添加空格
+ *Python Enhancement Proposal
+ *[[http://www.china-pub.com/39969|目录]]

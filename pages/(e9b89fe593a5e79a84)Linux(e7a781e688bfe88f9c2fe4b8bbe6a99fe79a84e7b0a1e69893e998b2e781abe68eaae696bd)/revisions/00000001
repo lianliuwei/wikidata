@@ -1,0 +1,457 @@
+=== 主機的簡易防火措施 ===
+
+==== 主機基本安全之一：限制 Linux 對外連線的埠口 ====
+
+ *Linux 的埠口 (port)
+
+  *什麼是 port
+
+   *共 65536 個 port
+
+   *只有 root 才能啟動的保留的 port
+
+   *大於 1024 用於 client 端的 port
+
+   *沒有所謂的 port 的安全性！因為『Port 的啟用是由服務軟體所造成的』， 也就是說，真正影響網路安全的並不是 port ，而是啟動 port 的那個軟體 (程式)！ 
+
+  *觀察 port
+
+   *netstat
+
+    *列出在監聽的網路服務 netstat -tunl
+
+    *列出已連線的網路連線狀態 netstat -tun
+
+    *刪除已建立或在監聽當中的連線 netstat -tunp 加 kill
+
+  *nmap
+
+   *掃瞄 port
+
+   *『Network exploration tool and security scanner』
+
+ *Port 的啟動與關閉  看书
+
+  *其實 port 是由某些程式所啟動的，所以要關閉某些 port 時，那就直接將某個程式給他關閉就是
+
+  *stand alone 與 super daemon
+
+  *設定開機時啟動服務
+
+  *安全性的考量
+
+==== 主機基本安全之二： Linux 線上自動升級 ====
+
+ *安裝 Linux 完畢後的第一項工作那就是..... 立刻進行整體軟體的升級
+
+ *為何需要進行軟體升級 看书
+
+  *如何進行軟體升級
+
+  *各種 distributions 的自動升級機制
+
+ *CentOS 的 yum 自動升級
+
+  *yum 的設定檔
+
+  *yum 的安裝、升級、移除、查詢等功能與安裝套件群組
+
+  *不同版本間的升級
+
+   *CentOS 4.2 to 4.3
+
+   *FC1 to CentOS 4.3
+
+ *Debian 的 apt 自動升級：以 B2D 為例
+
+  *[[http://apt.freshrpms.net/|apt主机查询]]
+
+  *APT 的設定檔
+
+   *APT 的設定檔都放在 /etc/apt 目錄下
+
+   *規範 APT 主機的設定則放到 /etc/apt/sources.list 當中
+
+   */etc/apt/apt.conf 還可以提供其他額外的設定
+
+   *APT將套件表頭的下載與實際的安裝分成兩個動作分別執行
+
+   *套件会下載到 /var/cache/apt/archives/
+
+  *實際使用 APT
+
+   *查詢: apt-cache 
+
+==== 路由器 Router 設定 ====
+
+ *路由
+
+  *路由表
+
+   *可以用 traceroute 來嘗試瞭解一下每個 router 的封包流向
+
+   *路由表主要幾種情況
+
+    *依據介面而存在的路由
+
+    *手動或預設路由(default route)
+
+    *動態路由
+
+     *額外的軟體支援 例如： zebra  或 Quagga
+
+   *在 Linux 的路由規則都是透過核心來達成的， 所以這些路由表的規則都是在核心功能內 也就是在記憶體當中 
+
+  *IP Alias 的測試用途
+
+   *用途
+
+    *測試用
+
+    *在一個實體網域中含有多個 IP 網域
+
+    *既有設備無法提供更多實體網卡時
+
+   *所有的 IP Alias 都是由實體網卡模擬來的， 所以當要啟動 eth0:0 時，eth0 必須要先被啟動才行。而當 eth0 被關閉後， 所以 eth0:n 的模擬網卡將同時也被關閉
+
+   *開機的時候就啟動 IP alias
+
+    *透過 /etc/rc.d/rc.local
+
+    *透過 /etc/sysconfig/network-scripts/ifcfg-eth0:0
+
+   *只要 ifcfg-eth0 這個實體網卡的設定檔中， ONBOOT 為 yes 時，開機就會將全部的 eth0:n 都啟動
+
+   *由於 ifup 及 /etc/init.d/network 這兩個 script 內程式碼撰寫的方式 导致使用 DHCP 來取得 eth0 的 IP 時，只能使用手動方式 (用 ifconfig) 來設定 IP Alias 
+
+  *重複路由的問題
+
+   *參考 [[http://www.study-area.org/tips/multipath.htm|頻寬負載平衡]]
+
+   *一般來說， 不應該設定同一的網段的不同 IP 在同一部主機上面
+
+ *路由器架設
+
+  *什麼是路由器
+
+   *如何啟動這個封包轉遞
+
+    *echo "1" > /proc/sys/net/ipv4/ip_forward
+
+    *修改 /etc/sysctl.conf
+
+  *何時需要路由器？
+
+   *實體線路之佈線及效能的考量
+
+   *部門獨立與保護資料的考量
+
+  *靜態路由之路由器
+
+   *路由是雙向的，你必須要瞭解出去的路由與回來時的規則
+
+   *如果你的 Linux Router 有設定防火牆的話， 而且還有設定類似 NAT 主機的 IP 偽裝技術，那可得特別留意，因為還可能會造成路由誤判的問題
+
+  *動態路由之路由器設定：zebra
+
+   *目前常見的動態路由協定有：RIPv1, RIPv2, OSPF, BGP
+
+   *可以說， quagga 就是 zebra 
+
+   *各項動態路由協定都放置到 /etc/quagga/ 目錄內
+
+   *zebra 這個 daemon 的功能在更新核心的路由規則； 
+
+   *RIP 這個 daemon 則是在向附近的其他 Router 溝通協調路由規則的傳送與否。
+
+   *可以用telnet使用zebra的服务
+
+   *設定 zebra 看书
+
+   *設定 ripd 服務 看书
+
+ *ARP Proxy 讓路由器兩端在同一網域
+
+  *只用 arp 和 route 实现
+
+==== 認識網路安全 ====
+
+ *網路封包連線進入主機的流程
+
+  *封包進入主機的流程
+
+   *封包過濾防火牆：IP Filtering 或 Net Filter
+
+   *第二層防火牆：TCP Wrappers
+
+   *服務 (daemon) 的功能
+
+   *使用主機的檔案系統資源
+
+  *主機能作的保護： 權限設定、套件更新、SELinux
+
+ *主機的細部權限規劃：ACL 的使用  复习
+
+  *什麼是 ACL？
+
+  *如何啟動 ACL
+
+  *ACL 的設定技巧： getfacl, setfacl
+
+  *ACL 內的 mask 項目
+
+ *一些常見的攻擊手法與主機的保護方式
+
+  *取得帳號資訊後猜密碼
+
+  *利用系統的程式漏洞『主動』攻擊
+
+  *利用社交工程作欺騙
+
+  *利用程式功能的『被動』攻擊
+
+  *蠕蟲或木馬的 rootkit
+
+   *可以定時以 rkhunter 之類的軟體來追查：有個網站提供 rootkit 程式的檢查，你可以前往下載與分析你的主機：[[http://www.rootkit.nl/projects/rootkit_hunter.html]]
+
+  *DoS 攻擊法 ( Denial of Service )
+
+  *其他 例如 IP 欺騙
+
+  *主機防護小結語
+
+   1. 建立完善的登入密碼規則限制； 
+
+   1. 完善的主機權限設定； 
+
+   1. 設定自動升級與修補套件漏洞、及移除危險套件； 
+
+   1. 在每項系統服務的設定當中，強化安全設定的項目； 
+
+   1. 利用 iptables, TCP_Wrappers 強化網路防火牆； 
+
+   1. 利用主機監控軟體如 MRTG 與 logwatch 來分析主機狀況與登錄檔
+
+ *被入侵後的修復工作
+
+  *網管人員需要對於作業系統有一定程度的熟悉， 對於程序的運作 (process) 與權限概念，則需要更瞭解
+
+  *網管人員的額外技巧與任務
+
+   *瞭解什麼是需要保護的內容
+
+   *預防黑客( Black hats )的入侵
+
+   *主機環境安全化
+
+   *防火牆規則的訂定
+
+   *即時維護您的主機
+
+    * PortSentry 就是蠻不錯的即時偵測软件
+
+   *良好的教育訓練課程
+
+   *完善的備份計畫
+
+    * rsync 工具
+
+  *入侵恢復工作
+
+   *主機被入侵了，最好的方法還是『重新安裝Linux 』會比較乾淨
+
+   1. 立即拔除網路線
+
+   1. 分析登錄檔資訊，搜尋可能的入侵途徑
+
+   1. 重要資料備份
+
+    * 重要的資料應該是『非 Linux 系統上面原有的資料』
+
+   1. 重新全新安裝
+
+   1. 套件的漏洞修補
+
+   1. 關閉或移除不需要的服務
+
+   1. 資料回復與恢復服務設定
+
+   1. 連上 Internet
+
+==== Linux 防火牆與 NAT 主機 ====
+
+ *認識防火牆
+
+  *防火牆就是在管制進入到我們網域內的主機(或者可以說是網域)的資料封包的一種機制
+
+  *iptables 與 TCP Wrappers 都可以稱為軟體防火牆
+
+  *防火牆最大的功能就是幫助你『限制某些服務的存取來源』！ 
+
+  *Linux 系統上防火牆的主要類別
+
+   *代理伺服器 (Proxy)
+
+   *IP Filter
+
+  *防火牆的一般線路佈線與抵擋技巧 看书
+
+   *單一 Linux 主機兼任防火牆功能
+
+   *單一 Linux 防火牆，但 LAN 內另設防火牆
+
+   *在防火牆後端的主機設定
+
+    *將提供網路服務的伺服器放在防火牆後面
+
+    *將網路伺服器獨立放置在兩個防火牆中間的網路， 我們稱之為非軍事區域 (DMZ)
+
+  *防火牆的使用限制
+
+   *防火牆並不能很有效的抵擋病毒或木馬程式
+
+   *防火牆對於來自內部 LAN 的攻擊較無承受力
+
+ *Linux 的封包過濾機制：iptables
+
+  *由 Linux kernel 所提供， 由於直接經過核心來處理，因此效能非常好
+
+  *不同 Linux 核心版本的防火牆軟體
+
+   *Version 2.0：使用 ipfwadm 這個防火牆機制； 
+
+   *Version 2.2：使用的是 ipchains 這個防火牆機制； 
+
+   *Version 2.4 與 2.6 ：主要是使用 iptables 這個防火牆機制，不過在某些早期的 Version 2.4 版本的 distributions 當中，亦同時支援 ipchains (編譯成為模組)，好讓使用者仍然可以使用來自 2.2 版的 ipchains 的防火牆規劃。不過，不建議在 2.4 以上的核心版本使用 ipchains
+
+  *iptables 的表格與封包進入流程
+
+   *根據封包的分析資料 "比對" 你預先定義的規則內容， 若封包資料與規則內容相同則進行動作，否則就繼續下一條規則的比對
+
+   *當您的規則順序排列錯誤時，就會產生很嚴重的錯誤了
+
+  *iptables 的表格與鏈 (chain)
+
+   *這個防火牆軟體裡面有多個表格 (table) ，每個表格都定義出自己的預設政策與規則， 且每個表格都用途都不相同
+
+   *Linux 的 iptables 至少就有三個表格，包括管理本機進出的 filter 、管理後端主機 (防火牆內部的其他電腦) 的 nat 、 管理特殊旗標使用的 mangle (較少使用) 。更有甚者，我們還可以自訂額外的鏈
+
+   *各個表格與鏈的相關性 看图
+
+   *事實上與本機最有關的其實是 filter 這個表格內的 INPUT 與 OUTPUT 這兩條鏈
+
+  *本機的 iptables 語法
+
+   *請不要在遠端主機上進行防火牆的練習，因為您很有可能一不小心將自己關在家門外
+
+   *規則的清除與觀察
+
+    *-t ：後面接 table ，例如 nat 或 filter ，若省略此項目，則使用預設的 filter
+
+    *-L ：列出目前的 table 的規則
+
+    *-n ：不進行 IP 與 HOSTNAME 的反查
+
+    *每個 chain 後面括號內的 policy 項目，那就是『預設動作(政策)』
+
+    *-F ：清除所有的已訂定的規則；
+
+    *-X ：殺掉所有使用者 "自訂" 的 chain (應該說的是 tables ）囉；
+
+    *-Z ：將所有的 chain 的計數與流量統計都歸零
+
+    *這三個指令會將本機防火牆的所有規則都清除，但卻不會改變預設政策 (policy) 
+
+   *定義預設政策 (policy)
+
+    *iptables [-t nat] -P [INPUT,OUTPUT,FORWARD] [ACCEPT,DROP]
+
+   *封包的基礎比對 IP/netmask I/O 裝置
+
+    *iptables [-AI 鏈] [-io 網路介面] [-p 協定] [-s 來源IP/網域] [-d 目標IP/網域] -j [ACCEPT|DROP]
+
+   *TCP, UDP 的規則比對
+
+    *iptables [-AI 鏈] [-io 網路介面] [-p tcp,udp] [-s 來源IP/網域] [--sport 埠口範圍] [-d 目標IP/網域] [--dport 埠口範圍] -j [ACCEPT|DROP]
+
+    *TCP 還有特殊的旗標 最常見的就是主動連線的 SYN 旗標, 在 iptables 裡面還支援『 --syn 』的處理方式
+
+   *狀態模組：MAC 與 RELATED
+
+    *可以透過一個狀態模組來分析 『這個想要進入的封包是否為剛剛我發出去的回應？』 如果是剛剛我發出去的回應，那麼就可以予以接受放行
+
+    *iptables -A INPUT -m state --state 狀態
+
+    *iptables -A INPUT -m mac --mac-source aa:bb:cc:dd:ee:ff -j ACCEPT
+
+  *防火牆的記錄、回復與測試
+
+   *iptables-save > filename
+
+   *iptables-restore < filename
+
+   *如果你將那個 filename 檔案存成『 /etc/sysconfig/iptables 』，並且利用 chkconfig 將 iptables 在開機時預設啟動的話，那麼一開機系統就會主動的幫你把防火牆的規則給載入
+
+   *測試
+
+    1. 先由主機向外面主動連線試看看； 
+
+    1. 再由私有網域內的 PC 向外面主動連線試看看； 
+
+    1. 最後，由 Internet 上面的主機，主動連線到您的 Linux 主機試看看
+
+  *IPv4 的核心管理功能： /proc/sys/net/ipv4/*
+
+   *設定資料都是放置在 /proc/sys/net/ipv4/ 這個目錄當中
+
+   *參考核心的說明文件 /usr/src/linux-{version}/networking/ip-sysctl.txt
+
+   */proc/sys/net/ipv4/tcp_syncookies 看书
+
+   */proc/sys/net/ipv4/icmp_echo_ignore_broadcasts 看书
+
+   */proc/sys/net/ipv4/conf/網路介面/* 看书
+
+ *本機防火牆的一個實例 看书有相关的shell script
+
+ *NAT 主機的設定
+
+  *什麼是 NAT？ SNAT？ DNAT？
+
+   *POSTROUTING 在修改來源 IP ，PREROUTING 則在修改目標 IP
+
+   *來源 NAT (Source NAT, SNAT) 看书
+
+   *目標 NAT, DNAT
+
+  *最陽春 NAT 主機： IP 分享功能   看书
+
+   *iptables -t nat -A POSTROUTING -s $innet -o $EXTIF -j MASQUERADE
+
+  *iptables 的額外核心模組功能
+
+   * 這些模組可以輔助封包的過濾用途，讓我們可以節省很多 iptables 的規則擬定
+
+  *在防火牆後端之網路伺服器 DNAT 設定
+
+   *將連接到 eth1 介面的 port 80 傳導到內部的 192.168.1.210: iptables -t nat -A PREROUTING -p tcp -i eth1 --dport 80 -j DNAT --to 192.168.1.210:80 
+
+   *80 連線的封包轉遞到 8080 這個 port: iptables -t nat -A PREROUTING -p tcp  --dport 80 -j REDIRECT --to-ports 8080
+
+==== 申請合法的主機名稱 ====
+
+ *為何需要主機名稱
+
+  *主機名稱的由來
+
+   *每部電腦的 /etc/hosts 裡面設定好主機名稱與 IP 的對應表
+
+  *重點在合法授權
+
+  *申請靜態還是動態 DNS 主機名稱
+
+ *註冊一個合法的主機名稱 看书
+
+  *靜態 DNS 註冊：以 Hinet 為例
+
+  *動態 DNS 註冊：以 no-ip 為例

@@ -1,0 +1,8 @@
+= Omaha 源代码分析 =
+ *core文件夹定义核心进程，每台机器一个，对于每个用户再一个
+ *core使用Reactor[[设计模式]]
+ *scoped_ptr模板可以自动管理一个范围里的指针变量
+ *Omaha里面有很多宝贝
+== UI ==
+ *worker/中有UI部分 是一个对话框 实现显示更新状态 包含一个模态对话框 使用WTL 实现带超链接的静态控件 使用状态机的方式
+ *worker/job_observer.h 中JobObserverCallMethodDecorator实现UI线程和worker线程间的交互 只在Worker线程中使用 好像也没有做怎么使用

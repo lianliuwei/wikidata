@@ -1,0 +1,18 @@
+= Understanding the Linux Kernel =
+== misc ==
+ *driver和device不一样
+ *和硬件有关的部分 在 arch 和 include 里, 有分门别类
+ *源代码和运行时是有区别的
+ *User Mode Linux 是什么东西
+ *头文件就目录下几个文件用的话 就放在目录下就行
+ *arm系列要这样配置 但是 x86不用这么配置呢
+== 硬件相关源码 ==
+ *arch include 目录下分门别类
+ *arm是最多
+ *arm下还要再细分
+ *arch代表架构 为具体的SoC或者CPU实现
+ *asm-为相关的硬件抽象
+ *Include多为申明
+ *各目录下的和架构有关的代码 都放在 arch下相应的架构里
+ *mach-s3c2410 和 mach-smdk2410 是芯片 和 开发板的关系
+ *plat 为平台 

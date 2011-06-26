@@ -1,0 +1,130 @@
+= bochs =
+ *你可以 用这个虚拟机来进行操作系统的调试，你可以随时让时间停住，然后钻进这台计算机的内部，CPU的寄存器、内存、硬盘，一切的一 切都尽收眼底。这正是进行操作系统的开发实验所需要的。
+ *安装的/doc/bochs/下有很多的文档
+== 调试 ==
+ *命令
+  *在某物理地址设置断点b addr	b 0x30400
+  *显示当前所有断点信息  info break	info break
+  *继续执行，直到遇上断点	c	c
+  单步执行（遇到函数则跳过）	n	n
+  *查看寄存器信息	
+   *info cpu
+   *r
+   *fp
+   *sreg
+   *creg	
+  *查看堆栈	print-stack	print-stack
+  *查看内存物理地址内容	xp /nuf addr	xp /40bx 0x9013e
+  *查看线性地址内容	x /nuf addr	x /40bx 0x13e
+  *反汇编一段内存	u start end	u 0x30400 0x3040D
+  *反汇编  u /数目 
+   *u /10 反汇编当前开始的10条指令并打印出来
+  *反汇编执行的每一条指令	trace-on	trace-on
+  *每执行一条指令就打印CPU信息	trace-reg	trace-reg on
+  *断点  vbreak 32位或 8086两段 地址表示法 或 vb   
+   *vbreak 0×0000:0×7c00 或者(b 0×00007c00)
+  *c 继续
+
+  *单步执行  step 或 s 
+  *info 显示信息
+   *info cpu cpu信息
+   *info vb 断点信息
+  *查看内存地址  x /nuf addr
+   *其中 n 应该为 一个你要显示内存的个数取值为一个整数
+   *u 为内存显示单位
+    *b 字节
+    *h 字（2个字节）
+    *w 双字（4个字节）
+    *g 4字(8字节)
+   *f 为打印格式 可以的取值
+    * x 16进制格式打印
+    * d 10进制格式打印
+    * u 无符号10进制格式打印
+    * o 8进制格式打印
+    * t 2进制格式打印
+   *x /8hx 0x00100000 就是 以16进制显示物理内存为 0x00100000 处 的8个字的内存
+ *帮助  help 具体内容   
+== Bochs的安装和使用 ==
+ *ubuntu里下的包是没有调试功能的，所以要自己编译。
+ *编译命令
+  *$ tar vxzf bochs-2.3.5.tar.gz
+  *$ cd bochs-2.3.5
+  *$ ./configure --enable-debugger --enable-disasm
+  *$ make
+  *$ sudo make install
+ *要记得每次编译失败，需要先make clean一下
+ *编译后/usr/share/boshs下没有keymaps文件夹 在 源文件夹的gui下有
+ *在ubuntu 8.10下安装成功,分为以下四步：
+  *1、准备工作
+   *bochs是由C++编写的，我们要安装相应的编译环境
+
+
+sudo apt-get install build-essential
+如果要图形界面，
+
+
+sudo apt-get install xorg-dev
+   *安装bison,
+
+
+sudo apt-get install bison
+   *到bochs官方网站下载源码包bochs-2.3.7.tar.gz, 解压产生文件夹bochs-2.3.7
+
+  *2、configure
+   *在目录/home/ubuntu/Desktop/bochs-2.3.7/下执行
+
+
+./configure --with-x11 --enable-debugger --enable-disasm --enable-pci --enable-pcidev --enable-plugins --enable-ne2000 --enable-pnic
+
+
+configure后的选项作为参考，你可以用./configure --help查看全部选项，bochs官方网站上有详细说明。
+
+  *3、make
+   *在运行make之前需要修改两个文件
+第一个文件是/home/ubuntu/Desktop/bochs-2.3.7/bx_debug/symbols.cc
+在97行之后加入代码如下,
+{{{
+
+using namespace std;
+
+#ifdef __GNUC__ //修改
+
+
+using namespace __gnu_cxx; //修改
+
+
+#endif //修改
+
+struct symbol_entry_t
+
+}}}
+第二个文件是/home/ubuntu/Desktop/bochs-2.3.7/Makefile
+将其中有关docbook的部分删除或注释掉，
+
+
+其实用不着改 Makefile 文件喔，只要 configure 的时候，加
+代码:
+--enable-docbook=no
+
+   *文件修改完毕，在目录/home/ubuntu/Desktop/bochs-2.3.7/下执行
+sudo make
+
+  *4、make install
+   *在目录/home/ubuntu/Desktop/bochs-2.3.7/下执行
+sudo make install
+== 创建软盘和硬盘 ==
+ *bximage命令 由bochs附带
+ *所谓映像者，你可以理解为原始设备的逐字节复制，也就是说，软盘的第$M$个字节对应映像文件的第M个字节。
+== 错误 ==
+ *ROM: System BIOS must end at 0xfffff
+  *有两种BIOS 128KB 和 64 KB
+  *128KB用0xe0000加载 64用0xf0000加载
+  *相反会超出8086的地址空间 出错
+  *出错为什么还会运行?
+== 资源 ==
+ *[[http://osfromscratch.org/bookscn/7-achapter02cn|搭建工作环境]]
+ *[[http://blog.chinaunix.net/u2/73569/showart_1287009.html]]
+ *[[http://forum.ubuntu.org.cn/viewtopic.php?f=65&t=177608|有关安装]]
+ *[[http://www.wangcong.org/articles/bochs.html]]
+ *[[http://bochs.sourceforge.net/|官网]]
+ *[[http://www.nongnu.org/vgabios/]]vgabios官网

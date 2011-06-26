@@ -1,0 +1,16 @@
+= wxPython in Action =
+ *wxPython作者写的
+{{{#!wiki
+<<TableOfContents(3)>>
+== Introduction to wxPython ==
+ *一切能在屏幕上显示的都是window 别的系统也叫widget
+ *wxPython使用[[http://www.swig.org/|SWIG]]来进行接口封装
+ *使用其他的子包时一定要先倒入wx包
+ *MainLoop()后就进入wxPython的控制
+ *有些widget是直接用[[Python]]写成的
+ *wx中的w代表Windows x代表Unix
+=== Welcome to wxPython ===
+== Essential wxPython ==
+== Advanced wxPython ==
+
+}}}

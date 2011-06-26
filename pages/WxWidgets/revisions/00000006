@@ -1,0 +1,23 @@
+= WxWidgets =
+ *开源界面库
+ *交叉平台使用
+ *绑定还真是很多
+ *[[http://www.wxwidgets.org/]]
+ *[[http://zh.wikipedia.org/zh-cn/WxWidgets]]
+ *[[http://en.wikipedia.org/wiki/WxWidgets]]
+ *[[http://sites.google.com/site/cnwxwidgets/wxwidgets_translate]]Cross-Platform GUI Programming with wxWidgets中文翻译 被墙
+ *[[http://www.wxwidgets.org/docs/]]文档
+ *[[http://wxcode.sourceforge.net/]]不在主线中的代码和第三方插件
+ *[[http://wiki.wxwidgets.org]]官方wiki
+ *[[Cross-Platform GUI Programming with wxWidgets]] 官方推荐书籍
+ *可以编译成一个文件 也可以编译为多个文件
+ *[[http://wyoguide.sourceforge.net/]]教程
+ *使用的是Autotool进行构建的
+ *和MFC的架构很像
+== 代码 ==
+ *utils/ 下为可独立使用的工具的代码
+ *include/ 下是使用库的程序用的头文件
+ *interface/ 是干什么用的？？
+ *docs/ 下是文档
+ *art/ 是图片等
+ *src/ 是主要的代码

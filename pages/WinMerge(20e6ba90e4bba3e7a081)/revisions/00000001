@@ -1,0 +1,17 @@
+= WinMerge 源代码 =
+ *使用[[MFC]]写成的界面系统
+ *使用VC进行开发
+ *使用脚本进行构建支持
+ *使用Inno系统进行安装包开发
+== 文件夹 ==
+ *参见\readme.txt的介绍
+ *Src
+ *ShellExtension
+ *Testing
+ *Plugins
+ *Installer
+ *Docs
+ *Filters
+ *Externals 可能是用到的外部库
+ *ArchiveSupport
+ *Tools 开发者用工具

@@ -1,0 +1,1240 @@
+== load_elf_binary() ==
+{{{#! cplusplus
+/*
+ * These are the functions used to load ELF style executables and shared
+ * libraries.  There is no binary dependent code anywhere else.
+ */
+
+#define INTERPRETER_NONE 0
+#define INTERPRETER_AOUT 1
+#define INTERPRETER_ELF 2
+
+
+static int load_elf_binary(struct linux_binprm * bprm, struct pt_regs * regs)
+{
+	struct file *interpreter = NULL; /* to shut gcc up */
+ 	unsigned long load_addr = 0, load_bias = 0;
+	int load_addr_set = 0;
+	char * elf_interpreter = NULL;
+	unsigned int interpreter_type = INTERPRETER_NONE;
+	unsigned char ibcs2_interpreter = 0;
+	unsigned long error;
+	struct elf_phdr * elf_ppnt, *elf_phdata;
+	unsigned long elf_bss, elf_brk;
+	int elf_exec_fileno;
+	int retval, i;
+	unsigned int size;
+	unsigned long elf_entry, interp_load_addr = 0;
+	unsigned long start_code, end_code, start_data, end_data;
+	unsigned long reloc_func_desc = 0;
+	struct elfhdr elf_ex;
+	struct elfhdr interp_elf_ex;
+  	struct exec interp_ex;
+	char passed_fileno[6];
+	struct files_struct *files;
+	int executable_stack = EXSTACK_DEFAULT;
+	
+	/* Get the exec-header */
+	elf_ex = *((struct elfhdr *) bprm->buf);
+
+	retval = -ENOEXEC;
+	/* First of all, some simple consistency checks */
+	if (memcmp(elf_ex.e_ident, ELFMAG, SELFMAG) != 0)
+		goto out;
+
+	if (elf_ex.e_type != ET_EXEC && elf_ex.e_type != ET_DYN)
+		goto out;
+	if (!elf_check_arch(&elf_ex))
+		goto out;
+	if (!bprm->file->f_op||!bprm->file->f_op->mmap)
+		goto out;
+
+	/* Now read in all of the header information */
+
+	retval = -ENOMEM;
+	if (elf_ex.e_phentsize != sizeof(struct elf_phdr))
+		goto out;
+	if (elf_ex.e_phnum > 65536U / sizeof(struct elf_phdr))
+		goto out;
+	size = elf_ex.e_phnum * sizeof(struct elf_phdr);
+	elf_phdata = (struct elf_phdr *) kmalloc(size, GFP_KERNEL);
+	if (!elf_phdata)
+		goto out;
+
+	retval = kernel_read(bprm->file, elf_ex.e_phoff, (char *) elf_phdata, size);
+	if (retval < 0)
+		goto out_free_ph;
+
+	files = current->files;		/* Refcounted so ok */
+	retval = unshare_files();
+	if (retval < 0)
+		goto out_free_ph;
+	if (files == current->files) {
+		put_files_struct(files);
+		files = NULL;
+	}
+
+	/* exec will make our files private anyway, but for the a.out
+	   loader stuff we need to do it earlier */
+
+	retval = get_unused_fd();
+	if (retval < 0)
+		goto out_free_fh;
+	get_file(bprm->file);
+	fd_install(elf_exec_fileno = retval, bprm->file);
+
+	elf_ppnt = elf_phdata;
+	elf_bss = 0;
+	elf_brk = 0;
+
+	start_code = ~0UL;
+	end_code = 0;
+	start_data = 0;
+	end_data = 0;
+
+	for (i = 0; i < elf_ex.e_phnum; i++) {
+		if (elf_ppnt->p_type == PT_INTERP) {
+			/* This is the program interpreter used for
+			 * shared libraries - for now assume that this
+			 * is an a.out format binary
+			 */
+
+			retval = -ENOMEM;
+			if (elf_ppnt->p_filesz > PATH_MAX)
+				goto out_free_file;
+			elf_interpreter = (char *) kmalloc(elf_ppnt->p_filesz,
+							   GFP_KERNEL);
+			if (!elf_interpreter)
+				goto out_free_file;
+
+			retval = kernel_read(bprm->file, elf_ppnt->p_offset,
+					   elf_interpreter,
+					   elf_ppnt->p_filesz);
+			if (retval < 0)
+				goto out_free_interp;
+			/* If the program interpreter is one of these two,
+			 * then assume an iBCS2 image. Otherwise assume
+			 * a native linux image.
+			 */
+			if (strcmp(elf_interpreter,"/usr/lib/libc.so.1") == 0 ||
+			    strcmp(elf_interpreter,"/usr/lib/ld.so.1") == 0)
+				ibcs2_interpreter = 1;
+
+			/*
+			 * The early SET_PERSONALITY here is so that the lookup
+			 * for the interpreter happens in the namespace of the 
+			 * to-be-execed image.  SET_PERSONALITY can select an
+			 * alternate root.
+			 *
+			 * However, SET_PERSONALITY is NOT allowed to switch
+			 * this task into the new images's memory mapping
+			 * policy - that is, TASK_SIZE must still evaluate to
+			 * that which is appropriate to the execing application.
+			 * This is because exit_mmap() needs to have TASK_SIZE
+			 * evaluate to the size of the old image.
+			 *
+			 * So if (say) a 64-bit application is execing a 32-bit
+			 * application it is the architecture's responsibility
+			 * to defer changing the value of TASK_SIZE until the
+			 * switch really is going to happen - do this in
+			 * flush_thread().	- akpm
+			 */
+			SET_PERSONALITY(elf_ex, ibcs2_interpreter);
+
+			interpreter = open_exec(elf_interpreter);
+			retval = PTR_ERR(interpreter);
+			if (IS_ERR(interpreter))
+				goto out_free_interp;
+			retval = kernel_read(interpreter, 0, bprm->buf, BINPRM_BUF_SIZE);
+			if (retval < 0)
+				goto out_free_dentry;
+
+			/* Get the exec headers */
+			interp_ex = *((struct exec *) bprm->buf);
+			interp_elf_ex = *((struct elfhdr *) bprm->buf);
+			break;
+		}
+		elf_ppnt++;
+	}
+
+	elf_ppnt = elf_phdata;
+	for (i = 0; i < elf_ex.e_phnum; i++, elf_ppnt++)
+		if (elf_ppnt->p_type == PT_GNU_STACK) {
+			if (elf_ppnt->p_flags & PF_X)
+				executable_stack = EXSTACK_ENABLE_X;
+			else
+				executable_stack = EXSTACK_DISABLE_X;
+		}
+
+	/* Some simple consistency checks for the interpreter */
+	if (elf_interpreter) {
+		interpreter_type = INTERPRETER_ELF | INTERPRETER_AOUT;
+
+		/* Now figure out which format our binary is */
+		if ((N_MAGIC(interp_ex) != OMAGIC) &&
+		    (N_MAGIC(interp_ex) != ZMAGIC) &&
+		    (N_MAGIC(interp_ex) != QMAGIC))
+			interpreter_type = INTERPRETER_ELF;
+
+		if (memcmp(interp_elf_ex.e_ident, ELFMAG, SELFMAG) != 0)
+			interpreter_type &= ~INTERPRETER_ELF;
+
+		retval = -ELIBBAD;
+		if (!interpreter_type)
+			goto out_free_dentry;
+
+		/* Make sure only one type was selected */
+		if ((interpreter_type & INTERPRETER_ELF) &&
+		     interpreter_type != INTERPRETER_ELF) {
+	     		// FIXME - ratelimit this before re-enabling
+			// printk(KERN_WARNING "ELF: Ambiguous type, using ELF\n");
+			interpreter_type = INTERPRETER_ELF;
+		}
+		/* Verify the interpreter has a valid arch */
+		if ((interpreter_type == INTERPRETER_ELF) &&
+		    !elf_check_arch(&interp_elf_ex))
+			goto out_free_dentry;
+	} else {
+		/* Executables without an interpreter also need a personality  */
+		SET_PERSONALITY(elf_ex, ibcs2_interpreter);
+	}
+
+	/* OK, we are done with that, now set up the arg stuff,
+	   and then start this sucker up */
+
+	if ((!bprm->sh_bang) && (interpreter_type == INTERPRETER_AOUT)) {
+		char *passed_p = passed_fileno;
+		sprintf(passed_fileno, "%d", elf_exec_fileno);
+
+		if (elf_interpreter) {
+			retval = copy_strings_kernel(1, &passed_p, bprm);
+			if (retval)
+				goto out_free_dentry; 
+			bprm->argc++;
+		}
+	}
+
+	/* Flush all traces of the currently running executable */
+	retval = flush_old_exec(bprm);
+	if (retval)
+		goto out_free_dentry;
+
+	/* Discard our unneeded old files struct */
+	if (files) {
+		steal_locks(files);
+		put_files_struct(files);
+		files = NULL;
+	}
+
+	/* OK, This is the point of no return */
+	current->mm->start_data = 0;
+	current->mm->end_data = 0;
+	current->mm->end_code = 0;
+	current->mm->mmap = NULL;
+	current->flags &= ~PF_FORKNOEXEC;
+
+	/* Do this immediately, since STACK_TOP as used in setup_arg_pages
+	   may depend on the personality.  */
+	SET_PERSONALITY(elf_ex, ibcs2_interpreter);
+
+	/* Do this so that we can load the interpreter, if need be.  We will
+	   change some of these later */
+	current->mm->rss = 0;
+	current->mm->free_area_cache = TASK_UNMAPPED_BASE;
+	retval = setup_arg_pages(bprm, executable_stack);
+	if (retval < 0) {
+		send_sig(SIGKILL, current, 0);
+		goto out_free_dentry;
+	}
+	
+	current->mm->start_stack = bprm->p;
+
+	/* Now we do a little grungy work by mmaping the ELF image into
+	   the correct location in memory.  At this point, we assume that
+	   the image should be loaded at fixed address, not at a variable
+	   address. */
+
+	for(i = 0, elf_ppnt = elf_phdata; i < elf_ex.e_phnum; i++, elf_ppnt++) {
+		int elf_prot = 0, elf_flags;
+		unsigned long k, vaddr;
+
+		if (elf_ppnt->p_type != PT_LOAD)
+			continue;
+
+		if (unlikely (elf_brk > elf_bss)) {
+			unsigned long nbyte;
+	            
+			/* There was a PT_LOAD segment with p_memsz > p_filesz
+			   before this one. Map anonymous pages, if needed,
+			   and clear the area.  */
+			retval = set_brk (elf_bss + load_bias,
+					  elf_brk + load_bias);
+			if (retval) {
+				send_sig(SIGKILL, current, 0);
+				goto out_free_dentry;
+			}
+			nbyte = ELF_PAGEOFFSET(elf_bss);
+			if (nbyte) {
+				nbyte = ELF_MIN_ALIGN - nbyte;
+				if (nbyte > elf_brk - elf_bss)
+					nbyte = elf_brk - elf_bss;
+				clear_user((void __user *) elf_bss + load_bias, nbyte);
+			}
+		}
+
+		if (elf_ppnt->p_flags & PF_R) elf_prot |= PROT_READ;
+		if (elf_ppnt->p_flags & PF_W) elf_prot |= PROT_WRITE;
+		if (elf_ppnt->p_flags & PF_X) elf_prot |= PROT_EXEC;
+
+		elf_flags = MAP_PRIVATE|MAP_DENYWRITE|MAP_EXECUTABLE;
+
+		vaddr = elf_ppnt->p_vaddr;
+		if (elf_ex.e_type == ET_EXEC || load_addr_set) {
+			elf_flags |= MAP_FIXED;
+		} else if (elf_ex.e_type == ET_DYN) {
+			/* Try and get dynamic programs out of the way of the default mmap
+			   base, as well as whatever program they might try to exec.  This
+			   is because the brk will follow the loader, and is not movable.  */
+			load_bias = ELF_PAGESTART(ELF_ET_DYN_BASE - vaddr);
+		}
+
+		error = elf_map(bprm->file, load_bias + vaddr, elf_ppnt, elf_prot, elf_flags);
+		if (BAD_ADDR(error))
+			continue;
+
+		if (!load_addr_set) {
+			load_addr_set = 1;
+			load_addr = (elf_ppnt->p_vaddr - elf_ppnt->p_offset);
+			if (elf_ex.e_type == ET_DYN) {
+				load_bias += error -
+				             ELF_PAGESTART(load_bias + vaddr);
+				load_addr += load_bias;
+				reloc_func_desc = load_bias;
+			}
+		}
+		k = elf_ppnt->p_vaddr;
+		if (k < start_code) start_code = k;
+		if (start_data < k) start_data = k;
+
+		/*
+		 * Check to see if the section's size will overflow the
+		 * allowed task size. Note that p_filesz must always be
+		 * <= p_memsz so it is only necessary to check p_memsz.
+		 */
+		if (k > TASK_SIZE || elf_ppnt->p_filesz > elf_ppnt->p_memsz ||
+		    elf_ppnt->p_memsz > TASK_SIZE ||
+		    TASK_SIZE - elf_ppnt->p_memsz < k) {
+			/* set_brk can never work.  Avoid overflows.  */
+			send_sig(SIGKILL, current, 0);
+			goto out_free_dentry;
+		}
+
+		k = elf_ppnt->p_vaddr + elf_ppnt->p_filesz;
+
+		if (k > elf_bss)
+			elf_bss = k;
+		if ((elf_ppnt->p_flags & PF_X) && end_code < k)
+			end_code = k;
+		if (end_data < k)
+			end_data = k;
+		k = elf_ppnt->p_vaddr + elf_ppnt->p_memsz;
+		if (k > elf_brk)
+			elf_brk = k;
+	}
+
+	elf_ex.e_entry += load_bias;
+	elf_bss += load_bias;
+	elf_brk += load_bias;
+	start_code += load_bias;
+	end_code += load_bias;
+	start_data += load_bias;
+	end_data += load_bias;
+
+	/* Calling set_brk effectively mmaps the pages that we need
+	 * for the bss and break sections.  We must do this before
+	 * mapping in the interpreter, to make sure it doesn't wind
+	 * up getting placed where the bss needs to go.
+	 */
+	retval = set_brk(elf_bss, elf_brk);
+	if (retval) {
+		send_sig(SIGKILL, current, 0);
+		goto out_free_dentry;
+	}
+	padzero(elf_bss);
+
+	if (elf_interpreter) {
+		if (interpreter_type == INTERPRETER_AOUT)
+			elf_entry = load_aout_interp(&interp_ex,
+						     interpreter);
+		else
+			elf_entry = load_elf_interp(&interp_elf_ex,
+						    interpreter,
+						    &interp_load_addr);
+		if (BAD_ADDR(elf_entry)) {
+			printk(KERN_ERR "Unable to load interpreter\n");
+			send_sig(SIGSEGV, current, 0);
+			retval = -ENOEXEC; /* Nobody gets to see this, but.. */
+			goto out_free_dentry;
+		}
+		reloc_func_desc = interp_load_addr;
+
+		allow_write_access(interpreter);
+		fput(interpreter);
+		kfree(elf_interpreter);
+	} else {
+		elf_entry = elf_ex.e_entry;
+	}
+
+	kfree(elf_phdata);
+
+	if (interpreter_type != INTERPRETER_AOUT)
+		sys_close(elf_exec_fileno);
+
+	set_binfmt(&elf_format);
+
+	compute_creds(bprm);
+	current->flags &= ~PF_FORKNOEXEC;
+	create_elf_tables(bprm, &elf_ex, (interpreter_type == INTERPRETER_AOUT),
+			load_addr, interp_load_addr);
+	/* N.B. passed_fileno might not be initialized? */
+	if (interpreter_type == INTERPRETER_AOUT)
+		current->mm->arg_start += strlen(passed_fileno) + 1;
+	current->mm->end_code = end_code;
+	current->mm->start_code = start_code;
+	current->mm->start_data = start_data;
+	current->mm->end_data = end_data;
+	current->mm->start_stack = bprm->p;
+
+	if (current->personality & MMAP_PAGE_ZERO) {
+		/* Why this, you ask???  Well SVr4 maps page 0 as read-only,
+		   and some applications "depend" upon this behavior.
+		   Since we do not have the power to recompile these, we
+		   emulate the SVr4 behavior.  Sigh.  */
+		down_write(&current->mm->mmap_sem);
+		error = do_mmap(NULL, 0, PAGE_SIZE, PROT_READ | PROT_EXEC,
+				MAP_FIXED | MAP_PRIVATE, 0);
+		up_write(&current->mm->mmap_sem);
+	}
+
+#ifdef ELF_PLAT_INIT
+	/*
+	 * The ABI may specify that certain registers be set up in special
+	 * ways (on i386 %edx is the address of a DT_FINI function, for
+	 * example.  In addition, it may also specify (eg, PowerPC64 ELF)
+	 * that the e_entry field is the address of the function descriptor
+	 * for the startup routine, rather than the address of the startup
+	 * routine itself.  This macro performs whatever initialization to
+	 * the regs structure is required as well as any relocations to the
+	 * function descriptor entries when executing dynamically links apps.
+	 */
+	ELF_PLAT_INIT(regs, reloc_func_desc);
+#endif
+
+	start_thread(regs, elf_entry, bprm->p);
+	if (unlikely(current->ptrace & PT_PTRACED)) {
+		if (current->ptrace & PT_TRACE_EXEC)
+			ptrace_notify ((PTRACE_EVENT_EXEC << 8) | SIGTRAP);
+		else
+			send_sig(SIGTRAP, current, 0);
+	}
+	retval = 0;
+out:
+	return retval;
+
+	/* error cleanup */
+out_free_dentry:
+	allow_write_access(interpreter);
+	if (interpreter)
+		fput(interpreter);
+out_free_interp:
+	if (elf_interpreter)
+		kfree(elf_interpreter);
+out_free_file:
+	sys_close(elf_exec_fileno);
+out_free_fh:
+	if (files) {
+		put_files_struct(current->files);
+		current->files = files;
+	}
+out_free_ph:
+	kfree(elf_phdata);
+	goto out;
+}
+
+}}}
+== load_elf_binary() 注释 ==
+{{{#! cplusplus
+/*
+ * These are the functions used to load ELF style executables and shared
+ * libraries.  There is no binary dependent code anywhere else.
+ */
+
+#define INTERPRETER_NONE 0
+#define INTERPRETER_AOUT 1
+#define INTERPRETER_ELF 2
+
+
+static int load_elf_binary(struct linux_binprm * bprm, struct pt_regs * regs)
+{
+bprm 含有要载入的该可执行文件的必要信息,具体解释间 do_execve()的说明。
+*regs 是用户态执行寄存器的表示。在内核态对该结构的任何修改, 当该程序所代表的 process
+切换到用户态执行时,会载入该结构中的内容。
+
+	struct file *interpreter = NULL; /* to shut gcc up */
+ 	unsigned long load_addr = 0, load_bias = 0;
+	int load_addr_set = 0;
+	char * elf_interpreter = NULL;
+动态链接库的名字
+	unsigned int interpreter_type = INTERPRETER_NONE;
+	unsigned char ibcs2_interpreter = 0;
+	unsigned long error;
+	struct elf_phdr * elf_ppnt, *elf_phdata;
+	unsigned long elf_bss, elf_brk;
+	int elf_exec_fileno;
+	int retval, i;
+	unsigned int size;
+	unsigned long elf_entry, interp_load_addr = 0;
+	unsigned long start_code, end_code, start_data, end_data;
+	unsigned long reloc_func_desc = 0;
+	struct elfhdr elf_ex;
+elf_ex 为 ELF 文件头的结构
+	struct elfhdr interp_elf_ex;
+interp_elf_ex 为动态链接器的文件头的结构
+  	struct exec interp_ex;
+     interp_ex 是 aout 文件头的结构,由于这里分析的是 ELF 的载入过程,这
+里忽略。
+	char passed_fileno[6];
+	struct files_struct *files;
+	int executable_stack = EXSTACK_DEFAULT;
+	
+	/* Get the exec-header */
+	elf_ex = *((struct elfhdr *) bprm->buf);
+bprm->buf[]中包含有当前要载入的可执行文件的前 128 个 bytes。ELF header 即在里面
+	retval = -ENOEXEC;
+	/* First of all, some simple consistency checks */
+	if (memcmp(elf_ex.e_ident, ELFMAG, SELFMAG) != 0)
+		goto out;
+比较前 4 个 byte 是否是 ELF 格式文件的签名。
+	if (elf_ex.e_type != ET_EXEC && elf_ex.e_type != ET_DYN)
+		goto out;
+比较要载入的可执行文件是什么类型的,只有 ET_EXEC(可执行文件)或 ET_SYN(共享库)才支持。这里有个疑问,难道对载入动态链接库也要调用本函数吗?
+	if (!elf_check_arch(&elf_ex))
+		goto out;
+体系相关检查,在 x86 上检查是否是正确的 CPU。
+	if (!bprm->file->f_op||!bprm->file->f_op->mmap)
+		goto out;
+可执行文件所在文件系统必须支持文件映射操作。要等到调用时再加载进来
+
+	/* Now read in all of the header information */
+
+	retval = -ENOMEM;
+	if (elf_ex.e_phentsize != sizeof(struct elf_phdr))
+		goto out;
+检查 ELF 文件中的 Program Header 的大小是否合法。
+	if (elf_ex.e_phnum > 65536U / sizeof(struct elf_phdr))
+		goto out;
+elf_ex.e_phnum 为 ELF 文件有几个 segment,这里对该可执行文件有多少个 segment 进
+行合法性检查。
+	size = elf_ex.e_phnum * sizeof(struct elf_phdr);
+	elf_phdata = (struct elf_phdr *) kmalloc(size, GFP_KERNEL);
+	if (!elf_phdata)
+		goto out;
+为了读入整个 Program Header Table,所以分配空间。
+	retval = kernel_read(bprm->file, elf_ex.e_phoff, (char *) elf_phdata, size);
+	if (retval < 0)
+		goto out_free_ph;
+读入整个 Program Header Table。
+	files = current->files;		/* Refcounted so ok */
+	retval = unshare_files();
+	if (retval < 0)
+		goto out_free_ph;
+	if (files == current->files) {
+		put_files_struct(files);
+		files = NULL;
+	}
+
+	/* exec will make our files private anyway, but for the a.out
+	   loader stuff we need to do it earlier */
+
+	retval = get_unused_fd();
+	if (retval < 0)
+		goto out_free_fh;
+取得一个未用的数字以用于作为 File Handle。
+	get_file(bprm->file);
+	fd_install(elf_exec_fileno = retval, bprm->file);
+先把该数字赋值给 elf_exec_fileno,然后在 file table 中把该数字与 bprm->file 进
+行关联,这时候该数字才可称为 File Handle。而 bprm->file 为当前正在载入的可执行文
+件本身。
+
+	elf_ppnt = elf_phdata;
+	elf_bss = 0;
+	elf_brk = 0;
+
+	start_code = ~0UL;
+	end_code = 0;
+	start_data = 0;
+	end_data = 0;
+相关变量的初始化。
+elf_bss 用于追踪 bss 段的首地址,  elf_brk 用于追踪 bss 段的尾地址。elf_brk – elf_bss
+就是整个 bss 段的大小,也是 ELF loader(也就是本函数)要初始化为零的空间大小。
+start_code,end_code 用于追踪本可执行文件的代码段的首地址与尾地址。
+start_data, end_data 用于追踪本可执行文件的数据段的首地址与尾地址。
+解释一下上图,如果数据段在文件中的大小与其在内存中映射的大小不同(只可能前者小于后
+者) ,表示存在 bss 段。这里 end_data 与 elf_bss 是重合的,而从 elf_bss 到 elf_brk
+的 BSS 段需要内核在这里初始化为零。在下面代码中有。并且 end_code 完全可能与
+start_data 重合。
+
+	for (i = 0; i < elf_ex.e_phnum; i++) {
+		if (elf_ppnt->p_type == PT_INTERP) {
+			/* This is the program interpreter used for
+			 * shared libraries - for now assume that this
+			 * is an a.out format binary
+			 */
+该 for 循环用来查找动态链接器的 path 所在的 Program Header。该 segment 非常简单,
+就是包含动态链接器的 path,比如/lib/ld-2.2.93.so。
+
+			retval = -ENOMEM;
+			if (elf_ppnt->p_filesz > PATH_MAX)
+elf_ppnt->p_filesz 即是该 segment 的大小,由于只包含的是动态链接器的 path,自然
+长度不应该超过最长的 path(4096) 
+
+				goto out_free_file;
+			elf_interpreter = (char *) kmalloc(elf_ppnt->p_filesz,
+							   GFP_KERNEL);
+			if (!elf_interpreter)
+				goto out_free_file;
+为存放动态链接器的 path 分配空间。
+			retval = kernel_read(bprm->file, elf_ppnt->p_offset,
+					   elf_interpreter,
+					   elf_ppnt->p_filesz);
+			if (retval < 0)
+				goto out_free_interp;
+elf_ppnt->p_offset 为该 path 在文件中的 offset,elf_ppnt->p_filesz 为 path 的
+长度。比如读取出“/lib/ld-2.2.93.so”到上面分配的 elf_interpreter 空间中。
+
+			/* If the program interpreter is one of these two,
+			 * then assume an iBCS2 image. Otherwise assume
+			 * a native linux image.
+			 */
+比较该动态链接器是否是特殊的。我也不知道所谓 iBCS2 image 是什麽。
+			if (strcmp(elf_interpreter,"/usr/lib/libc.so.1") == 0 ||
+			    strcmp(elf_interpreter,"/usr/lib/ld.so.1") == 0)
+				ibcs2_interpreter = 1;
+
+			/*
+			 * The early SET_PERSONALITY here is so that the lookup
+			 * for the interpreter happens in the namespace of the 
+			 * to-be-execed image.  SET_PERSONALITY can select an
+			 * alternate root.
+			 *
+			 * However, SET_PERSONALITY is NOT allowed to switch
+			 * this task into the new images's memory mapping
+			 * policy - that is, TASK_SIZE must still evaluate to
+			 * that which is appropriate to the execing application.
+			 * This is because exit_mmap() needs to have TASK_SIZE
+			 * evaluate to the size of the old image.
+			 *
+			 * So if (say) a 64-bit application is execing a 32-bit
+			 * application it is the architecture's responsibility
+			 * to defer changing the value of TASK_SIZE until the
+			 * switch really is going to happen - do this in
+			 * flush_thread().	- akpm
+			 */
+			SET_PERSONALITY(elf_ex, ibcs2_interpreter);
+忽略,不知道干什麽。
+			interpreter = open_exec(elf_interpreter);
+			retval = PTR_ERR(interpreter);
+			if (IS_ERR(interpreter))
+				goto out_free_interp;
+打开该动态链接器文件。
+			retval = kernel_read(interpreter, 0, bprm->buf, BINPRM_BUF_SIZE);
+			if (retval < 0)
+				goto out_free_dentry;
+读出该动态链接器文件头上 128 个 byte
+			/* Get the exec headers */
+			interp_ex = *((struct exec *) bprm->buf);
+			interp_elf_ex = *((struct elfhdr *) bprm->buf);
+			break;
+设定指针,指向刚读出的那 128 个 byte
+		}
+		elf_ppnt++;
+	}
+
+	elf_ppnt = elf_phdata;
+	for (i = 0; i < elf_ex.e_phnum; i++, elf_ppnt++)
+		if (elf_ppnt->p_type == PT_GNU_STACK) {
+			if (elf_ppnt->p_flags & PF_X)
+				executable_stack = EXSTACK_ENABLE_X;
+			else
+				executable_stack = EXSTACK_DISABLE_X;
+		}
+枚举当前可执行文件的 Program Header,找到里面的 stack,根据该 segment 的属性来设
+置该 stack 是否可执行(execuatble)。可执行 stack 有一定的危险度,臭名昭著的 stack
+buffer overflow 攻击就是利用了可执行 stack 这个特性。这里 ELF 文件对 stack 提供了
+一定的控制度,可以屏蔽 stack 的可执行特性。
+
+	/* Some simple consistency checks for the interpreter */
+	if (elf_interpreter) {
+		interpreter_type = INTERPRETER_ELF | INTERPRETER_AOUT;
+如果存在动态链接器,则要做一些检查。
+首先假设动态链接器类型未定,可以是 ELF 型或 aout 型。
+这里我就有点不明白了,现在是在 ELF loader 中,而 aout loader 另由其他函数处理,为
+什么这里不能假设就是 ELF 型呢?
+
+		/* Now figure out which format our binary is */
+		if ((N_MAGIC(interp_ex) != OMAGIC) &&
+		    (N_MAGIC(interp_ex) != ZMAGIC) &&
+		    (N_MAGIC(interp_ex) != QMAGIC))
+			interpreter_type = INTERPRETER_ELF;
+aout 型可执行文件有多种子类型,如 NMAGIC,OMAGIC,ZMAGIC,QMAGIC。如果不是这几
+种,就认为是 ELF 文件。
+
+		if (memcmp(interp_elf_ex.e_ident, ELFMAG, SELFMAG) != 0)
+			interpreter_type &= ~INTERPRETER_ELF;
+在该文件头上是否有“ELF”的签名,如果没有,则不是 ELF 文件。
+		retval = -ELIBBAD;
+		if (!interpreter_type)
+			goto out_free_dentry;
+如果即不是 aout 型,又不是 ELF 型,则出错,退出。
+		/* Make sure only one type was selected */
+		if ((interpreter_type & INTERPRETER_ELF) &&
+		     interpreter_type != INTERPRETER_ELF) {
+	     		// FIXME - ratelimit this before re-enabling
+			// printk(KERN_WARNING "ELF: Ambiguous type, using ELF\n");
+			interpreter_type = INTERPRETER_ELF;
+		}
+要么是 ELF,要么是 aout,不可能两者都是。
+		/* Verify the interpreter has a valid arch */
+		if ((interpreter_type == INTERPRETER_ELF) &&
+		    !elf_check_arch(&interp_elf_ex))
+			goto out_free_dentry;
+	} else {
+		/* Executables without an interpreter also need a personality  */
+		SET_PERSONALITY(elf_ex, ibcs2_interpreter);
+	}
+
+	/* OK, we are done with that, now set up the arg stuff,
+	   and then start this sucker up */
+
+	if ((!bprm->sh_bang) && (interpreter_type == INTERPRETER_AOUT)) {
+		char *passed_p = passed_fileno;
+		sprintf(passed_fileno, "%d", elf_exec_fileno);
+
+		if (elf_interpreter) {
+			retval = copy_strings_kernel(1, &passed_p, bprm);
+			if (retval)
+				goto out_free_dentry; 
+			bprm->argc++;
+		}
+	}
+bprm->sh_bang 表示该可执行文件是否是 script executable file,这里当然不是。并
+且该动态链接器也非 aout 型,所以不会执行这段代码。
+
+	/* Flush all traces of the currently running executable */
+	retval = flush_old_exec(bprm);
+	if (retval)
+		goto out_free_dentry;
+flush_old_exec()会释放掉原来的地址空间。在调用该函数以前,本程序运行的地址空间是
+fork 该进程的父进程的地址空间。从此开始,要开始崭新的生活了!
+
+	/* Discard our unneeded old files struct */
+	if (files) {
+		steal_locks(files);
+		put_files_struct(files);
+		files = NULL;
+	}
+释放无用的 file 结构。
+	/* OK, This is the point of no return */
+	current->mm->start_data = 0;
+	current->mm->end_data = 0;
+	current->mm->end_code = 0;
+	current->mm->mmap = NULL;
+	current->flags &= ~PF_FORKNOEXEC;
+初始化相应成员。
+mm->start_data 表示该程序的数据段在地址空间中的开始。
+mm->end_data 表示该程序的数据段在地址空间中的结束。
+mm->end_code 表示该程序的代码段在地址空间中的结束。
+mm->mmap 是进程内存映射之根。
+清除掉 PF_FORKNOEXEC 标志。该标志表示进程刚创建,但还没执行。当然现在不符合了。
+
+	/* Do this immediately, since STACK_TOP as used in setup_arg_pages
+	   may depend on the personality.  */
+	SET_PERSONALITY(elf_ex, ibcs2_interpreter);
+
+	/* Do this so that we can load the interpreter, if need be.  We will
+	   change some of these later */
+	current->mm->rss = 0;
+	current->mm->free_area_cache = TASK_UNMAPPED_BASE;
+	retval = setup_arg_pages(bprm, executable_stack);
+设置参数的页 通用 见setup_arg_pages()分析
+	if (retval < 0) {
+		send_sig(SIGKILL, current, 0);
+		goto out_free_dentry;
+	}
+	
+	current->mm->start_stack = bprm->p;
+bprm->p 指向 argv[],envp[]空间,具体解释请参阅对 copy_strings()函数的分析。
+	/* Now we do a little grungy work by mmaping the ELF image into
+	   the correct location in memory.  At this point, we assume that
+	   the image should be loaded at fixed address, not at a variable
+	   address. */
+
+	for(i = 0, elf_ppnt = elf_phdata; i < elf_ex.e_phnum; i++, elf_ppnt++) {
+		int elf_prot = 0, elf_flags;
+		unsigned long k, vaddr;
+对可执行文件中的 segment 进行枚举。比如
+$ readelf –l /bin/ls
+Elf file type is EXEC (Executable file)
+Entry point 0x80498c0
+There are 7 program headers, starting at offset 52
+Program Headers:
+  Type         Offset   VirtAddr   PhysAddr  FileSiz MemSiz  Flg Align
+  PHDR         0x000034 0x08048034 0x08048034 0x000e0 0x000e0 R E 0x4
+  INTERP       0x000114 0x08048114 0x08048114 0x00013 0x00013 R    0x1
+     [Requesting program interpreter: /lib/ld-linux.so.2]
+  LOAD         0x000000 0x08048000 0x08048000 0x10018 0x10018 R E 0x1000
+  LOAD         0x010020 0x08059020 0x08059020 0x00454 0x007c8 RW   0x1000
+  DYNAMIC       0x010220 0x08059220 0x08059220 0x000d8 0x000d8 RW   0x4
+  NOTE         0x000128 0x08048128 0x08048128 0x00020 0x00020 R   0x4
+  GNU_EH_FRAME   0x00ffec 0x08057fec 0x08057fec 0x0002c 0x0002c R    0x4
+例子中有 7 个 segment。
+
+		if (elf_ppnt->p_type != PT_LOAD)
+			continue;
+看上面的例子,标有 LOAD 就是属于 PT_LOAD 型。只有这种类型的才需要被载入内存。上面第
+一个 LOAD 型 segment 是该程序的代码段,而第二个是数据段。
+
+		if (unlikely (elf_brk > elf_bss)) {
+这里 unlikely()是个宏,被定义为一个 gcc 的内迁扩展函数,主要用在条件分支判断的优化
+方面,你就把它看成空而已,对代码理解没有影响。
+
+			unsigned long nbyte;
+	            
+			/* There was a PT_LOAD segment with p_memsz > p_filesz
+			   before this one. Map anonymous pages, if needed,
+			   and clear the area.  */
+			retval = set_brk (elf_bss + load_bias,
+					  elf_brk + load_bias);
+			if (retval) {
+				send_sig(SIGKILL, current, 0);
+				goto out_free_dentry;
+			}
+映射 BSS 段,并初始化零。这里由于是对页取整的,所以不包括 BSS 段与数据段在同一个 page
+上的部分。
+
+			nbyte = ELF_PAGEOFFSET(elf_bss);
+			if (nbyte) {
+				nbyte = ELF_MIN_ALIGN - nbyte;
+				if (nbyte > elf_brk - elf_bss)
+					nbyte = elf_brk - elf_bss;
+				clear_user((void __user *) elf_bss + load_bias, nbyte);
+			}
+		}
+处理 BSS 段中与 data 段在同一 page 上的情况。见下图:
+		if (elf_ppnt->p_flags & PF_R) elf_prot |= PROT_READ;
+		if (elf_ppnt->p_flags & PF_W) elf_prot |= PROT_WRITE;
+		if (elf_ppnt->p_flags & PF_X) elf_prot |= PROT_EXEC;
+根据该 segment 在程序中的 Program Header 中的段属性来设置 File Mapping 属性。
+		elf_flags = MAP_PRIVATE|MAP_DENYWRITE|MAP_EXECUTABLE;
+如果 察 看 mmap() 系 统 调 用 的 manual , 对 MAP_PRIVATE , MAP_DENYWRITE ,MAP_EXECUTABLE 的解释如下:
+MAP_PRIVATE
+     Create a private copy-on-write mapping.     Stores to the
+     region do not affect the original file. It is unspecified
+     whether changes made to the file after the mmap call are
+     visible in the mapped region.
+MAP_DENYWRITE
+     This flag is ignored. (Long ago, it signalled that attempts to
+     write to the underlying file should fail with ETXTBUSY. But
+     this was a source of denial-of-service attacks.)
+MAP_EXECUTABLE
+     This flag is ignored.
+MAP_FIXED Do not select a different address than the one specified.
+     If the specified address cannot be used, mmap will fail.
+     If MAP_FIXED is specified, start must be a multiple of the
+     pagesize. Use of this option is discouraged.
+设置要映射的空间的属性。
+
+		vaddr = elf_ppnt->p_vaddr;
+elf_ppnt->p_vaddr 是指该段需要被映射到虚拟地址空间的那儿(具体地址)                          。比如
+LOAD       0x000000 0x08048000 0x08048000 0x10018 0x10018 R E 0x1000
+p_vaddr = 0x08048000,即该程序的代码段需要被映射到 0x08048000 的地址。对可执行
+文件而言,这个地址是必须满足的,它不象共享库可以被重定位。
+
+		if (elf_ex.e_type == ET_EXEC || load_addr_set) {
+			elf_flags |= MAP_FIXED;
+		} else if (elf_ex.e_type == ET_DYN) {
+			/* Try and get dynamic programs out of the way of the default mmap
+			   base, as well as whatever program they might try to exec.  This
+			   is because the brk will follow the loader, and is not movable.  */
+			load_bias = ELF_PAGESTART(ELF_ET_DYN_BASE - vaddr);
+		}
+ET_EXEC 表示该文件是可执行文件,ET_DYN 表示该文件是共享库。如果是可执行文件,则正
+象上面说的,映射时必须是固定地址的,即 mmap()程序没有自由来决定该映射到哪儿,因为设
+了 MAP_FIXED 标志;而如果是共享库,则 elf_ppnt->p_vaddr 只是相对于本模块基址的偏
+移(Offset)。比如:
+$ readelf –l /lib/libc.so.6
+Elf file type is DYN (Shared object file)
+Entry point 0x159d0
+There are 7 program headers, starting at offset 52
+Program Headers:
+  Type         Offset   VirtAddr   PhysAddr  FileSiz MemSiz  Flg Align
+  PHDR         0x000034 0x00000034 0x00000034 0x000e0 0x000e0 R E 0x4
+  INTERP        0x127d10 0x00127d10 0x00127d10 0x00013 0x00013 R   0x1
+     [Requesting program interpreter: /lib/ld-linux.so.2]
+  LOAD         0x000000 0x00000000 0x00000000 0x128068 0x128068 R E 0x1000
+  LOAD         0x128080 0x00129080 0x00129080 0x0465c 0x08b84 RW   0x1000
+  DYNAMIC       0x12c284 0x0012d284 0x0012d284 0x000d8 0x000d8 RW  0x4
+  NOTE         0x000114 0x00000114 0x00000114 0x00020 0x00020 R   0x4
+  GNU_EH_FRAME   0x127d24 0x00127d24 0x00127d24 0x00344 0x00344 R   0x4
+上面共享库的代码段要求映射到 0x00000000 地址,而数据段要求映射到 0x00129080 地址,
+这当然是不可能的。这里的 VirtAddr 只是 Offset。比如如果/lib/libc.so.6 被载入到
+               则表示其代码段应该从 0x40000000 的 0x00000000 偏移开始,                    也就是从地址
+0x40000000,
+0x40000000 开始;而其数据段应该从 0x40000000 的 0x00129080 偏移开始,也就是从地
+址 0x40129080 开始。
+对共享库而言,#define ELF_ET_DYN_BASE                        (TASK_SIZE / 3 * 2)
+即 3G / 3 * 2 = 2G,把共享库映射到地址空间 2G 以下。
+上面对于
+          if (loc->elf_ex.e_type == ET_EXEC || load_addr_set) {
+              elf_flags |= MAP_FIXED;
+得判断可以轻易理解。直译就是如果是可执行文件(ET_EXEC)或者 load_addr_set 置位的情
+况下,   文件映射必须满足固定地址映射, elf_map()函数的第二个参数不是推荐的映射地址,
+                                     即
+而是必须满足的映射地址,否则失败。这就是设置 MAP_FIXED 的效果。该 if 判断的第一个条
+件可以理解,因为可执行文件本来就不是可“浮动”的。而第二个条件 load_addr_set 就在
+紧接下面的代码出置位,它是针对共享库的非第一个 segment 映射的。在载入共享库时,第一
+个 segment(通常是该共享库的代码段)的映射地址就是该库被载入的基址,                                  是可以 “浮动”的。
+但一旦选定基址,则后面的 segment,比如该共享库的数据段,则没有自由了,它必须逻辑上
+挨着第一个 segment(之所以说是逻辑上,因为物理上当然可以中间不连续,有空洞等,但不
+能有其他外在模块的插入),这样自然就必须是 fixed。所以第一个条件是针对可执行文件的,
+而第二个条件是针对共享库(ET_DYN)的。
+else if 中的条件是针对共享库(ET_DYN)的第一个 segment 映射的,这里推荐的载入地址
+是 2G。
+我这里有个疑问,在什么情况下,load_elf_binary()会被用来再如共享库呢?因为按常规,
+所有共享库都由 dynamic linker 在用户态载入。
+
+		error = elf_map(bprm->file, load_bias + vaddr, elf_ppnt, elf_prot, elf_flags);
+		if (BAD_ADDR(error))
+			continue;
+进行 File Mapping,如果失败,则内核向当前进程发 SIGKILL 信号,也就是 kill 该进程。我这里有点疑惑,这都到了这份上,如果文件映射失败,当该进程返回到用户态时,还能正确处
+理 SIGKULL 这 个 信号吗 ?因 为这时 候原 来的继 承自 父进程 的地 址空间 已经 在上面 运 行
+flush_old_exec()以 后 被 彻底 释放, 而新 的地址 空间 又正在 建立 时失败 ,那 怎么 运 行
+SIGKILL 信号的 handler 呢?当然该信号有点特殊,属于应用程序无法改写的信号。当然可
+以通过阅读内核关于 signal handling 的源代码来回答,但还有一个更简单,快捷的方法。
+用 KDB 在 elf_map()函数返回哪儿设断点,然后修改返回值,使得返回值指向非法空间,我这
+里设成 0xFFFFFFFF,代码将走出错分支,即设置 SIGKILL 信号,然后退出。在 console 界
+面上打印出 “Killed”    。OK!内核能正确处理。
+
+		if (!load_addr_set) {
+			load_addr_set = 1;
+			load_addr = (elf_ppnt->p_vaddr - elf_ppnt->p_offset);
+			if (elf_ex.e_type == ET_DYN) {
+				load_bias += error -
+				             ELF_PAGESTART(load_bias + vaddr);
+				load_addr += load_bias;
+				reloc_func_desc = load_bias;
+			}
+		}
+只有第一次载入 segment 时才会进入该段代码。首先把 load_addr_set 置 1。
+elf_ppnt->p_offset 为该 segment 在文件中的偏移,而 elf_ppnt->p_vaddr 为该
+segment 被载入后所在的虚拟地址。比如:
+[wzhou@dcmp10 ~]$ readelf -l /bin/ls
+Elf file type is EXEC (Executable file)
+Entry point 0x8049d80
+There are 8 program headers, starting at offset 52
+Program Headers:
+  Type         Offset   VirtAddr   PhysAddr  FileSiz MemSiz Flg Align
+  PHDR         0x000034 0x08048034 0x08048034 0x00100 0x00100 R E 0x4
+  INTERP       0x000134 0x08048134 0x08048134 0x00013 0x00013 R   0x1
+     [Requesting program interpreter: /lib/ld-linux.so.2]
+  LOAD         0x000000 0x08048000 0x08048000 0x13040 0x13040 R E 0x1000
+  LOAD         0x013040 0x0805c040 0x0805c040 0x01141 0x01141 RW 0x1000
+  DYNAMIC       0x013480 0x0805c480 0x0805c480 0x000e0 0x000e0 RW 0x4
+  NOTE         0x000148 0x08048148 0x08048148 0x00020 0x00020 R   0x4
+  GNU_EH_FRAME   0x012f78 0x0805af78 0x0805af78 0x0002c 0x0002c R  0x4
+  GNU_STACK     0x000000 0x00000000 0x00000000 0x00000 0x00000 RW 0x4
+上面标兰的是文件内偏移,而表红的则是该 segment 映射到的虚拟地址。
+所以上面的 load_addr 对可执行文件而言是载入的基址。对共享库有点不一样。load_bias
+是该 segment 世纪载入地址与希望载入地址(elf_map()的返回值 error 是实际载入地址,
+而 ELF_PAGESTART(load_bias + vaddr)是传递给 elf-map()的推荐地址。因为共享库
+的载入是“浮动”的,没有指定 MAP_FIXED 标志)               。reloc_func_desc 变量纪录了该位移。
+
+		k = elf_ppnt->p_vaddr;
+		if (k < start_code) start_code = k;
+		if (start_data < k) start_data = k;
+在整个模块被载入后,start_code 总是追踪模块中地址映射的最低地址,而 start_data 总
+是指向位于最高地址的 segment 的开始。  这短短几行代码, 实际上隐含了对 ELF 格式的诸多假
+定,使得 ELF 格式理论上的“变化多端”荡然无存。
+假设之一:代码段必须是可载入段的第一个段,否则 start_code 指向肯定错了。
+假设之二:数据段必须是可载入段的最后一个段,否则 start_data 指向肯定错了。
+其实我只要把常规可执行文件中的代码段与数据段换一下位置,该可执行文件虽然符合 ELF 格
+式,但 Linux 却拒绝载入。当然合格的 linker 也不会生成这样怪的可执行文件。但由此可以
+看出 linker 之类工具是如何的与 OS 紧密相连,谈不上什么 portable。
+
+		/*
+		 * Check to see if the section's size will overflow the
+		 * allowed task size. Note that p_filesz must always be
+		 * <= p_memsz so it is only necessary to check p_memsz.
+		 */
+		if (k > TASK_SIZE || elf_ppnt->p_filesz > elf_ppnt->p_memsz ||
+		    elf_ppnt->p_memsz > TASK_SIZE ||
+		    TASK_SIZE - elf_ppnt->p_memsz < k) {
+			/* set_brk can never work.  Avoid overflows.  */
+			send_sig(SIGKILL, current, 0);
+			goto out_free_dentry;
+		}
+一些合法性检查。
+#define BAD_ADDR(x) ((unsigned long)(x) >= TASK_SIZE)
+k 是用户态地址,当然不能超过 3G(TASK_SIZE)。
+elf_ppnt->p_filesz > elf_ppnt->p_memsz
+该段在文件中的大小不能超过其在内存中的大小。当然不行,如果超过,不是表示有东西没映射
+进内存吗?
+elf_ppnt->p_memsz > TASK_SIZE
+一个段占的内存大小超过 3G,即整个用户空间。太大了吧,看来只有 64 位操作系统适合它了。
+TASK_SIZE - elf_ppnt->p_memsz < k
+即
+k + elf_ppnt->p_memsz > TASK_SIZE
+k 为该段被映射进内存后的首地址,该表达式表示该 segment 的尾巴超过了用户空间的边界,
+当然也不允许。
+
+		k = elf_ppnt->p_vaddr + elf_ppnt->p_filesz;
+k 为该段首址加上该段在文件中的大小。下面的代码
+     k = elf_ppnt->p_vaddr + elf_ppnt->p_memsz;
+k 为该段首址加上该段在内存中的大小。
+对代码段而言,这两个 k 是完全是一样的。但对数据段而言,可能不一样。一般后者略大于前
+者,这多出来的空间就是未初始化的全局变量,也就是所谓的 bss 段。
+
+		if (k > elf_bss)
+			elf_bss = k;
+记录 bss 段的起始。
+		if ((elf_ppnt->p_flags & PF_X) && end_code < k)
+			end_code = k;
+变量 end_code 用于追踪可执行段的尾端
+		if (end_data < k)
+			end_data = k;
+变量 end_data 用于追踪数据段的尾端。
+		k = elf_ppnt->p_vaddr + elf_ppnt->p_memsz;
+		if (k > elf_brk)
+			elf_brk = k;
+从 elf_bss 到 elf_brk 实际上就是 bss 段的大小。
+	}
+
+	elf_ex.e_entry += load_bias;
+	elf_bss += load_bias;
+	elf_brk += load_bias;
+	start_code += load_bias;
+	end_code += load_bias;
+	start_data += load_bias;
+	end_data += load_bias;
+调整各个追踪变量。对可执行文件(ET_EXEC)而言,load_bias 为零,无所谓调整;而对共
+享库而言,则需要调整。
+
+	/* Calling set_brk effectively mmaps the pages that we need
+	 * for the bss and break sections.  We must do this before
+	 * mapping in the interpreter, to make sure it doesn't wind
+	 * up getting placed where the bss needs to go.
+	 */
+	retval = set_brk(elf_bss, elf_brk);
+	if (retval) {
+		send_sig(SIGKILL, current, 0);
+		goto out_free_dentry;
+	}
+	padzero(elf_bss);
+初始化 BSS 段。
+	if (elf_interpreter) {
+如果是动态链接的,则
+		if (interpreter_type == INTERPRETER_AOUT)
+			elf_entry = load_aout_interp(&interp_ex,
+						     interpreter);
+		else
+			elf_entry = load_elf_interp(&interp_elf_ex,
+						    interpreter,
+						    &interp_load_addr);
+载入动态连接器
+		if (BAD_ADDR(elf_entry)) {
+			printk(KERN_ERR "Unable to load interpreter\n");
+			send_sig(SIGSEGV, current, 0);
+			retval = -ENOEXEC; /* Nobody gets to see this, but.. */
+			goto out_free_dentry;
+		}
+根据动态链接器的不同类型调用不同的函数来载入动态链接器。我不知道在什么情况下,ELF
+格式的可执行文件链接的确是 aout 型的动态链接器。不解?ELF 型动态链接器的载入见
+load_elf_interp()的分析。
+返回值有两个,elf_entry 是动态链接器的入口,在本进程返回到用户态后要执行的第一条指
+令;interp_load_addr 是 ELF 格式的动态链接器被载入的基址。比如 0x40000000。
+
+		reloc_func_desc = interp_load_addr;
+
+		allow_write_access(interpreter);
+		fput(interpreter);
+		kfree(elf_interpreter);
+	} else {
+这里表示该可执行文件是静态链接的,没有什么动态链接的事,这就简单多了。
+		elf_entry = elf_ex.e_entry;
+把该可执行文件的入口设为本进程返回到用户态后运行的第一条指令。
+	}
+
+	kfree(elf_phdata);
+
+	if (interpreter_type != INTERPRETER_AOUT)
+		sys_close(elf_exec_fileno);
+如果动态链接器不是 aout 型,则关闭可执行文件本身所对应的 File Handle。这是一个很有
+趣的特性,即可执行文件正在运行时,并不保留有对自身的文件关联。这造成的后果是,可执行
+文件还在运行,但用户却可以成功的删除该可执行文件。比如:
+我们可以写一个自删除的程序。
+[wzhou@dcmp10 ~]$ cat remove-self.c
+#include <unistd.h>
+#include <stdio.h>
+int main(int argc, char** argv, char** env)
+{
+       if(unlink(argv[0]) == 0)
+       {
+               printf("delete self successfully!\n");
+       }
+       else
+       {
+               printf("delete self fail!\n");
+       }
+       getchar();
+       return 0;
+}
+通过系统调用 unlink()来删除自身。返回值为零,表示删除成功。
+加上 getchar()是为了让该程序在自删除以后不要马上退出,以便我们察看信息。
+[wzhou@dcmp10 ~]$ ./remove-self &
+[2] 2410
+[wzhou@dcmp10 ~]$ delete self successfully!
+[2]+ Stopped                  ./remove-self
+[wzhou@dcmp10 ~]$
+自删除成功,但该程序所代表的 process 应该还未退出。
+[wzhou@dcmp10 ~]$ ps aux | grep remove-self
+wzhou    2410 0.0 0.0 2052 284 pts/9      T  09:35 0:00 ./remove-self
+wzhou    2414 0.0 0.0 4476 664 pts/9      S+ 09:37 0:00 grep remove-self
+标红的即是静态的程序已被删除,但动态的该程序所代表的 process 还在运行。
+在 Windows 下你要写一个自删除的程序,可要许多奇技淫巧。因为本质上 Windows 是不允许
+自删除的,当它运行一个程序时,拥有该程序的 File Handle。
+两种方式各有利弊。比如 Windows 下对普通用户的误删除文件可能好一点,但对反病毒软件杀
+毒却造成很大障碍。我在使用 Windows 中的一个大的烦恼就是打开反病毒软件实时监控后造成
+的系统低效,所以时常手工禁止该功能。但一旦可执行文件被感染,同时其又处于运行状态,反
+病毒软件对它就束手无策。Microsoft 实在应该想一个办法,来解决这个问题。
+	set_binfmt(&elf_format);
+增加 ELF loader 所在模块的引用计数。
+	compute_creds(bprm);
+	current->flags &= ~PF_FORKNOEXEC;
+这个 flag 好象在前面的代码中已经 clear 过了。这里怎么又来一次。
+PF_FORKNOEXEC 表示 fork 但还没有 execute,当然现在不符现状了。
+
+	create_elf_tables(bprm, &elf_ex, (interpreter_type == INTERPRETER_AOUT),
+			load_addr, interp_load_addr);
+见对 create_elf_tables()的分析。
+	/* N.B. passed_fileno might not be initialized? */
+	if (interpreter_type == INTERPRETER_AOUT)
+		current->mm->arg_start += strlen(passed_fileno) + 1;
+	current->mm->end_code = end_code;
+	current->mm->start_code = start_code;
+	current->mm->start_data = start_data;
+	current->mm->end_data = end_data;
+	current->mm->start_stack = bprm->p;
+设置 task_struct 结构(管理 process 的最核心结构)中用户态虚拟内存管理的相应变量。
+	if (current->personality & MMAP_PAGE_ZERO) {
+		/* Why this, you ask???  Well SVr4 maps page 0 as read-only,
+		   and some applications "depend" upon this behavior.
+		   Since we do not have the power to recompile these, we
+		   emulate the SVr4 behavior.  Sigh.  */
+		down_write(&current->mm->mmap_sem);
+		error = do_mmap(NULL, 0, PAGE_SIZE, PROT_READ | PROT_EXEC,
+				MAP_FIXED | MAP_PRIVATE, 0);
+		up_write(&current->mm->mmap_sem);
+从上面代码中的注释看,好像 SVr4 有要求,把地址空间的首页变成 NULL page。显然是为了
+捕捉 NULL pointer。不过我也没用过 SVr4 型的 Unix OS。
+
+	}
+
+#ifdef ELF_PLAT_INIT
+	/*
+	 * The ABI may specify that certain registers be set up in special
+	 * ways (on i386 %edx is the address of a DT_FINI function, for
+	 * example.  In addition, it may also specify (eg, PowerPC64 ELF)
+	 * that the e_entry field is the address of the function descriptor
+	 * for the startup routine, rather than the address of the startup
+	 * routine itself.  This macro performs whatever initialization to
+	 * the regs structure is required as well as any relocations to the
+	 * function descriptor entries when executing dynamically links apps.
+	 */
+	ELF_PLAT_INIT(regs, reloc_func_desc);
+#endif
+
+	start_thread(regs, elf_entry, bprm->p);
+  ELF_PLAT_INIT 是 macro,定义如下:
+  #define ELF_PLAT_INIT(_r, load_addr)   do { \
+  _r->ebx = 0; _r->ecx = 0; _r->edx = 0; \
+  _r->esi = 0; _r->edi = 0; _r->ebp = 0; \
+  _r->eax = 0; \
+  } while (0)
+  start_thread 是个 macro,定义如下:
+  #define start_thread(regs, new_eip, new_esp) do { \
+  __asm__("movl %0,%%fs": :"r" (0));        \
+  regs->xgs = 0;                     \
+  set_fs(USER_DS);                \
+  regs->xds = __USER_DS;                 \
+  regs->xes = __USER_DS;                 \
+  regs->xss = __USER_DS;                 \
+  regs->xcs = __USER_CS;                 \
+  regs->eip = new_eip;               \
+  regs->esp = new_esp;               \
+  } while (0)
+  这里实际上是设置该可执行文件最初始执行时的寄存器的状态。可见在 Linux 下可执行文
+件执行第一条指令时的 CPU 状态是这样的:
+  eax = 0
+  ebx = 0
+  ecx = 0
+  edx = 0
+  esi = 0
+  edi = 0
+  ebp = 0
+  gs = 0
+  ds = 15 * 8 + 3 = 123
+  es = 123
+  ss = 123
+  cs = 14 * 8 + 3 = 115
+  如果是静态链接的可执行文件
+  eip = 可执行文件本身的入口
+  如果是动态链接的可执行文件
+  eip = 动态链接器的入口
+  指向用户空间顶端分配给 argv 与环境变量的空间,前面有介绍。
+
+	if (unlikely(current->ptrace & PT_PTRACED)) {
+		if (current->ptrace & PT_TRACE_EXEC)
+			ptrace_notify ((PTRACE_EVENT_EXEC << 8) | SIGTRAP);
+		else
+			send_sig(SIGTRAP, current, 0);
+	}
+	retval = 0;
+   current->ptrace & PT_PTRACED 表示当前进程正在被调试,也即 debugger “exec”
+了该执行文件。如果 PT_TRACE_EXEC 同样置位的话,要特殊处理(?)PT_TRACE_EXEC 好像
+是一个比较新的标志,没研究过在这里是干什么的。否则就发送 SIGTRAP signal,而
+debugger 会捕捉该信号,来实现调试。
+
+out:
+	return retval;
+
+	/* error cleanup */
+out_free_dentry:
+	allow_write_access(interpreter);
+	if (interpreter)
+		fput(interpreter);
+out_free_interp:
+	if (elf_interpreter)
+		kfree(elf_interpreter);
+out_free_file:
+	sys_close(elf_exec_fileno);
+out_free_fh:
+	if (files) {
+		put_files_struct(current->files);
+		current->files = files;
+	}
+out_free_ph:
+	kfree(elf_phdata);
+	goto out;
+}
+
+}}}

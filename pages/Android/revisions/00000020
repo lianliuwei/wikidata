@@ -1,0 +1,57 @@
+= Android =
+== 任务 ==
+ *搞懂 repo 和 git 的各项功能
+ *搞懂构造过程
+ *下载源代码
+ *编译 虚拟机内核
+== Windows下repo ==
+ *Windows下repo不能很好的运行
+ *可以启动一个项目 让repo在Windows的msysgit中的sh 或者cmd中原生的运行 或者用[[chrome]] gclient来进行
+ *[[http://bradchow.wordpress.com/2009/01/20/get-android-source-code-in-m-windows/|现有的解决方法]]
+== 系统开发 ==
+ *移植适合Android的Linux
+ *将文件系统移植上去
+ *应用环境完整
+ *熟练调试
+ *[[http://www.codesourcery.com/downloads/public/gnu_toolchain/arm-none-linux-gnueabi]] 编译器
+ *[[http://code.google.com/p/android/]] android的Linux内核
+ *[[http://developer.android.com/index.html]]android SDK 这是要上网更新的
+ *[[http://benno.id.au/blog/2007/11/14/android-busybox]]android-busybox
+== x86 Android ==
+ *[[http://www.android-x86.org/]]
+ *[[http://code.google.com/p/android-x86/]]下载点
+== LiveCD Android ==
+ *[[http://code.google.com/p/live-android/]]
+== 移植 ==
+ *[[http://source.android.com/projects]]工程介绍
+ *[[http://blog.csdn.net/tekkamanitachi]]
+ *[[http://hi.baidu.com/aokikyon/blog/category/Android]]
+ *[[http://www.eoeandroid.com/thread-3001-1-1.html]]
+== repo 和 git ==
+ *[[Git]]
+ *[[http://en.wikipedia.org/wiki/Repo_(Script)]]
+ *[[http://source.android.com/download/using-repo]]官方repo使用指南
+ *[[http://hi.baidu.com/aokikyon/blog/item/956aa55262fd0f040df3e3ec.html]]
+ *[[http://blog.csdn.net/dongfengsun/archive/2009/10/16/4679902.aspx]]获得源代码
+ *[[http://www.williamhua.com/2009/04/29/git-and-repo-for-dummies/]]
+ *[[http://source.android.com/download]]获得源代码
+ *[[http://book.git-scm.com/]]git book
+== NDK开发 ==
+ *[[http://blog.sina.com.cn/flza]]
+== 资源 ==
+ *[[http://code.google.com/p/android/]] 早期工程
+ *[[http://blog.csdn.net/JiangBo_HIT/archive/2009/11/24/4860996.aspx]]更新不行
+ *[[http://wxmijl.blog.163.com/blog/static/13245928200910242415186/]]使用 SDK 2.0 emualtor 
+ *[[http://www.motobbs.com/thread-448821-1-1.html]]早期移植
+ *[[http://source.android.com/]]源代码
+ *[[http://android.git.kernel.org/]]代码区
+ *[[http://groups.google.com/group/android-platform]]kernel讨论区
+ *[[http://en.wikipedia.org/wiki/Android_(operating_system)]] wiki
+ *[[http://www.cevx.com/bbs/thread-15645-1-1.html]]开发者网站集合
+ *[[http://www.isandroid.com/android-emulator-emulator-super-detailed-instructions/]] emulator使用
+ 
+ *[[http://www.androidin.com/]]开发论坛
+ *[[http://android.google.org.cn/]]
+ *[[http://www.hiapk.com/bbs/]]
+ *[[http://source.android.com/discuss]]邮件列表
+ *[[http://source.android.com/porting/build_system.html]] 构建系统

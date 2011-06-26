@@ -1,0 +1,26 @@
+= Linux Device Drivers =
+== An Introduction to Device Drivers ==
+ *3类驱动
+  *字符
+  *块
+   *已经对用户透明
+  *网络 
+   *没有映射为文件系统中的一个文件
+   *不用read 和 write访问
+ *安全
+  *安全由内核定义
+  *驱动也要考虑安全问题
+ *本书内容
+  *可以多回顾一下
+== Building and Running Modules ==
+ *需要当前内核的源码
+ *
+== 问题 ==
+ *为什么需要当前内核源码编译内核而不是头文件
+ *为什么printk 的级别信息后没有加 , 
+== 资源 ==
+ *[[http://lwn.net/Kernel/LDD3/]] 官网
+ *[[http://lwn.net/Articles/2.6-kernel-api/]]API 变化
+ *[[ftp://ftp.ora.com/pub/examples/linux/drivers/]] 例子
+ *[[http://www.tux.org/lkml]]Linux 内核邮件列表 FAQ:
+ *[[http://blog.csdn.net/fudan_abc/]] 很多分析
