@@ -1,0 +1,8 @@
+= UEFI =
+ *取代BIOS的启动系统
+ *[[http://x86asm.net/articles/uefi-programming-first-steps/|UEFI Programming - First Steps]]
+ *华硕主板UEFI BIOS是怎么回事
+ *[[virtualBox]]使用EFI支持装[[ubuntu]]不能启动是怎么回事？
+ *[[http://blog.zhaojie.me/2010/09/how-to-install-mac-os-x-snow-leopard-on-virtualbox.html|Win7 + VirtualBox安装Mac OS X雪豹操作系统图文详解]] 看Max OS X支持EFI是怎么回事
+ *[[https://wiki.ubuntu.com/EFIBootLoaders|EFIBootLoaders]] 参考[[ubuntu]]官网
+ *[[http://blog.sina.com.cn/s/blog_4a44ac500100g6r7.html|EFI Shell 命令参考]]
