@@ -1,14 +1,5 @@
 = 文件同步 =
- *[[http://en.wikipedia.org/wiki/File_synchronization]]
- *[[分布式的文件系统]]也是一种方法
- *[[http://www1.pconline.com.cn/download/zt/2009/syncsoft/|文件转移利器 20款优秀同步工具推荐]]
- *[[http://beacon.blog.51cto.com/442731/109961/|FreeNAS的安装和简单配置]]
-== 服务器和本地同步 ==
- *[[http://blog.linjian.org/articles/rsync-unison-ssh/|使用 rsync 或 unison 备份或同步支持 ssh 的 web 主机]]
- *[[http://www.ourys.com/post/rsync-grsync-unison.html|linux文件夹同步]]
- *[[http://www.ithov.com/Linux/Apply/Network/94991.shtml|Unison一款跨平台的Linux文件同步工具]]
- *[[http://club.topsage.com/viewthread.php?tid=215355|Linux远程数据同步工具rsync简介]]
- *[[http://www.zn05.com/thread-91-1-1.html|用rsync从Linux到Windows远程备份]]
-== U盘和本地同步 ==
- *[[]]
- 
+ *[[http://en.wikipedia.org/wiki/File_synchronization]]]]
+ *[[分布式文件系统]]
+== Unison ==
+== ==
