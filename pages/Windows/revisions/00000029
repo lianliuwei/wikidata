@@ -1,4 +1,4 @@
-= Windows =
+﻿= Windows =
  *[[http://www.china-pub.com/195486|Windows 内核情景分析--采用开源代码ReactOS]]
  *WRK:Windows Research Kernel 微软开源内核
  *[[http://www.unifiedkernel.com/]] 在Linux内核里模拟Windows 内核
@@ -22,6 +22,7 @@
  *[[http://www.flounder.com/messages.htm]] 关于自定义信息用法大全
  *[[http://www.flounder.com/mvp_tips.htm]] flounder Windows专家文章
  *[[http://blog.csdn.net/vcbear/archive/2003/07/07/5988.aspx|探索Win32系统之窗口类（Window Classes in Win32）]]
+ *[[http://bbs.pediy.com/showthread.php?p=914823#post914823|Windows XP中的向量化异常处理]]
 == 快捷键 ==
  *[[http://zhidao.baidu.com/question/4964586|最小化当前窗口]]
  *[[http://www.njmy.cn/myblog/user1/service/archives/2008/6390.shtml|windows中的快捷键(全)]]
