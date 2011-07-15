@@ -1,0 +1,18 @@
+= nginx =
+ *高性能Web服务器
+ *[[http://nginx.org/]]
+ *[[http://kangzj.net/setup-a-http-proxy-using-nginx/]]
+ *[[http://www.kevinworthington.com/nginx-for-windows/]]
+ *[[http://applife.net/2008/07/nginx-windows/]]
+ *[[http://wiki.nginx.org/]]
+ *error_log 路径 debug 调试模式 参考 [[http://nginx.org/en/docs/debugging_log.html|A debugging log]]
+ *cgi调用用fcgiwrap转换 fcgiwrap一定用最新版本 旧版本有问题
+ *[[http://nginx.localdomain.pl/wiki/FcgiWrap]]
+ *[[http://wiki.nginx.org/Fcgiwrap]] 带安装编译方法 需要libfcgi-dev库
+ *[[http://huichen.org/2010/03/12/configure-fastcgi-for-nginx/|Nginx下配置FastCGI]]
+ *[[https://github.com/gnosek/fcgiwrap/]] 代码库
+ *[[svn://svn.nginx.org]] 官方库
+ *[[http://www.ruby-forum.com/topic/153153|Can't upload files > 10Mb]] 如 client_max_body_size 150m;这样设置可以解决上传过大的问题
+== 文件服务器 ==
+ *[[http://stevenos.iteye.com/blog/560703|用nginx做文件服务器替代samba]]
+ *[[http://blog.chinaunix.net/space.php?uid=7845870&do=blog&id=334831|使用nginx做静态文件服务器 ]]
