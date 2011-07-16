@@ -1,74 +1,74 @@
-= Windows =
- *[[http://www.china-pub.com/195486|Windows ÄÚºËÇé¾°·ÖÎö--²ÉÓÃ¿ªÔ´´úÂëReactOS]]
- *WRK:Windows Research Kernel Î¢Èí¿ªÔ´ÄÚºË
- *[[http://www.unifiedkernel.com/]] ÔÚLinuxÄÚºËÀïÄ£ÄâWindows ÄÚºË
- *[[http://www.reactos.org/]] ¿ªÔ´WindowsÄÚºË·ÂÔì
- *[[http://www.winehq.org/]] wine¹ÙÍø
- *[[http://blog.csdn.net/fmddlmyy/archive/2005/05/03/371646.aspx|´Ósubsystem¿ªÊ¼¸ÅÊöNTÄÚºË]]
- *[[http://support.microsoft.com/kb/310516/zh-cn|ÈçºÎÍ¨¹ıÊ¹ÓÃ×¢²áÏî (.reg) ÎÄ¼şÌí¼Ó¡¢ĞŞ¸Ä»òÉ¾³ı×¢²á±í×ÓÏîºÍÖµ]]
+ï»¿= Windows =
+ *[[http://www.china-pub.com/195486|Windows å†…æ ¸æƒ…æ™¯åˆ†æ--é‡‡ç”¨å¼€æºä»£ç ReactOS]]
+ *WRK:Windows Research Kernel å¾®è½¯å¼€æºå†…æ ¸
+ *[[http://www.unifiedkernel.com/]] åœ¨Linuxå†…æ ¸é‡Œæ¨¡æ‹ŸWindows å†…æ ¸
+ *[[http://www.reactos.org/]] å¼€æºWindowså†…æ ¸ä»¿é€ 
+ *[[http://www.winehq.org/]] wineå®˜ç½‘
+ *[[http://blog.csdn.net/fmddlmyy/archive/2005/05/03/371646.aspx|ä»subsystemå¼€å§‹æ¦‚è¿°NTå†…æ ¸]]
+ *[[http://support.microsoft.com/kb/310516/zh-cn|å¦‚ä½•é€šè¿‡ä½¿ç”¨æ³¨å†Œé¡¹ (.reg) æ–‡ä»¶æ·»åŠ ã€ä¿®æ”¹æˆ–åˆ é™¤æ³¨å†Œè¡¨å­é¡¹å’Œå€¼]]
  *[[http://binglongx.wordpress.com/2009/01/29/felxible-dllstatic-library-linkage-configurations/|Felxible DLL/static library linkage configurations]]
- *[[http://msdn.microsoft.com/zh-cn/library/t2fck18t.aspx|MSDN Á´½Ó·½ÃæĞÅÏ¢]]
- *[[http://msdn.microsoft.com/zh-cn/library/wk21sfcf.aspx|MSDN ±àÒë·½ÃæĞÅÏ¢]]
- *[[http://msdn.microsoft.com/zh-cn/library/z7kx322x.aspx|Building a C/C++ Program]] MSDNĞÅÏ¢
- *[[http://xyztony1985.blog.163.com/blog/static/36117820077127565780/|XP£º×¢²á±íµÄÎÄ¼ş¹ØÁª¼°Ó¦ÓÃ]]
- *[[http://gnuwin32.sourceforge.net/]] GNU¹¤¾ßµÄWin32ÒÆÖ²
- *[[http://lifeinlinux.blogspot.com/2009/08/gnuwin32.html|GNUWin32]] ½éÉÜÎÄÕÂ
- *[[http://msdn.microsoft.com/en-us/library/ee663300%28v=VS.85%29.aspx|Windows Development]] MSDNÉÏÃæµÄ×ÜÄ¿Â¼Ò³
- *[[http://www.cnblogs.com/Aplo/archive/2008/03/17/1110372.html|Ì½Ë÷ sscli, ¿ªÆô CLR µÄ´óÃÅ ¡ª¡ª ÅäÖÃ»·¾³Ïê½â]] sscli   .net¿ªÔ´½âÊÍÆ÷
- *[[http://msdn.microsoft.com/en-us/library/ms810439|Multiple Threads in the User Interface]] ºÜ¾ÉÁË
- *[[http://msdn.microsoft.com/en-us/windows/hardware/gg487320|Display and Graphics]] Î¢ÈíÍ¼ĞÎ¼Ü¹¹
- *Alt + F  W  F ´´½¨ĞÂÎÄ¼ş¼Ğ
+ *[[http://msdn.microsoft.com/zh-cn/library/t2fck18t.aspx|MSDN é“¾æ¥æ–¹é¢ä¿¡æ¯]]
+ *[[http://msdn.microsoft.com/zh-cn/library/wk21sfcf.aspx|MSDN ç¼–è¯‘æ–¹é¢ä¿¡æ¯]]
+ *[[http://msdn.microsoft.com/zh-cn/library/z7kx322x.aspx|Building a C/C++ Program]] MSDNä¿¡æ¯
+ *[[http://xyztony1985.blog.163.com/blog/static/36117820077127565780/|XPï¼šæ³¨å†Œè¡¨çš„æ–‡ä»¶å…³è”åŠåº”ç”¨]]
+ *[[http://gnuwin32.sourceforge.net/]] GNUå·¥å…·çš„Win32ç§»æ¤
+ *[[http://lifeinlinux.blogspot.com/2009/08/gnuwin32.html|GNUWin32]] ä»‹ç»æ–‡ç« 
+ *[[http://msdn.microsoft.com/en-us/library/ee663300%28v=VS.85%29.aspx|Windows Development]] MSDNä¸Šé¢çš„æ€»ç›®å½•é¡µ
+ *[[http://www.cnblogs.com/Aplo/archive/2008/03/17/1110372.html|æ¢ç´¢ sscli, å¼€å¯ CLR çš„å¤§é—¨ â€”â€” é…ç½®ç¯å¢ƒè¯¦è§£]] sscli   .netå¼€æºè§£é‡Šå™¨
+ *[[http://msdn.microsoft.com/en-us/library/ms810439|Multiple Threads in the User Interface]] å¾ˆæ—§äº†
+ *[[http://msdn.microsoft.com/en-us/windows/hardware/gg487320|Display and Graphics]] å¾®è½¯å›¾å½¢æ¶æ„
+ *Alt + F  W  F åˆ›å»ºæ–°æ–‡ä»¶å¤¹
  *[[http://www.sevenforums.com/tutorials/7539-local-users-groups-manager-open.html|How to Open Local Users and Groups in Windows 7]]
- *[[http://www.flounder.com/messages.htm]] ¹ØÓÚ×Ô¶¨ÒåĞÅÏ¢ÓÃ·¨´óÈ«
- *[[http://www.flounder.com/mvp_tips.htm]] flounder Windows×¨¼ÒÎÄÕÂ
- *[[http://blog.csdn.net/vcbear/archive/2003/07/07/5988.aspx|Ì½Ë÷Win32ÏµÍ³Ö®´°¿ÚÀà£¨Window Classes in Win32£©]]
- *[[http://bbs.pediy.com/showthread.php?p=914823#post914823|Windows XPÖĞµÄÏòÁ¿»¯Òì³£´¦Àí]]
-== ¿ì½İ¼ü ==
- *[[http://zhidao.baidu.com/question/4964586|×îĞ¡»¯µ±Ç°´°¿Ú]]
- *[[http://www.njmy.cn/myblog/user1/service/archives/2008/6390.shtml|windowsÖĞµÄ¿ì½İ¼ü(È«)]]
- *[[http://xbeta.info/windows-7-shortcuts.htm|À´×Ô¹Ù·½µÄ windows 7 ¿ì½İ¼ü´óÈ«]]
-== Î¢ÈíCOM´æ´¢½Ó¿Ú ==
- *¿ÉÒÔÓÃ[[Visual C++]] 6.0 µÄDFVIEW.EXE²Î¿¼ Ê¡È¥ÁËĞ´µ÷ÊÔ³ÌĞòµÄ²½Öè ÔÙ¼ÓÉÏÊ¹ÓÃXML¸üÄÜ·½±ãµ÷ÊÔ
+ *[[http://www.flounder.com/messages.htm]] å…³äºè‡ªå®šä¹‰ä¿¡æ¯ç”¨æ³•å¤§å…¨
+ *[[http://www.flounder.com/mvp_tips.htm]] flounder Windowsä¸“å®¶æ–‡ç« 
+ *[[http://blog.csdn.net/vcbear/archive/2003/07/07/5988.aspx|æ¢ç´¢Win32ç³»ç»Ÿä¹‹çª—å£ç±»ï¼ˆWindow Classes in Win32ï¼‰]]
+ *[[http://bbs.pediy.com/showthread.php?p=914823#post914823|Windows XPä¸­çš„å‘é‡åŒ–å¼‚å¸¸å¤„ç†]]
+== å¿«æ·é”® ==
+ *[[http://zhidao.baidu.com/question/4964586|æœ€å°åŒ–å½“å‰çª—å£]]
+ *[[http://www.njmy.cn/myblog/user1/service/archives/2008/6390.shtml|windowsä¸­çš„å¿«æ·é”®(å…¨)]]
+ *[[http://xbeta.info/windows-7-shortcuts.htm|æ¥è‡ªå®˜æ–¹çš„ windows 7 å¿«æ·é”®å¤§å…¨]]
+== å¾®è½¯COMå­˜å‚¨æ¥å£ ==
+ *å¯ä»¥ç”¨[[Visual C++]] 6.0 çš„DFVIEW.EXEå‚è€ƒ çœå»äº†å†™è°ƒè¯•ç¨‹åºçš„æ­¥éª¤ å†åŠ ä¸Šä½¿ç”¨XMLæ›´èƒ½æ–¹ä¾¿è°ƒè¯•
  *[[http://msdn.microsoft.com/en-us/library/ms679731%28v=vs.85%29.aspx|Structured Storage]]
-== ÃüÁîĞĞ ==
- *[[http://www.cn-dos.net/forum/viewthread.php?tid=26838|ÇóÒ»¸öÄÜÈ¡µ±Ç°Ö´ĞĞµÄbatÎÄ¼şËùÔÚÄ¿Â¼·½·¨¡£]] Ò»°ãÓÃ%cd%¾ÍĞĞÁË
- *[[http://www.cn-dos.net/forum/viewthread.php?tid=27667&fpage=1|Åú´¦ÀíÊÒ¾­µäÌû×Ó·ÖÀàË÷Òı]]
+== å‘½ä»¤è¡Œ ==
+ *[[http://www.cn-dos.net/forum/viewthread.php?tid=26838|æ±‚ä¸€ä¸ªèƒ½å–å½“å‰æ‰§è¡Œçš„batæ–‡ä»¶æ‰€åœ¨ç›®å½•æ–¹æ³•ã€‚]] ä¸€èˆ¬ç”¨%cd%å°±è¡Œäº†
+ *[[http://www.cn-dos.net/forum/viewthread.php?tid=27667&fpage=1|æ‰¹å¤„ç†å®¤ç»å…¸å¸–å­åˆ†ç±»ç´¢å¼•]]
  *[[http://commandwindows.com/]]
- *[[http://commandwindows.com/assoc.htm]] ÎÄ¼ş¹ØÁªµÄÃüÁîĞĞ
- *[[http://tristones.viaspeip.com/archives/001130.html|Åú´¦ÀíÎÄ¼şbat Óï·¨±¸Íü]]
-== »æÍ¼ÒıÇæ ==
+ *[[http://commandwindows.com/assoc.htm]] æ–‡ä»¶å…³è”çš„å‘½ä»¤è¡Œ
+ *[[http://tristones.viaspeip.com/archives/001130.html|æ‰¹å¤„ç†æ–‡ä»¶bat è¯­æ³•å¤‡å¿˜]]
+== ç»˜å›¾å¼•æ“ ==
  *[[http://en.wikipedia.org/wiki/Desktop_Window_Manager]]
  *[[http://en.wikipedia.org/wiki/Graphics_Device_Interface]]
 == DLL ==
- *[[http://blog.titilima.com/show-534-1.html|DLL µ¼³öº¯ÊıµÄ¾²Ì¬Á´½Ó]] ×Ô¼ºÖÆ×÷libÎÄ¼şÀ´¼ÓÔØDLLÖĞµÄº¯Êı
+ *[[http://blog.titilima.com/show-534-1.html|DLL å¯¼å‡ºå‡½æ•°çš„é™æ€é“¾æ¥]] è‡ªå·±åˆ¶ä½œlibæ–‡ä»¶æ¥åŠ è½½DLLä¸­çš„å‡½æ•°
  *[[http://www.binary-soft.com/dll2lib/dll2lib.htm|DLL to Lib]]
-== ´°¿Ú¹ÜÀí ==
- *[[http://blog.csdn.net/xt_xiaotian/archive/2008/08/06/2778689.aspx|ÉîÈë½âÎöSendMessage¡¢PostMessage]] Àı×Ó²»´í£¬µ«ÊÇ·ÖÎöÓĞÎó£¬±ÈÈçµÚÒ»¸ö½çÃæÏß³ÌPostMessageµÄÀı×Ó£¬Ó¦¸ÃÊÇ½çÃæÏß³Ìµ÷ÓÃÁËvoid CMyDlg::OnBnClickedOk()ºóÁ¬ĞøµÄ·¢ÁËËùÓĞµÄÏûÏ¢£¬È»ºóÔÙÓÃ´¦ÀíCMyDlg::OnMyTest()´¦ÀíÏûÏ¢¡£ÕâÊ±ºòµÄ²ÎÊıÒ²ÊÇ´ÓÕ»ÉÏÏûÊ§ÁË¡£ÒªÊµÏÖÏàÍ¬¹¦ÄÜÓÃWM_TIME¶¨Ê±´¥·¢ºÃ¡£¿çÏß³ÌÓÃSendMessage³öÎÊÌâµÄ»ú»áÂù´óµÄ£¬Èç¹ûÏß³Ì¼äÒªÍ¬²½µÄ»°»¹ÊÇ×Ô¼º×ö´¦ÀíºÃĞ©¡£
- *[[http://blog.csdn.net/vcbear/archive/2003/07/07/5988.aspx|Ì½Ë÷Win32ÏµÍ³Ö®´°¿ÚÀà£¨Window Classes in Win32£©]] Ã»ÓĞ´úÂëÁË½âÆğÀ´»¹ÊÇ±È½ÏÀ§ÄÑ
-== ¶àÓÃ»§Í¬Ê±µÇÂ½ ==
- *[[http://www.winmatrix.com/forums/index.php?/topic/22479-enable-concurrent-sessions-in-windows-7-x86x64/|Ô­ÀíºÃÏñÊÇÕâ¸ö]]
- *[[http://www.blogsdna.com/2336/enable-multiple-user-accessconcurrent-user-sessions-for-remote-desktop-on-windows-7.htm|Ö»Õë¶ÔWindows 7ÌØ¶¨°æ±¾µÄ]]
- *[[http://www.zahirkhan.com/tools-utilities/multi-user-login-in-windows-7]] È«²¿Ö§³Ö
-== ÍøÂç ==
- *WindowsÍøÂçµÄ¹¦ÄÜºÜ¶à µ«ÊÇÃ»ÓĞÍ¨ÓÃµÄÑ§Ï°·½·¨ Ì«ÔÓÁË ²»ÖªµÀ´íÎóÔÚÄÄ
- *[[http://www.windowsnetworking.com/articles_tutorials/Introduction-Network-Access-Protection-Part1.html|An Introduction to Network Access Protection]] ¸´ÔÓµÄÆóÒµ¼¶¹¦ÄÜ
+== çª—å£ç®¡ç† ==
+ *[[http://blog.csdn.net/xt_xiaotian/archive/2008/08/06/2778689.aspx|æ·±å…¥è§£æSendMessageã€PostMessage]] ä¾‹å­ä¸é”™ï¼Œä½†æ˜¯åˆ†ææœ‰è¯¯ï¼Œæ¯”å¦‚ç¬¬ä¸€ä¸ªç•Œé¢çº¿ç¨‹PostMessageçš„ä¾‹å­ï¼Œåº”è¯¥æ˜¯ç•Œé¢çº¿ç¨‹è°ƒç”¨äº†void CMyDlg::OnBnClickedOk()åè¿ç»­çš„å‘äº†æ‰€æœ‰çš„æ¶ˆæ¯ï¼Œç„¶åå†ç”¨å¤„ç†CMyDlg::OnMyTest()å¤„ç†æ¶ˆæ¯ã€‚è¿™æ—¶å€™çš„å‚æ•°ä¹Ÿæ˜¯ä»æ ˆä¸Šæ¶ˆå¤±äº†ã€‚è¦å®ç°ç›¸åŒåŠŸèƒ½ç”¨WM_TIMEå®šæ—¶è§¦å‘å¥½ã€‚è·¨çº¿ç¨‹ç”¨SendMessageå‡ºé—®é¢˜çš„æœºä¼šè›®å¤§çš„ï¼Œå¦‚æœçº¿ç¨‹é—´è¦åŒæ­¥çš„è¯è¿˜æ˜¯è‡ªå·±åšå¤„ç†å¥½äº›ã€‚
+ *[[http://blog.csdn.net/vcbear/archive/2003/07/07/5988.aspx|æ¢ç´¢Win32ç³»ç»Ÿä¹‹çª—å£ç±»ï¼ˆWindow Classes in Win32ï¼‰]] æ²¡æœ‰ä»£ç äº†è§£èµ·æ¥è¿˜æ˜¯æ¯”è¾ƒå›°éš¾
+== å¤šç”¨æˆ·åŒæ—¶ç™»é™† ==
+ *[[http://www.winmatrix.com/forums/index.php?/topic/22479-enable-concurrent-sessions-in-windows-7-x86x64/|åŸç†å¥½åƒæ˜¯è¿™ä¸ª]]
+ *[[http://www.blogsdna.com/2336/enable-multiple-user-accessconcurrent-user-sessions-for-remote-desktop-on-windows-7.htm|åªé’ˆå¯¹Windows 7ç‰¹å®šç‰ˆæœ¬çš„]]
+ *[[http://www.zahirkhan.com/tools-utilities/multi-user-login-in-windows-7]] å…¨éƒ¨æ”¯æŒ
+== ç½‘ç»œ ==
+ *Windowsç½‘ç»œçš„åŠŸèƒ½å¾ˆå¤š ä½†æ˜¯æ²¡æœ‰é€šç”¨çš„å­¦ä¹ æ–¹æ³• å¤ªæ‚äº† ä¸çŸ¥é“é”™è¯¯åœ¨å“ª
+ *[[http://www.windowsnetworking.com/articles_tutorials/Introduction-Network-Access-Protection-Part1.html|An Introduction to Network Access Protection]] å¤æ‚çš„ä¼ä¸šçº§åŠŸèƒ½
 == Rich Edit ==
  *[[http://msdn.microsoft.com/zh-cn/library/bb787605|msdn Rich Edit]]
- *[[http://www.cnblogs.com/thankgoodness/articles/1136221.html|RichEditÊ¹ÓÃÊÖ²á]]
-== °²È« ==
+ *[[http://www.cnblogs.com/thankgoodness/articles/1136221.html|RichEditä½¿ç”¨æ‰‹å†Œ]]
+== å®‰å…¨ ==
  *[[http://en.wikipedia.org/wiki/NTLM]]
  *[[http://en.wikipedia.org/wiki/Category:Microsoft_Windows_security_technology]]
-== °ü¹ÜÀí ==
- *WindowsÏÂ°ü¹ÜÀí¶¼Ã»ÓĞ
- *[[http://www.infoq.com/cn/news/2010/04/CoApp-Open-Source-Packaging|WindowsÆ½Ì¨µÄ¿ªÔ´Èí¼ş°ü¹ÜÀíÏµÍ³]]
- *[[http://coapp.org/]] »¹ÔÚ¿ª·¢
+== åŒ…ç®¡ç† ==
+ *Windowsä¸‹åŒ…ç®¡ç†éƒ½æ²¡æœ‰
+ *[[http://www.infoq.com/cn/news/2010/04/CoApp-Open-Source-Packaging|Windowså¹³å°çš„å¼€æºè½¯ä»¶åŒ…ç®¡ç†ç³»ç»Ÿ]]
+ *[[http://coapp.org/]] è¿˜åœ¨å¼€å‘
  *[[http://code.google.com/p/windows-package-manager/]]
- *[[http://technet.microsoft.com/zh-cn/library/dd799247(WS.10).aspx|OCSetup ÃüÁîĞĞÑ¡Ïî]] WindowsÕâ¸öÃüÁîĞĞËµ²»¶¨ÓĞÓÃ
-== ¿ÉÒÆ¶¯Èí¼ş ==
- *[[http://portableapps.com/]] ¿ªÔ´µÄ
- *[[http://www.ceedo.com/]] ÉÌÒµÈí¼ş Ö§³Ö64Î»
+ *[[http://technet.microsoft.com/zh-cn/library/dd799247(WS.10).aspx|OCSetup å‘½ä»¤è¡Œé€‰é¡¹]] Windowsè¿™ä¸ªå‘½ä»¤è¡Œè¯´ä¸å®šæœ‰ç”¨
+== å¯ç§»åŠ¨è½¯ä»¶ ==
+ *[[http://portableapps.com/]] å¼€æºçš„
+ *[[http://www.ceedo.com/]] å•†ä¸šè½¯ä»¶ æ”¯æŒ64ä½
  *Symantec Workspace Virtualization
- *[[http://www.yunduan.cn]] ÔÆ¶Ë ²»Ö§³Ö64Î»
- *[[http://hi.baidu.com/1000c/blog/item/61ae3109552ec8cc3bc763c3.html|´òÔìÉÁ´æÅÌÒÆ¶¯Ó¦ÓÃ·½°¸£¨PortableApps¡¢Ceedo¡¢MojoPac£©]]
+ *[[http://www.yunduan.cn]] äº‘ç«¯ ä¸æ”¯æŒ64ä½
+ *[[http://hi.baidu.com/1000c/blog/item/61ae3109552ec8cc3bc763c3.html|æ‰“é€ é—ªå­˜ç›˜ç§»åŠ¨åº”ç”¨æ–¹æ¡ˆï¼ˆPortableAppsã€Ceedoã€MojoPacï¼‰]]
 == Office ==
- *²»ÏÔÊ¾²åÈëÍ¼Æ¬£¬ÉèÖÃÑ¡Ïî-¡·ÊÓÍ¼-¡·Í¼Æ¬¿ò ÎªÃ»ÓĞÉèÖÃ¡£
+ *ä¸æ˜¾ç¤ºæ’å…¥å›¾ç‰‡ï¼Œè®¾ç½®é€‰é¡¹-ã€‹è§†å›¾-ã€‹å›¾ç‰‡æ¡† ä¸ºæ²¡æœ‰è®¾ç½®ã€‚

@@ -1,4 +1,4 @@
-﻿= Visual C++ =
+= Visual C++ =
  *[[http://www.cnblogs.com/xcj26/archive/2010/03/17/1688455.html|深入理解 resx文件]]
  *在Visual C++中定制AppWizard
   *[[http://www.vckbase.com/document/viewdoc/?id=276]]
@@ -24,6 +24,8 @@
  *使用/MT会静态链接运行库 使用/MD会动态链接运行库
  *Windows上动态库的版本是个大问题，所以[[chrome]]使用的是/MT版本的。
  *[[MFC]]的链接版本和动态库的链接版本要对应
+ *[[http://stackoverflow.com/questions/757418/should-i-compile-with-md-or-mt]]
+ *程序有多个DLL模块 用/MT进行链接 会存在多份代码
 == 远程调试 ==
  *[[http://v8ynkq.dev3.webenabled.net/archives/285|VS2008 远程调试环境搭建]]
  *[[http://www.cnblogs.com/OpenCoder/archive/2010/02/17/1668983.html|Visual Studio 2008 远程调试]]
@@ -36,7 +38,6 @@
  *Visual C++ 2008以后会出现 因为微软改变了库为开源的了
  *[[http://blog.csdn.net/wu_huiwen/archive/2010/04/24/5523128.aspx|MFC 中正则表达式的使用，找不到atlrx.h解决办法]]
  *[[http://atlserver.codeplex.com/releases/view/3754|ATL Server Library and Tools]] 相关库位置
-
 == 预编译头文件 ==
  *[[http://blog.csdn.net/Nhsoft/archive/2003/07/07/11558.aspx|预编译头文件的使用]] 节省常见头文件的处理
  *[[http://lmsjack.blog.163.com/blog/static/134484720091026102919815/|预编译头文件来自编译器的早期版本，或者预编译头为 C++ 而在 C 中使用它(或相反)]] 混合编程可能出现的错误

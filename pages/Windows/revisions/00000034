@@ -1,4 +1,4 @@
-﻿= Windows =
+= Windows =
  *[[http://www.china-pub.com/195486|Windows 内核情景分析--采用开源代码ReactOS]]
  *WRK:Windows Research Kernel 微软开源内核
  *[[http://www.unifiedkernel.com/]] 在Linux内核里模拟Windows 内核
@@ -23,6 +23,8 @@
  *[[http://www.flounder.com/mvp_tips.htm]] flounder Windows专家文章
  *[[http://blog.csdn.net/vcbear/archive/2003/07/07/5988.aspx|探索Win32系统之窗口类（Window Classes in Win32）]]
  *[[http://bbs.pediy.com/showthread.php?p=914823#post914823|Windows XP中的向量化异常处理]]
+ *[[http://www.codeproject.com/Articles/206409/Ribbon-with-Cplusplus-Part-1-Introduction-to-the-W|Ribbon with C++]] XP以上可以使用Win32创建Ribbon应用
+ *[[http://www.emptyloop.com/unlocker/]] 超方便查看解除文件锁工具
 == 快捷键 ==
  *[[http://zhidao.baidu.com/question/4964586|最小化当前窗口]]
  *[[http://www.njmy.cn/myblog/user1/service/archives/2008/6390.shtml|windows中的快捷键(全)]]
@@ -36,6 +38,7 @@
  *[[http://commandwindows.com/]]
  *[[http://commandwindows.com/assoc.htm]] 文件关联的命令行
  *[[http://tristones.viaspeip.com/archives/001130.html|批处理文件bat 语法备忘]]
+ *[[http://hi.baidu.com/%CD%F8%B0%C9%BC%BC%CA%F5/blog/item/ab1bc8030776d4733812bbe8.html|cmd下start命令的用法]]启动进程
 == 绘图引擎 ==
  *[[http://en.wikipedia.org/wiki/Desktop_Window_Manager]]
  *[[http://en.wikipedia.org/wiki/Graphics_Device_Interface]]
@@ -58,3 +61,19 @@
 == 安全 ==
  *[[http://en.wikipedia.org/wiki/NTLM]]
  *[[http://en.wikipedia.org/wiki/Category:Microsoft_Windows_security_technology]]
+== 包管理 ==
+ *Windows下包管理都没有
+ *[[http://www.infoq.com/cn/news/2010/04/CoApp-Open-Source-Packaging|Windows平台的开源软件包管理系统]]
+ *[[http://coapp.org/]] 还在开发
+ *[[http://code.google.com/p/windows-package-manager/]]
+ *[[http://technet.microsoft.com/zh-cn/library/dd799247(WS.10).aspx|OCSetup 命令行选项]] Windows这个命令行说不定有用
+== 可移动软件 ==
+ *[[http://portableapps.com/]] 开源的
+ *[[http://www.ceedo.com/]] 商业软件 支持64位
+ *Symantec Workspace Virtualization
+ *[[http://www.yunduan.cn]] 云端 不支持64位
+ *[[http://hi.baidu.com/1000c/blog/item/61ae3109552ec8cc3bc763c3.html|打造闪存盘移动应用方案（PortableApps、Ceedo、MojoPac）]]
+== Office ==
+ *不显示插入图片，设置选项-》视图-》图片框 为没有设置。
+== Windows 7 ==
+ *[[http://www.vcoo.me/show/1072.html|Windows 7最全的硬盘安装方法]]

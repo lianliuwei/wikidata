@@ -1,4 +1,4 @@
-﻿= C++ =
+= C++ =
  *超级难的语言
  *[[http://www.cplusplus.com/]]
  *[[http://blog.csdn.net/freefalcon/articles/52619.aspx]] c++资源
@@ -21,6 +21,8 @@
  *[[http://blog.csdn.net/Solstice/archive/2010/04/17/5497699.aspx|整合 Google 开源 C++ 代码]]
  *[[http://blog.csdn.net/shurenjob_/archive/2011/02/25/6208846.aspx|C++源码]] C++开源工程推荐
  *[[chrome]] C++工程典范
+== 语法 ==
+ *explicit用于指定构造不能用于隐式转换 只能用于显示转换
 == C++取数组大小 ==
  *使用模板的特性来实现，利用了C++语言中很多技巧
  *[[http://blogs.msdn.com/b/the1/archive/2004/05/07/128242.aspx|How Would You Get the Count of an Array in C++?]]
@@ -28,10 +30,14 @@
  *[[]]
 == 头文件依赖 ==
  *[[http://stackoverflow.com/questions/42308/tool-to-track-include-dependencies|Tool to track #include dependencies]]
- *[[]]
  *[[Visual C++]] 2010中有支持 不过要安装的东西太多了 太庞大了
  *[[http://flourish.org/cinclude2dot/]] perl脚本
  *[[http://www.mobile-mir.com/cpp/]] 将就可用
- *[[Doxygen]]听说也可以
+ *[[Doxygen]] 只能生成一个文件对应依赖的图 不具有交互式操作
+== C C++论战 ==
+ *[[http://blog.csdn.net/turingbook/article/details/1775488|Linux之父炮轰C++：糟糕程序员的垃圾语言]]
+ *[[http://blog.csdn.net/myan/article/details/1777230|Linux之父话糙理不糙]]
+ *[[http://thread.gmane.org/gmane.comp.version-control.git/57643/focus=57918|原帖]]
+ *[[http://blog.codingnow.com/2007/09/c_vs_cplusplus.html|C 的回归|]]
 ----
  [[Category Programming Language]] 

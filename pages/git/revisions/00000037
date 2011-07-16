@@ -1,4 +1,4 @@
-﻿= Git =
+= Git =
  *为[[http://en.wikipedia.org/wiki/Source_Code_Management|SCM]] 源代码管理的一种
  *用SHA计算 代表Object
  *Objects
@@ -59,6 +59,7 @@
  *[[http://blog.ossxp.com/2010/11/2166/|Git 工作区、暂存区和版本库]]
  *[[http://debuggable.com/posts/git-fake-submodules:4b563ee4-f3cc-4061-967e-0e48cbdd56cb|Git Fake Submodules]]
  *[[http://www.infoq.com/cn/news/2011/01/git-adventures-1]] Git历险记 教程
+ *[[https://git.wiki.kernel.org/index.php/WindowsInstall]] git官网Windows安装建议
 == 文字编码 ==
  *[[http://wangcongming.info/2010/07/windows-%E4%B8%8B-git-%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E9%80%89%E6%8B%A9%EF%BC%8C%E5%8F%8A-msysgit-%E5%90%84%E7%A7%8D%E4%B8%AD%E6%96%87%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3/|Git 系列之二：Windows 下 Git 客户端的选择，及 msysGit 各种中文问题的解决]]
  *最好不要使用中文 特别是Windows下
@@ -67,6 +68,17 @@
  *和SVN进行交互时要注意路径字符编码 设置svn.pathnameencoding [[http://www.cnblogs.com/ly4cn/archive/2011/07/04/2097611.html|git+svn 中文文件名乱码的处理]]
  *[[http://topic.csdn.net/u/20110113/19/b0d5d506-4307-428b-a61d-7974aa66a2da.html|搞定Git中文乱码、用TortoiseMerge实现Diff/Merge]] 可用脚本
  *现在能支持中文内容 中文log 不支持中文路径名创建 中文路径下文件修改支持
+=== Bug ===
+ *git svn中文路径的bug用[[http://oznyang.iteye.com/blog/993195|msysgit中文乱码问题大全]]的方法修改，中文路径下文件修改支持，但是不支持中文路径名创建
+ *相关讨论[[http://git.661346.n2.nabble.com/PATCH-1-3-Fixes-bug-git-diff-class-methods-are-not-detected-in-hunk-headers-for-Pascal-td5865814.html]]
+== gitignore ==
+ *[[http://www.kernel.org/pub/software/scm/git/docs/gitignore.html]]
+ *有多种来源, 可以适合各种场合
+ *带/项只会在文件名，文件夹中匹配 相当于用/隔开来匹配
+ *开头带/项表示绝对路径
+ *末尾带/项表示文件夹和其里面的文件夹文件名
+ *[[http://mactruecolor.blogspot.com/2011/01/git-ignore.html]] 有点特殊的技巧
+ *[[http://hi.baidu.com/orangejackylee/blog/item/dd1bc005afd66995e950cd3b.html|git 创建 .gitignore 文件 建立项目过滤规则]] 这个解释不错
 == 服务器 ==
  *[[http://progit.org/2010/03/04/smart-http.html|Smart HTTP Transport]] 用git-http-backend做后台是主流
  *git-http-backend要设置GIT_HTTP_EXPORT_ALL环境变量时默认目录都导出
@@ -94,4 +106,7 @@
  *使用git repack -a -d 打包减少文件数
  *[[https://launchpad.net/~git-core/+archive/ppa]] ubuntu 最新版git
  *git的配置信息好像是从global拷贝到本地 system信息和global有什么区别？
- *在Windows下要最好设置core.fileMode = false 因为[[Windows]]上权限支持不好
+ *在Windows下要最好设置core.fileMode = false 因为[[Windows]]上权限支持不好 参考[[http://stackoverflow.com/questions/1580596/how-do-i-make-git-ignore-mode-changes-chmod|How do I make git ignore mode changes (chmod)?]]
+ *清除掉git库中除.git库文件以外的所有文件 包括子.git目录
+  *find . -not -path "*/.git/*" -type f | xargs rm   清楚文件项
+  *find . -not -path "*/.git*" -type d | xargs rmdir -p --ignore-fail-on-non-empty 清楚文件夹
