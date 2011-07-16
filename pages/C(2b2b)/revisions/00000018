@@ -1,29 +1,37 @@
 = C++ =
- *è¶…çº§éš¾çš„è¯­è¨€
+ *³¬¼¶ÄÑµÄÓïÑÔ
  *[[http://www.cplusplus.com/]]
- *[[http://blog.csdn.net/freefalcon/articles/52619.aspx]] c++èµ„æº
- *[[Inside C++ object model]]æœªçœ‹è¿‡
- *C++ç¨‹åºè®¾è®¡ä¹‹å››ä¹¦äº”ç».doc
- *C++èµ„æºä¹‹ä¸å®Œå…¨å¯¼å¼•.doc
+ *[[http://blog.csdn.net/freefalcon/articles/52619.aspx]] c++×ÊÔ´
+ *[[Inside C++ object model]]Î´¿´¹ı
+ *C++³ÌĞòÉè¼ÆÖ®ËÄÊéÎå¾­.doc
+ *C++×ÊÔ´Ö®²»ÍêÈ«µ¼Òı.doc
  *[[TCPL]]
- *Visual Studioé™„å¸¦å…¶è‡ªå·±çš„C\C++ runtimeåº“çš„ä»£ç  åœ¨Visual Studioå®‰è£…ç›®å½•\VC\crt\srcä¸­
- *Visual Studioé™„å¸¦å…¶è‡ªå·±çš„ATLåº“å’ŒMFCåº“çš„ä»£ç  åœ¨Visual Studioå®‰è£…ç›®å½•\VC\atlmfc\srcä¸­
- *[[http://blog.csdn.net/pongba|åˆ˜æœªé¹ C++çš„ç½—æµ®å®«]] é«˜çº§è®¨è®º
- *[[http://www2.research.att.com/~bs/homepage.html|C++ä¹‹çˆ¶çš„ä¸»é¡µ]]
- *[[http://en.wikipedia.org/wiki/Generic_programming|æ³›å‹ç¼–ç¨‹wikiä¸»é¡µ]]
- *[[http://blog.csdn.net/fmddlmyy/archive/2007/02/14/1510176.aspx|çœ¼è§ä¸ºå®(1)ï¼šC++åŸºæœ¬æ¦‚å¿µåœ¨ç¼–è¯‘å™¨ä¸­çš„å®ç°]]
- *[[http://blog.csdn.net/pongba/archive/2007/12/11/1930150.aspx|å­¦ä¹ C++ï¼šå®è·µè€…çš„æ–¹æ³•]]
- *[[http://www.china-pub.com/196847#ml|C++ç¨‹åºè®¾è®¡åŸç†ä¸å®è·µ]] æœ‰ç©ºçœ‹ä¸€ä¸‹
- *[[http://www.cppblog.com/converse/]]é‚£è°çš„æŠ€æœ¯åšå®¢ æœ‰C++è›®å¤šçš„å†…å®¹
- *[[http://www.vckbase.com/]]æœ‰ç‚¹æ—§
- *[[http://hi.baidu.com/fandywang_jlu/blog/item/7c8e98cc0db2081601e928a1.html|C/C++ä¸­çš„64ä½æ•´æ•°]]
- *[[http://blog.csdn.net/longshanks/archive/2008/02/16/2097854.aspx|C++çš„è¥å…»â€”â€”RAII]] èµ„æºé‡Šæ”¾é—®é¢˜
- *[[http://blog.csdn.net/Solstice/archive/2010/04/17/5497699.aspx|æ•´åˆ Google å¼€æº C++ ä»£ç ]]
- *[[http://blog.csdn.net/shurenjob_/archive/2011/02/25/6208846.aspx|C++æºç ]] C++å¼€æºå·¥ç¨‹æ¨è
-== C++å–æ•°ç»„å¤§å° ==
- *ä½¿ç”¨æ¨¡æ¿çš„ç‰¹æ€§æ¥å®ç°ï¼Œåˆ©ç”¨äº†C++è¯­è¨€ä¸­å¾ˆå¤šæŠ€å·§
+ *Visual Studio¸½´øÆä×Ô¼ºµÄC\C++ runtime¿âµÄ´úÂë ÔÚVisual Studio°²×°Ä¿Â¼\VC\crt\srcÖĞ
+ *Visual Studio¸½´øÆä×Ô¼ºµÄATL¿âºÍMFC¿âµÄ´úÂë ÔÚVisual Studio°²×°Ä¿Â¼\VC\atlmfc\srcÖĞ
+ *[[http://blog.csdn.net/pongba|ÁõÎ´Åô C++µÄÂŞ¸¡¹¬]] ¸ß¼¶ÌÖÂÛ
+ *[[http://www2.research.att.com/~bs/homepage.html|C++Ö®¸¸µÄÖ÷Ò³]]
+ *[[http://en.wikipedia.org/wiki/Generic_programming|·ºĞÍ±à³ÌwikiÖ÷Ò³]]
+ *[[http://blog.csdn.net/fmddlmyy/archive/2007/02/14/1510176.aspx|ÑÛ¼ûÎªÊµ(1)£ºC++»ù±¾¸ÅÄîÔÚ±àÒëÆ÷ÖĞµÄÊµÏÖ]]
+ *[[http://blog.csdn.net/pongba/archive/2007/12/11/1930150.aspx|Ñ§Ï°C++£ºÊµ¼ùÕßµÄ·½·¨]]
+ *[[http://www.china-pub.com/196847#ml|C++³ÌĞòÉè¼ÆÔ­ÀíÓëÊµ¼ù]] ÓĞ¿Õ¿´Ò»ÏÂ
+ *[[http://www.cppblog.com/converse/]]ÄÇË­µÄ¼¼Êõ²©¿Í ÓĞC++Âù¶àµÄÄÚÈİ
+ *[[http://www.vckbase.com/]]ÓĞµã¾É
+ *[[http://hi.baidu.com/fandywang_jlu/blog/item/7c8e98cc0db2081601e928a1.html|C/C++ÖĞµÄ64Î»ÕûÊı]]
+ *[[http://blog.csdn.net/longshanks/archive/2008/02/16/2097854.aspx|C++µÄÓªÑø¡ª¡ªRAII]] ×ÊÔ´ÊÍ·ÅÎÊÌâ
+ *[[http://blog.csdn.net/Solstice/archive/2010/04/17/5497699.aspx|ÕûºÏ Google ¿ªÔ´ C++ ´úÂë]]
+ *[[http://blog.csdn.net/shurenjob_/archive/2011/02/25/6208846.aspx|C++Ô´Âë]] C++¿ªÔ´¹¤³ÌÍÆ¼ö
+ *[[chrome]] C++¹¤³Ìµä·¶
+== C++È¡Êı×é´óĞ¡ ==
+ *Ê¹ÓÃÄ£°åµÄÌØĞÔÀ´ÊµÏÖ£¬ÀûÓÃÁËC++ÓïÑÔÖĞºÜ¶à¼¼ÇÉ
  *[[http://blogs.msdn.com/b/the1/archive/2004/05/07/128242.aspx|How Would You Get the Count of an Array in C++?]]
- *[[http://blog.csdn.net/yuanmanzheng/archive/2010/04/12/5472967.aspx|å¦‚ä½•ç†è§£stdlib.hé‡Œçš„_countof()å®]]
+ *[[http://blog.csdn.net/yuanmanzheng/archive/2010/04/12/5472967.aspx|ÈçºÎÀí½âstdlib.hÀïµÄ_countof()ºê]]
  *[[]]
+== Í·ÎÄ¼şÒÀÀµ ==
+ *[[http://stackoverflow.com/questions/42308/tool-to-track-include-dependencies|Tool to track #include dependencies]]
+ *[[]]
+ *[[Visual C++]] 2010ÖĞÓĞÖ§³Ö ²»¹ıÒª°²×°µÄ¶«Î÷Ì«¶àÁË Ì«ÅÓ´óÁË
+ *[[http://flourish.org/cinclude2dot/]] perl½Å±¾
+ *[[http://www.mobile-mir.com/cpp/]] ½«¾Í¿ÉÓÃ
+ *[[Doxygen]]ÌıËµÒ²¿ÉÒÔ
 ----
  [[Category Programming Language]] 

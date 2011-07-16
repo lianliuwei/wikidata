@@ -1,0 +1,35 @@
+﻿= 文件同步 =
+ *[[http://en.wikipedia.org/wiki/Synchronization]]
+ *[[http://en.wikipedia.org/wiki/File_synchronization]]
+ *[[分布式文件系统]]
+ *[[http://www.syncoo.com]]同步控
+ *[[http://www1.pconline.com.cn/download/zt/2009/syncsoft/|文件转移利器 20款优秀同步工具推荐]]
+ *[[http://beacon.blog.51cto.com/442731/109961/|FreeNAS的安装和简单配置]]
+== 服务器和本地同步 ==
+ *[[http://blog.linjian.org/articles/rsync-unison-ssh/|使用 rsync 或 unison 备份或同步支持 ssh 的 web 主机]]
+ *[[http://www.ourys.com/post/rsync-grsync-unison.html|linux文件夹同步]]
+ *[[http://www.ithov.com/Linux/Apply/Network/94991.shtml|Unison一款跨平台的Linux文件同步工具]]
+ *[[http://club.topsage.com/viewthread.php?tid=215355|Linux远程数据同步工具rsync简介]]
+ *[[http://www.zn05.com/thread-91-1-1.html|用rsync从Linux到Windows远程备份]]
+== U盘和本地同步 ==
+ *[[]]
+== Unison ==
+ *使用的语言比较特别
+ *[[http://hqman.javaeye.com/blog/226256|linux文件同步工具Unison的使用]]
+ *[[http://alan.petitepomme.net/unison/]]下载地址
+ *[[http://www.cis.upenn.edu/~bcpierce/unison/]]官网
+ *[[http://ubuntuforums.org/showthread.php?t=1081247|FTP Sync using curlftpfs and Unison]]
+ *[[http://www.ithov.com/Linux/Apply/Network/94991.shtml|Unison一款跨平台的Linux文件同步工具]]
+ *[[http://blog.linjian.org/articles/rsync-unison-ssh/|使用 rsync 或 unison 备份或同步支持 ssh 的 web 主机]]
+ *[[http://aleung.blogbus.com/logs/5545100.html|终于找到了最合适的文件同步/备份工具]]
+== rsync ==
+ *[[http://www.cqumzh.cn/uchome/space.php?uid=4517&do=blog&id=272420|硬盘数据同步备份工具──非备份系统]]
+ *[[http://club.topsage.com/viewthread.php?tid=215355|Linux远程数据同步工具rsync简介]]
+== Dropbox ==
+ *[[http://www.syncoo.com/dropbox-replacement-tools-2102.htm|Dropbox的6款暂时性替代工具]]
+== 分布式文件系统 ==
+ *[[http://server.zdnet.com.cn/server/2008/1017/1179179.shtml|利用分布式文件系统（DFS）实现网站文件同步]]
+== sparkleshare ==
+ *使用Git服务器来进行同步
+ *还未开发好
+ *[[http://sparkleshare.org/]] 库[[https://github.com/hbons/SparkleShare]]

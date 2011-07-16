@@ -1,0 +1,5 @@
+= UEFI =
+ *取代BIOS的启动系统
+ *[[http://x86asm.net/articles/uefi-programming-first-steps/|UEFI Programming - First Steps]]
+ *华硕主板UEFI BIOS是怎么回事
+ *[[visualbox]]使用EFI支持装[[ubuntu]]不能启动是怎么回事？

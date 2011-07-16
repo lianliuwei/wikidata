@@ -1,81 +1,83 @@
 = Visual C++ =
- *[[http://www.cnblogs.com/xcj26/archive/2010/03/17/1688455.html|æ·±å…¥ç†è§£ resxæ–‡ä»¶]]
- *åœ¨Visual C++ä¸­å®šåˆ¶AppWizard
+ *[[http://www.cnblogs.com/xcj26/archive/2010/03/17/1688455.html|ÉîÈëÀí½â resxÎÄ¼ş]]
+ *ÔÚVisual C++ÖĞ¶¨ÖÆAppWizard
   *[[http://www.vckbase.com/document/viewdoc/?id=276]]
   *[[http://www.vckbase.com/document/viewdoc/?id=286]]
   *[[http://www.vckbase.com/document/viewdoc/?id=287]]
- *çª¥æ¢PEæ–‡ä»¶å†…å¹•ï¼šWin32 PE æ–‡ä»¶æ ¼å¼ä¹‹æ—…
+ *¿úÌ½PEÎÄ¼şÄÚÄ»£ºWin32 PE ÎÄ¼ş¸ñÊ½Ö®ÂÃ
   *[[http://www.cnblogs.com/jasonsun/archive/2010/08/13/1799029.html]]
- *[[http://hi.baidu.com/aztack/blog/item/7fbc82cbfcc258f752664fee.html|VCçš„å¯¹è¯æ¡†æ¨¡æ¿åŸç†]]
- *2008ä¸­ä½¿ç”¨ctrl+f5è¿è¡Œæ§åˆ¶å°ç¨‹åºå°±ä¸ä¼šä¸€é—ªè€Œè¿‡
- *[[http://msdn.microsoft.com/en-us/library/x93ctkx8.aspx|Debug Interface Access SDK]] ç”¨äºæŸ¥è¯¢pdbçš„COM
+ *[[http://hi.baidu.com/aztack/blog/item/7fbc82cbfcc258f752664fee.html|VCµÄ¶Ô»°¿òÄ£°åÔ­Àí]]
+ *2008ÖĞÊ¹ÓÃctrl+f5ÔËĞĞ¿ØÖÆÌ¨³ÌĞò¾Í²»»áÒ»ÉÁ¶ø¹ı
+ *[[http://msdn.microsoft.com/en-us/library/x93ctkx8.aspx|Debug Interface Access SDK]] ÓÃÓÚ²éÑ¯pdbµÄCOM
  *[[http://msdn.microsoft.com/en-us/library/yd4f8bd1.aspx|Program Database Files (C++)]]
- *[[http://sourceforge.net/projects/wtl/]] Windowsä¸‹çš„UIåº“
- *[[http://blog.sina.com.cn/s/blog_403ba3dd01000aue.html|ä¸å†ç»å—"Warning C4819"çš„æ‘§æ®‹]] å¤šè¯­è¨€æ”¯æŒæ€ä¹ˆå°±è¿™ä¹ˆå·®
- *Visual Studioä¸­çš„Samplesç›®å½•æœ‰å¾ˆå¤šæœ‰ç”¨çš„ç¤ºä¾‹
- *[[http://msdn.microsoft.com/zh-tw/library/1370z17c%28v=VS.90%29.aspx|Visual C++ ç¯„ä¾‹æ‡‰ç”¨ç¨‹å¼]]
+ *[[http://sourceforge.net/projects/wtl/]] WindowsÏÂµÄUI¿â
+ *[[http://blog.sina.com.cn/s/blog_403ba3dd01000aue.html|²»ÔÙ¾­ÊÜ"Warning C4819"µÄ´İ²Ğ]] ¶àÓïÑÔÖ§³ÖÔõÃ´¾ÍÕâÃ´²î
+ *Visual StudioÖĞµÄSamplesÄ¿Â¼ÓĞºÜ¶àÓĞÓÃµÄÊ¾Àı
+ *[[http://msdn.microsoft.com/zh-tw/library/1370z17c%28v=VS.90%29.aspx|Visual C++ ¹ Àı‘ªÓÃ³ÌÊ½]]
  *[[http://stackoverflow.com/questions/1116465/how-do-you-share-code-between-projects-solutions-in-visual-studio|How do you share code between projects/solutions in Visual Studio?]]
- *[[http://msdn.microsoft.com/zh-cn/library/151kt790%28v=VS.90%29.aspx|é“¾æ¥å™¨çš„å»¶è¿ŸåŠ è½½ DLL æ”¯æŒ]]
+ *[[http://msdn.microsoft.com/zh-cn/library/151kt790%28v=VS.90%29.aspx|Á´½ÓÆ÷µÄÑÓ³Ù¼ÓÔØ DLL Ö§³Ö]]
  *[[GDI+]]
-== è¿è¡Œåº“ ==
- *åŸºæœ¬ä¸Šç”¨æœ‰/MD /MTå’Œå¯¹åº”çš„d debugç‰ˆæœ¬ã€‚
- *ä½¿ç”¨/MTä¼šé™æ€é“¾æ¥è¿è¡Œåº“ ä½¿ç”¨/MDä¼šåŠ¨æ€é“¾æ¥è¿è¡Œåº“
- *Windowsä¸ŠåŠ¨æ€åº“çš„ç‰ˆæœ¬æ˜¯ä¸ªå¤§é—®é¢˜ï¼Œæ‰€ä»¥[[chrome]]ä½¿ç”¨çš„æ˜¯/MTç‰ˆæœ¬çš„ã€‚
- *[[MFC]]çš„é“¾æ¥ç‰ˆæœ¬å’ŒåŠ¨æ€åº“çš„é“¾æ¥ç‰ˆæœ¬è¦å¯¹åº”
-== è¿œç¨‹è°ƒè¯• ==
- *[[http://v8ynkq.dev3.webenabled.net/archives/285|VS2008 è¿œç¨‹è°ƒè¯•ç¯å¢ƒæ­å»º]]
- *[[http://www.cnblogs.com/OpenCoder/archive/2010/02/17/1668983.html|Visual Studio 2008 è¿œç¨‹è°ƒè¯•]]
+== ÏÂÔØ ==
+ *[[http://boston.celtics.blog.163.com/blog/static/1134536022010316046647/?1308745551|]]
+== ÔËĞĞ¿â ==
+ *»ù±¾ÉÏÓÃÓĞ/MD /MTºÍ¶ÔÓ¦µÄd debug°æ±¾¡£
+ *Ê¹ÓÃ/MT»á¾²Ì¬Á´½ÓÔËĞĞ¿â Ê¹ÓÃ/MD»á¶¯Ì¬Á´½ÓÔËĞĞ¿â
+ *WindowsÉÏ¶¯Ì¬¿âµÄ°æ±¾ÊÇ¸ö´óÎÊÌâ£¬ËùÒÔ[[chrome]]Ê¹ÓÃµÄÊÇ/MT°æ±¾µÄ¡£
+ *[[MFC]]µÄÁ´½Ó°æ±¾ºÍ¶¯Ì¬¿âµÄÁ´½Ó°æ±¾Òª¶ÔÓ¦
+== Ô¶³Ìµ÷ÊÔ ==
+ *[[http://v8ynkq.dev3.webenabled.net/archives/285|VS2008 Ô¶³Ìµ÷ÊÔ»·¾³´î½¨]]
+ *[[http://www.cnblogs.com/OpenCoder/archive/2010/02/17/1668983.html|Visual Studio 2008 Ô¶³Ìµ÷ÊÔ]]
  *[[http://msdn.microsoft.com/en-us/library/y7f5zaaa.aspx|Remote Debugging Setup]]
- *æƒé™æ˜¯ä¸ªå¤§é—®é¢˜
-== è¿è¡Œç¨‹åº ==
+ *È¨ÏŞÊÇ¸ö´óÎÊÌâ
+== ÔËĞĞ³ÌĞò ==
  *[[http://stackoverflow.com/questions/42531/how-do-i-call-createprocess-in-c-to-launch-a-windows-executable]]
- *[[http://www.vckbase.com/document/viewdoc/?id=416|æ·±å…¥æµ…å‡ºShellExecute]]
+ *[[http://www.vckbase.com/document/viewdoc/?id=416|ÉîÈëÇ³³öShellExecute]]
 == atlrx.h missing ==
- *Visual C++ 2008ä»¥åä¼šå‡ºç° å› ä¸ºå¾®è½¯æ”¹å˜äº†åº“ä¸ºå¼€æºçš„äº†
- *[[http://blog.csdn.net/wu_huiwen/archive/2010/04/24/5523128.aspx|MFC ä¸­æ­£åˆ™è¡¨è¾¾å¼çš„ä½¿ç”¨ï¼Œæ‰¾ä¸åˆ°atlrx.hè§£å†³åŠæ³•]]
- *[[http://atlserver.codeplex.com/releases/view/3754|ATL Server Library and Tools]] ç›¸å…³åº“ä½ç½®
+ *Visual C++ 2008ÒÔºó»á³öÏÖ ÒòÎªÎ¢Èí¸Ä±äÁË¿âÎª¿ªÔ´µÄÁË
+ *[[http://blog.csdn.net/wu_huiwen/archive/2010/04/24/5523128.aspx|MFC ÖĞÕıÔò±í´ïÊ½µÄÊ¹ÓÃ£¬ÕÒ²»µ½atlrx.h½â¾ö°ì·¨]]
+ *[[http://atlserver.codeplex.com/releases/view/3754|ATL Server Library and Tools]] Ïà¹Ø¿âÎ»ÖÃ
 
-== é¢„ç¼–è¯‘å¤´æ–‡ä»¶ ==
- *[[http://blog.csdn.net/Nhsoft/archive/2003/07/07/11558.aspx|é¢„ç¼–è¯‘å¤´æ–‡ä»¶çš„ä½¿ç”¨]] èŠ‚çœå¸¸è§å¤´æ–‡ä»¶çš„å¤„ç†
- *[[http://lmsjack.blog.163.com/blog/static/134484720091026102919815/|é¢„ç¼–è¯‘å¤´æ–‡ä»¶æ¥è‡ªç¼–è¯‘å™¨çš„æ—©æœŸç‰ˆæœ¬ï¼Œæˆ–è€…é¢„ç¼–è¯‘å¤´ä¸º C++ è€Œåœ¨ C ä¸­ä½¿ç”¨å®ƒ(æˆ–ç›¸å)]] æ··åˆç¼–ç¨‹å¯èƒ½å‡ºç°çš„é”™è¯¯
-== æ’ä»¶ ==
+== Ô¤±àÒëÍ·ÎÄ¼ş ==
+ *[[http://blog.csdn.net/Nhsoft/archive/2003/07/07/11558.aspx|Ô¤±àÒëÍ·ÎÄ¼şµÄÊ¹ÓÃ]] ½ÚÊ¡³£¼ûÍ·ÎÄ¼şµÄ´¦Àí
+ *[[http://lmsjack.blog.163.com/blog/static/134484720091026102919815/|Ô¤±àÒëÍ·ÎÄ¼şÀ´×Ô±àÒëÆ÷µÄÔçÆÚ°æ±¾£¬»òÕßÔ¤±àÒëÍ·Îª C++ ¶øÔÚ C ÖĞÊ¹ÓÃËü(»òÏà·´)]] »ìºÏ±à³Ì¿ÉÄÜ³öÏÖµÄ´íÎó
+== ²å¼ş ==
  *[[http://www.wholetomato.com/|Visual Assist X]]
- *Visual Assist X å¯ä»¥é…ç½®å˜é‡é¢œè‰² Visual Studio 2008é‡Œé¢ä¸€ç›´æ‰¾ä¸åˆ°
-== å¿«æ·é”® ==
+ *Visual Assist X ¿ÉÒÔÅäÖÃ±äÁ¿ÑÕÉ« Visual Studio 2008ÀïÃæÒ»Ö±ÕÒ²»µ½
+== ¿ì½İ¼ü ==
  *[[http://www.microsoft.com/downloads/en/details.aspx?FamilyID=4411BBFC-0E3C-42B3-BD05-AF1D292C986F|Visual C++ 2008 Keybinding Reference Poster ]]
- *å·¥å…· -> é€‰é¡¹ -> ç¯å¢ƒ -> é”®ç›˜ å¯ä»¥æŸ¥æ‰¾å¯¹åº”çš„å¿«æ·é”®å¯¹åº”çš„å‘½ä»¤
- *Ctrl + Shift + V æŸ¥çœ‹å‰ªåˆ‡æ¿
- *Ctrl + Enter ä¸Šæ–¹æ’å…¥ä¸€è¡Œ Ctrl + Shift + Enter ä¸‹æ–¹æ’ä¸€è¡Œ
- *Alt + o å¤´æ–‡ä»¶å’Œæºæ–‡ä»¶åˆ‡æ¢
- *Ctrl + - å‘åå®šä½ Ctrl + shift + - å…ˆå‰å®šä½
- *Ctrl + Delete Ctrl + Backspace åˆ é™¤è¯ Ctrl + L å‰ªåˆ‡è¡Œ
- *Ctrl + k, Ctrl + \ åˆ é™¤ç©ºç™½è¡Œ
- *Ctrl + r, Ctrl + w åˆ‡æ¢æ˜¯å¦æ˜¾ç¤ºç©ºç™½å­—ç¬¦
- *F4 ä¸‹ä¸€ä¸ªé”™è¯¯
- *Ctrl + F6 Ctrl + Shift + F6 åœ¨æ ‡ç­¾é¡µä¸­è·³è½¬  Ctrl + F4å…³é—­å½“å‰æ ‡ç­¾é¡µ
- *Alt + Shift + å…‰æ ‡ç§»åŠ¨ é€‰æ‹©åŒºåŸŸ
- *Ctrl + = é€‰æ‹©åˆ°æœ€åä¸€ä¸ªè¿”å›æ ‡è®°çš„ä»£ç  Ctrl + kï¼Œ Ctrl + A äº¤æ¢å½“å‰å®šä½ç‚¹ä½ç½®
- *ç¼–è¾‘æ³¨å†Œè¡¨å¯ä»¥è·å¾—å¼•å¯¼çº¿
- *Ctrl + kï¼ŒCtrl + C Ctrl + kï¼ŒCtrl + U æ³¨é‡Šå’Œåæ³¨é‡Šä»£ç 
- *Ctrl + k, Ctrl + F æ•´ç†é€‰æ‹©æˆ–å½“å‰è¡Œçš„æ ¼å¼
- *ä¸è¦åœ¨ä»£ç ä¸­ä½¿ç”¨åˆ¶è¡¨ç¬¦
- *Ctrl + M, Ctrl + M æŠ˜å æŒ‡ç‚¹ä»£ç å— Ctrl + M, Ctrl + Læ•´ä¸ªå¤§çº²è§†å›¾æŠ˜å  Ctrl + M, Ctrl + P å…³é—­å¤§çº²æ˜¾ç¤º Ctrl + M, Ctrl + OæŠ˜å åˆ°å®šä¹‰
- åœæ­¢å¤§çº²è§†å›¾å¯ä»¥ç”¨æ’¤é”€å‘½ä»¤å–æ¶ˆ
- *Alt + M åˆ°å¿«é€Ÿå‘½ä»¤åˆ‡æ¢è¡Œ
- *Ctrl + k, Ctrl + k åˆ›å»ºä¹¦ç­¾ Ctrl + k, Ctrl + p ä¸Šä¸€ä¸ªä¹¦ç­¾ Ctrl + kï¼Œ Ctrl + n ä¸‹ä¸€ä¸ªä¹¦ç­¾ åŒä¸€æ–‡æ¡£ä¸­ä½¿ç”¨ä¹¦ç­¾é»˜è®¤æ²¡æœ‰ç»‘å®š ç°åœ¨ç»‘å®šä¸º Ctrl + k, Ctrl + o å’Œ Ctrl + k, Ctrl + j  Ctrl + shift + k, Ctrl + Shift + n å’Œ Ctrl + shift + k, Ctrl + Shift + n å¯¹åº”äºç›¸åŒä¹¦ç­¾æ–‡ä»¶å¤¹çš„åˆ‡æ¢
- *Alt + F3 ä½¿ç”¨å½“å‰é€‰ä¸­è¯è¯­ä½œä¸ºæœç´¢è¯ F3å½“å‰è¯æœç´¢ Shift + F3è¿›è¡Œåå‘å½“å‰è¯æœç´¢
- *Ctrl + Shift + ç©ºæ ¼ å‚æ•°ä¿¡æ¯ Alt + å³ç®­å¤´ å®Œæˆä¿¡æ¯ Ctrl + K Ctrl + I å‡½æ•°å¿«é€Ÿä¿¡æ¯
- *ä½¿ç”¨Ctrl + i è¿›è¡Œæ¸è¿›å¼æœç´¢ ä¸­é€”Escé€€å‡º Ctrl + Shift + i è¿›è¡Œåå‘æ¸è¿›å¼æœç´¢
- *Ctrl + F3 ç”¨å½“å‰é€‰ä¸­è¯è¯­åšè¯æœç´¢ Ctrl + Shift + F3 é€†å‘æœç´¢
- *Ctrl + F å¿«é€Ÿæœç´¢ Ctrl + shift + F åœ¨æ–‡ä»¶ä¸­æœç´¢ Ctrl + H å¿«é€Ÿæ›¿æ¢ Ctrl + Shift + H æ–‡ä»¶ä¸­æ›¿æ¢ Alt + F12 æŸ¥æ‰¾ç¬¦å· Ctrl + D æŸ¥æ‰¾ç»„åˆæ¡† F3 é‡å¤ä¸Šæ¬¡æŸ¥æ‰¾ Alt + Shift + F12 å®šä½åˆ°æŸ¥æ‰¾ç¬¦å·ç»“æœçª—å£
- *Ctrl + Alt + ä¸‹ç®­å¤´ æ‰“å¼€æ–‡ä»¶èœå•ä¸‹æ‹‰åˆ—è¡¨
- *F12 è·³åˆ°ç±»çš„å®šä¹‰
- *Alt + ç©ºæ ¼ è°ƒå‡ºç³»ç»Ÿæ€»èœå• å¯ä»¥ä½¿ç”¨é”®ç›˜ç§»åŠ¨æ”¾å¤§çª—å£
- *Alt + F6 Alt + Shift + F6 åœ¨å·¥å…·çª—å£ä¸­å¯¼èˆª
- *Ctrl + F7 ç¼–è¯‘å½“å‰æ–‡ä»¶
- *shift + Esc å…³é—­å½“å‰å·¥å…·çª—å£
- *Ctrl + pageUp Ctrl + pageDown åˆ‡æ¢å·¥å…·å¡ä¸­çš„çª—å£
- *Shift + Alt + Enter è¿›å…¥å…¨å±æ¨¡å¼ 
- *Ctrl + Alt + A å‘½ä»¤çª—å£ Alt + 1 è¾“å‡ºçª—å£
- *F12 æŸ¥æ‰¾æŒ‡ç‚¹ç¬¦å·çš„å®šä¹‰ Shift + F12 æŸ¥æ‰¾æŒ‡ç‚¹ç¬¦å·çš„å£°æ˜
- *Ctrl + / åœ¨æŸ¥æ‰¾ç»„åˆæ¡†ä¸­æ‰§è¡Œå‘½ä»¤
+ *¹¤¾ß -> Ñ¡Ïî -> »·¾³ -> ¼üÅÌ ¿ÉÒÔ²éÕÒ¶ÔÓ¦µÄ¿ì½İ¼ü¶ÔÓ¦µÄÃüÁî
+ *Ctrl + Shift + V ²é¿´¼ôÇĞ°å
+ *Ctrl + Enter ÉÏ·½²åÈëÒ»ĞĞ Ctrl + Shift + Enter ÏÂ·½²åÒ»ĞĞ
+ *Alt + o Í·ÎÄ¼şºÍÔ´ÎÄ¼şÇĞ»»
+ *Ctrl + - Ïòºó¶¨Î» Ctrl + shift + - ÏÈÇ°¶¨Î»
+ *Ctrl + Delete Ctrl + Backspace É¾³ı´Ê Ctrl + L ¼ôÇĞĞĞ
+ *Ctrl + k, Ctrl + \ É¾³ı¿Õ°×ĞĞ
+ *Ctrl + r, Ctrl + w ÇĞ»»ÊÇ·ñÏÔÊ¾¿Õ°××Ö·û
+ *F4 ÏÂÒ»¸ö´íÎó
+ *Ctrl + F6 Ctrl + Shift + F6 ÔÚ±êÇ©Ò³ÖĞÌø×ª  Ctrl + F4¹Ø±Õµ±Ç°±êÇ©Ò³
+ *Alt + Shift + ¹â±êÒÆ¶¯ Ñ¡ÔñÇøÓò
+ *Ctrl + = Ñ¡Ôñµ½×îºóÒ»¸ö·µ»Ø±ê¼ÇµÄ´úÂë Ctrl + k£¬ Ctrl + A ½»»»µ±Ç°¶¨Î»µãÎ»ÖÃ
+ *±à¼­×¢²á±í¿ÉÒÔ»ñµÃÒıµ¼Ïß
+ *Ctrl + k£¬Ctrl + C Ctrl + k£¬Ctrl + U ×¢ÊÍºÍ·´×¢ÊÍ´úÂë
+ *Ctrl + k, Ctrl + F ÕûÀíÑ¡Ôñ»òµ±Ç°ĞĞµÄ¸ñÊ½
+ *²»ÒªÔÚ´úÂëÖĞÊ¹ÓÃÖÆ±í·û
+ *Ctrl + M, Ctrl + M ÕÛµşÖ¸µã´úÂë¿é Ctrl + M, Ctrl + LÕû¸ö´ó¸ÙÊÓÍ¼ÕÛµş Ctrl + M, Ctrl + P ¹Ø±Õ´ó¸ÙÏÔÊ¾ Ctrl + M, Ctrl + OÕÛµşµ½¶¨Òå
+ Í£Ö¹´ó¸ÙÊÓÍ¼¿ÉÒÔÓÃ³·ÏúÃüÁîÈ¡Ïû
+ *Alt + M µ½¿ìËÙÃüÁîÇĞ»»ĞĞ
+ *Ctrl + k, Ctrl + k ´´½¨ÊéÇ© Ctrl + k, Ctrl + p ÉÏÒ»¸öÊéÇ© Ctrl + k£¬ Ctrl + n ÏÂÒ»¸öÊéÇ© Í¬Ò»ÎÄµµÖĞÊ¹ÓÃÊéÇ©Ä¬ÈÏÃ»ÓĞ°ó¶¨ ÏÖÔÚ°ó¶¨Îª Ctrl + k, Ctrl + o ºÍ Ctrl + k, Ctrl + j  Ctrl + shift + k, Ctrl + Shift + n ºÍ Ctrl + shift + k, Ctrl + Shift + n ¶ÔÓ¦ÓÚÏàÍ¬ÊéÇ©ÎÄ¼ş¼ĞµÄÇĞ»»
+ *Alt + F3 Ê¹ÓÃµ±Ç°Ñ¡ÖĞ´ÊÓï×÷ÎªËÑË÷´Ê F3µ±Ç°´ÊËÑË÷ Shift + F3½øĞĞ·´Ïòµ±Ç°´ÊËÑË÷
+ *Ctrl + Shift + ¿Õ¸ñ ²ÎÊıĞÅÏ¢ Alt + ÓÒ¼ıÍ· Íê³ÉĞÅÏ¢ Ctrl + K Ctrl + I º¯Êı¿ìËÙĞÅÏ¢
+ *Ê¹ÓÃCtrl + i ½øĞĞ½¥½øÊ½ËÑË÷ ÖĞÍ¾EscÍË³ö Ctrl + Shift + i ½øĞĞ·´Ïò½¥½øÊ½ËÑË÷
+ *Ctrl + F3 ÓÃµ±Ç°Ñ¡ÖĞ´ÊÓï×ö´ÊËÑË÷ Ctrl + Shift + F3 ÄæÏòËÑË÷
+ *Ctrl + F ¿ìËÙËÑË÷ Ctrl + shift + F ÔÚÎÄ¼şÖĞËÑË÷ Ctrl + H ¿ìËÙÌæ»» Ctrl + Shift + H ÎÄ¼şÖĞÌæ»» Alt + F12 ²éÕÒ·ûºÅ Ctrl + D ²éÕÒ×éºÏ¿ò F3 ÖØ¸´ÉÏ´Î²éÕÒ Alt + Shift + F12 ¶¨Î»µ½²éÕÒ·ûºÅ½á¹û´°¿Ú
+ *Ctrl + Alt + ÏÂ¼ıÍ· ´ò¿ªÎÄ¼ş²Ëµ¥ÏÂÀ­ÁĞ±í
+ *F12 Ìøµ½ÀàµÄ¶¨Òå
+ *Alt + ¿Õ¸ñ µ÷³öÏµÍ³×Ü²Ëµ¥ ¿ÉÒÔÊ¹ÓÃ¼üÅÌÒÆ¶¯·Å´ó´°¿Ú
+ *Alt + F6 Alt + Shift + F6 ÔÚ¹¤¾ß´°¿ÚÖĞµ¼º½
+ *Ctrl + F7 ±àÒëµ±Ç°ÎÄ¼ş
+ *shift + Esc ¹Ø±Õµ±Ç°¹¤¾ß´°¿Ú
+ *Ctrl + pageUp Ctrl + pageDown ÇĞ»»¹¤¾ß¿¨ÖĞµÄ´°¿Ú
+ *Shift + Alt + Enter ½øÈëÈ«ÆÁÄ£Ê½ 
+ *Ctrl + Alt + A ÃüÁî´°¿Ú Alt + 1 Êä³ö´°¿Ú
+ *F12 ²éÕÒÖ¸µã·ûºÅµÄ¶¨Òå Shift + F12 ²éÕÒÖ¸µã·ûºÅµÄÉùÃ÷
+ *Ctrl + / ÔÚ²éÕÒ×éºÏ¿òÖĞÖ´ĞĞÃüÁî

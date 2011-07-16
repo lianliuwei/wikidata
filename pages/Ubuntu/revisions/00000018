@@ -1,0 +1,57 @@
+= Ubuntu =
+ *桌面版本好用的工具 Ailurus
+ *[[http://forum.ubuntu.org.cn/viewtopic.php?f=77&t=166469&start=0|如何备份已经安装的软件清单和源(包括签名)]]
+ *[[http://forum.ubuntu.com.cn/viewtopic.php?f=52&t=230326&view=next|建立属于你的Ubuntu本地光盘源!]]
+== 问题 ==
+ *bash运行Vim后乱码
+ *sudo很慢
+ *原来解析网址很慢 一修改 DNS 将 12 和 18 换成 18一个就好了
+== 任务 ==
+ *了解开机流程
+ *了解Grub 2
+ *了解Ubuntu 最新技术动向
+ *了解HAL
+== 添加源 ==
+ *默认的源中的包的版本太低了
+ *[[http://hi.baidu.com/joe371/blog/item/b23524019f9cf28fe950cde2.html|gpg签名验证错误及ubuntu 升级密钥]] 添加源使用gpg 和 apt-key命令
+ *使用deb http://ftp.de.debian.org/debian sid main 源[[http://packages.debian.org/sid/all/git-core/download|参考]]
+== upstart ==
+
+ *upstart是Ubuntu用来替代init的程序，还有很多的功能
+ *[[http://upstart.ubuntu.com/index.html|官网]]
+
+ *[[http://nhlcorp.blog.ubuntu.org.cn/2009/08/02/ubuntu-%E5%90%AF%E5%8A%A8%E8%BF%90%E8%A1%8C%E8%84%9A%E6%9C%AC/|ubuntu 启动运行脚本]]
+
+ *[[http://blog.csdn.net/dong_miao/archive/2010/02/23/5319556.aspx|需要查看]]
+
+ *[[http://www.linux.com/archive/feature/125977|需要查看]]
+== 资源 ==
+ *[[http://www.ubuntu.org.cn/|中文官网]]
+ *[[http://www.ubuntu.com/|英文官网]]
+ *[[http://www.playdeb.net/]]ubuntu下游戏
+ *[[http://wiki.ubuntu.org.cn/index.php?title=%E9%A6%96%E9%A1%B5&variant=zh-cn]]Ubuntu的wiki
+== 8.10升级 ==
+ *使用更新管理器升级
+  *[[http://blog.sina.com.cn/s/blog_5ed5a1f40100c3wf.html]]
+  *[[http://hi.baidu.com/luo_dean/blog/item/c25151d65392ed2706088bb5.html]]
+ *装新的系统在重新安装
+== 备份 ==
+ *[[http://blog.sina.com.cn/s/blog_574fa1f00100d95g.html]]直接备份
+ *[[http://ubuntu.osgeeker.com/2007/06/clonezillabetter-than-nortonghost.html]]Clonezilla
+ *[[http://tech.ddvip.com/2007-03/117350267120461_3.html]]Sbackup
+== 更新 ==
+ *[[http://forum.ubuntu.org.cn/viewtopic.php?f=52&t=38756&start=135]]教育网的资源
+ *[[http://forum.ubuntu.org.cn/viewforum.php?f=52]]源
+== 挂载ISO ==
+ *[[http://www.leoxiaofei.com/blog/article.asp?id=132]]
+ *-t iso9660
+== Minicom变英文 ==
+ *.bashrc下添加 alias minicom=‘env LANG=en_US minicom’
+== 启动自动挂载文件系统 ==
+ *直接修改/etc/fstab
+ *使用disk manager 中文:磁盘管理器
+== 源代码阅读工具 ==
+ *[[http://forum.ubuntu.org.cn/viewtopic.php?f=70&t=12133]]
+ *[[http://www.gnu.org/software/global/global.html]]
+== 10.10 ==
+ *[[https://help.ubuntu.com/10.10/serverguide/C/index.html|Ubuntu Server Guide]]
