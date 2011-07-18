@@ -1,0 +1,22 @@
+= 编码 =
+ *计算机只认识 0 和 1 所以人的一切都要编码由计算机处理
+ *有人的因素就是麻烦
+ *掌握UTF-8就可以了
+== 字符集 ==
+ *ASCII ISO 646
+ *Unicode
+== 实现 ==
+ *UTF-8 变长 兼容
+ *UTF-16 LE
+ *UTF-16 BE
+== iconv ==
+ *linux下强大的编码工具 和 程序库
+== 资源 ==
+ *[[http://baike.baidu.com/view/482098.htm|百度百科]] 有iconv的介绍]
+ *[[http://zh.wikipedia.org/zh-cn/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81|中文wiki字符编码]] 字符编码和字符集有很大的不同 这还真是门学问
+ *[[http://en.wikipedia.org/wiki/Character_encoding|英文wiki字符编码]]
+ *[[http://zh.wikipedia.org/zh-cn/Unicode|中文Wiki Unicode]] 只是编码 还有实现
+ *[[http://zh.wikipedia.org/zh-cn/UTF-8|中文Wiki UTF-8]] 
+ *[[http://www.nengcha.com/code/]]在线编码转换
+ *[[http://blog.csdn.net/byxdaz/article/details/2419280|gbk, gb2312,big5,unicode,utf-8,utf-16之间的关系]]
+ *[[http://blog.csdn.net/byxdaz/article/details/2433004|UTF8,UTF16,UTF32,UTF16-LE,UTF16-BE,GBK 之间的转换]]
