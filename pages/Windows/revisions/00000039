@@ -1,0 +1,87 @@
+= Windows =
+ *[[http://www.china-pub.com/195486|Windows 内核情景分析--采用开源代码ReactOS]]
+ *WRK:Windows Research Kernel 微软开源内核
+ *[[http://www.unifiedkernel.com/]] 在Linux内核里模拟Windows 内核
+ *[[http://www.reactos.org/]] 开源Windows内核仿造
+ *[[http://www.winehq.org/]] wine官网
+ *[[http://blog.csdn.net/fmddlmyy/archive/2005/05/03/371646.aspx|从subsystem开始概述NT内核]]
+ *[[http://support.microsoft.com/kb/310516/zh-cn|如何通过使用注册项 (.reg) 文件添加、修改或删除注册表子项和值]]
+ *[[http://binglongx.wordpress.com/2009/01/29/felxible-dllstatic-library-linkage-configurations/|Felxible DLL/static library linkage configurations]]
+ *[[http://msdn.microsoft.com/zh-cn/library/t2fck18t.aspx|MSDN 链接方面信息]]
+ *[[http://msdn.microsoft.com/zh-cn/library/wk21sfcf.aspx|MSDN 编译方面信息]]
+ *[[http://msdn.microsoft.com/zh-cn/library/z7kx322x.aspx|Building a C/C++ Program]] MSDN信息
+ *[[http://xyztony1985.blog.163.com/blog/static/36117820077127565780/|XP：注册表的文件关联及应用]]
+ *[[http://gnuwin32.sourceforge.net/]] GNU工具的Win32移植
+ *[[http://lifeinlinux.blogspot.com/2009/08/gnuwin32.html|GNUWin32]] 介绍文章
+ *[[http://msdn.microsoft.com/en-us/library/ee663300%28v=VS.85%29.aspx|Windows Development]] MSDN上面的总目录页
+ *[[http://www.cnblogs.com/Aplo/archive/2008/03/17/1110372.html|探索 sscli, 开启 CLR 的大门 —— 配置环境详解]] sscli   .net开源解释器
+ *[[http://msdn.microsoft.com/en-us/library/ms810439|Multiple Threads in the User Interface]] 很旧了
+ *[[http://msdn.microsoft.com/en-us/windows/hardware/gg487320|Display and Graphics]] 微软图形架构
+ *Alt + F  W  F 创建新文件夹
+ *[[http://www.sevenforums.com/tutorials/7539-local-users-groups-manager-open.html|How to Open Local Users and Groups in Windows 7]]
+ *[[http://www.flounder.com/messages.htm]] 关于自定义信息用法大全
+ *[[http://www.flounder.com/mvp_tips.htm]] flounder Windows专家文章
+ *[[http://blog.csdn.net/vcbear/archive/2003/07/07/5988.aspx|探索Win32系统之窗口类（Window Classes in Win32）]]
+ *[[http://bbs.pediy.com/showthread.php?p=914823#post914823|Windows XP中的向量化异常处理]]
+ *[[http://www.codeproject.com/Articles/206409/Ribbon-with-Cplusplus-Part-1-Introduction-to-the-W|Ribbon with C++]] XP以上可以使用Win32创建Ribbon应用
+ *[[http://www.emptyloop.com/unlocker/]] 超方便查看解除文件锁工具
+== 快捷键 ==
+ *[[http://zhidao.baidu.com/question/4964586|最小化当前窗口]]
+ *[[http://www.njmy.cn/myblog/user1/service/archives/2008/6390.shtml|windows中的快捷键(全)]]
+ *[[http://xbeta.info/windows-7-shortcuts.htm|来自官方的 windows 7 快捷键大全]]
+== 微软COM存储接口 ==
+ *可以用[[Visual C++]] 6.0 的DFVIEW.EXE参考 省去了写调试程序的步骤 再加上使用XML更能方便调试
+ *[[http://msdn.microsoft.com/en-us/library/ms679731%28v=vs.85%29.aspx|Structured Storage]]
+== 命令行 ==
+ *[[http://www.cn-dos.net/forum/viewthread.php?tid=26838|求一个能取当前执行的bat文件所在目录方法。]] 一般用%cd%就行了
+ *[[http://www.cn-dos.net/forum/viewthread.php?tid=27667&fpage=1|批处理室经典帖子分类索引]]
+ *[[http://commandwindows.com/]]
+ *[[http://commandwindows.com/assoc.htm]] 文件关联的命令行
+ *[[http://tristones.viaspeip.com/archives/001130.html|批处理文件bat 语法备忘]]
+ *[[http://hi.baidu.com/%CD%F8%B0%C9%BC%BC%CA%F5/blog/item/ab1bc8030776d4733812bbe8.html|cmd下start命令的用法]]启动进程
+ *使用:进行注释
+ *使用 /c选项从命令行中输入命令
+ *[[http://tristones.viaspeip.com/archives/001130.html|批处理文件bat 语法备忘]]
+== COM ==
+ *[[http://www.cppblog.com/tx7do/archive/2009/04/17/80246.html?1311946307|vc中调用Com组件的方法详解]]
+ *[[http://blog.gmsj.org/116.html|C++调用COM组件]]
+== 绘图引擎 ==
+ *[[http://en.wikipedia.org/wiki/Desktop_Window_Manager]]
+ *[[http://en.wikipedia.org/wiki/Graphics_Device_Interface]]
+== DLL ==
+ *[[http://blog.titilima.com/show-534-1.html|DLL 导出函数的静态链接]] 自己制作lib文件来加载DLL中的函数
+ *[[http://www.binary-soft.com/dll2lib/dll2lib.htm|DLL to Lib]]
+ *[[http://www.dependencywalker.com/|Dependency Walker]] DLL依赖查看
+== 窗口管理 ==
+ *[[http://blog.csdn.net/xt_xiaotian/archive/2008/08/06/2778689.aspx|深入解析SendMessage、PostMessage]] 例子不错，但是分析有误，比如第一个界面线程PostMessage的例子，应该是界面线程调用了void CMyDlg::OnBnClickedOk()后连续的发了所有的消息，然后再用处理CMyDlg::OnMyTest()处理消息。这时候的参数也是从栈上消失了。要实现相同功能用WM_TIME定时触发好。跨线程用SendMessage出问题的机会蛮大的，如果线程间要同步的话还是自己做处理好些。
+ *[[http://blog.csdn.net/vcbear/archive/2003/07/07/5988.aspx|探索Win32系统之窗口类（Window Classes in Win32）]] 没有代码了解起来还是比较困难
+== 多用户同时登陆 ==
+ *[[http://www.winmatrix.com/forums/index.php?/topic/22479-enable-concurrent-sessions-in-windows-7-x86x64/|原理好像是这个]]
+ *[[http://www.blogsdna.com/2336/enable-multiple-user-accessconcurrent-user-sessions-for-remote-desktop-on-windows-7.htm|只针对Windows 7特定版本的]]
+ *[[http://www.zahirkhan.com/tools-utilities/multi-user-login-in-windows-7]] 全部支持
+== 网络 ==
+ *Windows网络的功能很多 但是没有通用的学习方法 太杂了 不知道错误在哪
+ *[[http://www.windowsnetworking.com/articles_tutorials/Introduction-Network-Access-Protection-Part1.html|An Introduction to Network Access Protection]] 复杂的企业级功能
+== Rich Edit ==
+ *[[http://msdn.microsoft.com/zh-cn/library/bb787605|msdn Rich Edit]]
+ *[[http://www.cnblogs.com/thankgoodness/articles/1136221.html|RichEdit使用手册]]
+== 安全 ==
+ *[[http://en.wikipedia.org/wiki/NTLM]]
+ *[[http://en.wikipedia.org/wiki/Category:Microsoft_Windows_security_technology]]
+== 包管理 ==
+ *Windows下包管理都没有
+ *[[http://www.infoq.com/cn/news/2010/04/CoApp-Open-Source-Packaging|Windows平台的开源软件包管理系统]]
+ *[[http://coapp.org/]] 还在开发
+ *[[http://code.google.com/p/windows-package-manager/]]
+ *[[http://technet.microsoft.com/zh-cn/library/dd799247(WS.10).aspx|OCSetup 命令行选项]] Windows这个命令行说不定有用
+== 可移动软件 ==
+ *[[http://portableapps.com/]] 开源的
+ *[[http://www.ceedo.com/]] 商业软件 支持64位
+ *Symantec Workspace Virtualization
+ *[[http://www.yunduan.cn]] 云端 不支持64位
+ *[[http://hi.baidu.com/1000c/blog/item/61ae3109552ec8cc3bc763c3.html|打造闪存盘移动应用方案（PortableApps、Ceedo、MojoPac）]]
+== Office ==
+ *不显示插入图片，设置选项-》视图-》图片框 为没有设置。
+== Windows 7 ==
+ *[[http://www.vcoo.me/show/1072.html|Windows 7最全的硬盘安装方法]]
+ *[[http://news.newhua.com/news1/Skills_System/2009/1211/091211152247DBD76IKGFDHJ5CIC4IA6H88EA1DAD0IBBE1GD032J96K.html|Windows 7加XP的局域网搭建与文件共享]]
