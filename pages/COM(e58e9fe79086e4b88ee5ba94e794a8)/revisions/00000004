@@ -1,0 +1,27 @@
+= COM原理与应用 =
+ *COM也没什么神秘的，就是要传递指针参数
+ *COM的设计明显来自C++
+ *3部分：原理 扩展 应用与发展
+ *[[http://blog.csdn.net/daichanglin/article/details/1540504|COM 组件设计与应用]] 有历史和技术演进的介绍
+== COM对象与接口 ==
+ *使用GUID作为标识技术
+ *使用IDL作为接口定义语言
+ *所有的接口必须继承于IUnknown接口
+== COM的实现 ==
+ *微软实现的COM库和Windows操作系统是绑定在一起的
+ *进程内组件基于DLL
+ *进程外组件基于LPC和RPC
+ *代理DLL和接口DLL
+ *HKEY_CLASSES_ROOT 下 CLSID 记录着与CLSID相对应的组件
+ *组件也能用ProgID来进行识别 ProgID 是字符串 带有版本功能
+ *COM对应实现接口用CATID代表
+ *HKEY_CLASSES_ROOT 下 Component Categories 下有所有组件的接口类别
+ *进程内组件使用RegSvr32进行注册 就是调用DLL中特定的方法 注销过程相同
+ *进程外组件使用提供相应的命令行选项进行注册
+ *CoInitialize() 和 CoUninitialize() 要对应
+ *COM使用IMalloc接口来统一内存操作
+ *有MEMCTX_TASK本进程分配器task allocator   MEMCTX_SHARED跨进程分配器
+ *CoGetMalloc()获得分配器
+ *整个COM流程中只能有一个分配器
+ *CoTaskMemAlloc() CoTaskMemFree() CoTaskMemRealloc()封装从CoGetMalloc()获取分配器并调用相应方法
+ 
