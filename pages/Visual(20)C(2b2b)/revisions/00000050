@@ -1,0 +1,103 @@
+= Visual C++ =
+ *[[http://www.cnblogs.com/xcj26/archive/2010/03/17/1688455.html|深入理解 resx文件]]
+ *在Visual C++中定制AppWizard
+  *[[http://www.vckbase.com/document/viewdoc/?id=276]]
+  *[[http://www.vckbase.com/document/viewdoc/?id=286]]
+  *[[http://www.vckbase.com/document/viewdoc/?id=287]]
+ *窥探PE文件内幕：Win32 PE 文件格式之旅
+  *[[http://www.cnblogs.com/jasonsun/archive/2010/08/13/1799029.html]]
+ *[[http://hi.baidu.com/aztack/blog/item/7fbc82cbfcc258f752664fee.html|VC的对话框模板原理]]
+ *2008中使用ctrl+f5运行控制台程序就不会一闪而过
+ *[[http://msdn.microsoft.com/en-us/library/x93ctkx8.aspx|Debug Interface Access SDK]] 用于查询pdb的COM
+ *[[http://msdn.microsoft.com/en-us/library/yd4f8bd1.aspx|Program Database Files (C++)]]
+ *[[http://sourceforge.net/projects/wtl/]] Windows下的UI库
+ *[[http://blog.sina.com.cn/s/blog_403ba3dd01000aue.html|不再经受"Warning C4819"的摧残]] 多语言支持怎么就这么差
+ *Visual Studio中的Samples目录有很多有用的示例
+ *[[http://msdn.microsoft.com/zh-tw/library/1370z17c%28v=VS.90%29.aspx|Visual C++ 範例應用程式]]
+ *[[http://stackoverflow.com/questions/1116465/how-do-you-share-code-between-projects-solutions-in-visual-studio|How do you share code between projects/solutions in Visual Studio?]]
+ *[[http://msdn.microsoft.com/zh-cn/library/151kt790%28v=VS.90%29.aspx|链接器的延迟加载 DLL 支持]]
+ *[[GDI+]]
+ *选项-》项目与解决方案-》生成并运行 中的 运行时，当项目过期时选项可以用来配置调试前是否进行构建
+ *VS下的工程和它依赖的工程不要重名，不然生成的时候可能会互相删除前一个生成的文件
+== 下载 ==
+ *[[http://boston.celtics.blog.163.com/blog/static/1134536022010316046647/?1308745551|]]
+== 运行库 ==
+ *基本上用有/MD /MT和对应的d debug版本。
+ *使用/MT会静态链接运行库 使用/MD会动态链接运行库
+ *Windows上动态库的版本是个大问题，所以[[chrome]]使用的是/MT版本的。
+ *[[MFC]]的链接版本和动态库的链接版本要对应
+ *[[http://stackoverflow.com/questions/757418/should-i-compile-with-md-or-mt]]
+ *程序有多个DLL模块 用/MT进行链接 会存在多份代码
+== 远程调试 ==
+ *[[http://v8ynkq.dev3.webenabled.net/archives/285|VS2008 远程调试环境搭建]]
+ *[[http://www.cnblogs.com/OpenCoder/archive/2010/02/17/1668983.html|Visual Studio 2008 远程调试]]
+ *[[http://msdn.microsoft.com/en-us/library/y7f5zaaa.aspx|Remote Debugging Setup]]
+ *权限是个大问题
+ *[[http://msdn.microsoft.com/en-us/library/2kzt1wy3.aspx|/MD, /MT, /LD (Use Run-Time Library)]]
+== C4275 ==
+ *这个warnings可能会导致很严重的问题，但是出现概率很小
+ *[[https://bugzilla.mozilla.org/show_bug.cgi?id=556886|相关讨论和解释]]
+ *[[http://stackoverflow.com/questions/553103/can-i-disable-exceptions-in-stl]]
+ *当使用/MD /MDd使用_STATIC_CPPLIB 标记就能解决标准库的报错
+== WinSxS ==
+ *用来解决DLL Hell问题
+ *配套程序需要有
+ *本地目录下有manifest文件优先使用
+ *程序中的manifest在rc资源文件中
+ *mt程序可以维护manifest
+ *[[http://www.cnblogs.com/killmyday/archive/2009/02/20/1394596.html|VC编写的程序不能在其他机器上运行的解决方案]]
+== 运行程序 ==
+ *[[http://stackoverflow.com/questions/42531/how-do-i-call-createprocess-in-c-to-launch-a-windows-executable]]
+ *[[http://www.vckbase.com/document/viewdoc/?id=416|深入浅出ShellExecute]]
+== atlrx.h missing ==
+ *Visual C++ 2008以后会出现 因为微软改变了库为开源的了
+ *[[http://blog.csdn.net/wu_huiwen/archive/2010/04/24/5523128.aspx|MFC 中正则表达式的使用，找不到atlrx.h解决办法]]
+ *[[http://atlserver.codeplex.com/releases/view/3754|ATL Server Library and Tools]] 相关库位置
+== 预编译头文件 ==
+ *[[http://blog.csdn.net/Nhsoft/archive/2003/07/07/11558.aspx|预编译头文件的使用]] 节省常见头文件的处理
+ *[[http://lmsjack.blog.163.com/blog/static/134484720091026102919815/|预编译头文件来自编译器的早期版本，或者预编译头为 C++ 而在 C 中使用它(或相反)]] 混合编程可能出现的错误
+== 插件 ==
+ *[[http://www.wholetomato.com/|Visual Assist X]]
+ *Visual Assist X 可以配置变量颜色 Visual Studio 2008里面一直找不到
+== Memory Leak Detection ==
+ *[[http://stackoverflow.com/questions/2820223/visual-c-memory-leak-detection]]
+ *[[http://vld.codeplex.com/]] Visual Leak Detector官网  开源工具
+ *[[http://www-01.ibm.com/software/awdtools/purify/]] IBM收费工具
+== 快捷键 ==
+ *[[http://www.microsoft.com/downloads/en/details.aspx?FamilyID=4411BBFC-0E3C-42B3-BD05-AF1D292C986F|Visual C++ 2008 Keybinding Reference Poster ]]
+ *工具 -> 选项 -> 环境 -> 键盘 可以查找对应的快捷键对应的命令
+ *Ctrl + Shift + V 查看剪切板
+ *Ctrl + Enter 上方插入一行 Ctrl + Shift + Enter 下方插一行
+ *Alt + o 头文件和源文件切换
+ *Ctrl + - 向后定位 Ctrl + shift + - 先前定位
+ *Ctrl + Delete Ctrl + Backspace 删除词 Ctrl + L 剪切行
+ *Ctrl + k, Ctrl + \ 删除空白行
+ *Ctrl + r, Ctrl + w 切换是否显示空白字符
+ *F4 下一个错误
+ *Ctrl + F6 Ctrl + Shift + F6 在标签页中跳转  Ctrl + F4关闭当前标签页
+ *Alt + Shift + 光标移动 选择区域
+ *Ctrl + = 选择到最后一个返回标记的代码 Ctrl + k， Ctrl + A 交换当前定位点位置
+ *编辑注册表可以获得引导线
+ *Ctrl + k，Ctrl + C Ctrl + k，Ctrl + U 注释和反注释代码
+ *Ctrl + k, Ctrl + F 整理选择或当前行的格式
+ *不要在代码中使用制表符
+ *Ctrl + M, Ctrl + M 折叠指点代码块 Ctrl + M, Ctrl + L整个大纲视图折叠 Ctrl + M, Ctrl + P 关闭大纲显示 Ctrl + M, Ctrl + O折叠到定义
+ 停止大纲视图可以用撤销命令取消
+ *Alt + M 到快速命令切换行
+ *Ctrl + k, Ctrl + k 创建书签 Ctrl + k, Ctrl + p 上一个书签 Ctrl + k， Ctrl + n 下一个书签 同一文档中使用书签默认没有绑定 现在绑定为 Ctrl + k, Ctrl + o 和 Ctrl + k, Ctrl + j  Ctrl + shift + k, Ctrl + Shift + n 和 Ctrl + shift + k, Ctrl + Shift + n 对应于相同书签文件夹的切换
+ *Alt + F3 使用当前选中词语作为搜索词 F3当前词搜索 Shift + F3进行反向当前词搜索
+ *Ctrl + Shift + 空格 参数信息 Alt + 右箭头 完成信息 Ctrl + K Ctrl + I 函数快速信息
+ *使用Ctrl + i 进行渐进式搜索 中途Esc退出 Ctrl + Shift + i 进行反向渐进式搜索
+ *Ctrl + F3 用当前选中词语做词搜索 Ctrl + Shift + F3 逆向搜索
+ *Ctrl + F 快速搜索 Ctrl + shift + F 在文件中搜索 Ctrl + H 快速替换 Ctrl + Shift + H 文件中替换 Alt + F12 查找符号 Ctrl + D 查找组合框 F3 重复上次查找 Alt + Shift + F12 定位到查找符号结果窗口
+ *Ctrl + Alt + 下箭头 打开文件菜单下拉列表
+ *F12 跳到类的定义
+ *Alt + 空格 调出系统总菜单 可以使用键盘移动放大窗口
+ *Alt + F6 Alt + Shift + F6 在工具窗口中导航
+ *Ctrl + F7 编译当前文件
+ *shift + Esc 关闭当前工具窗口
+ *Ctrl + pageUp Ctrl + pageDown 切换工具卡中的窗口
+ *Shift + Alt + Enter 进入全屏模式 
+ *Ctrl + Alt + A 命令窗口 Alt + 1 输出窗口
+ *F12 查找指点符号的定义 Shift + F12 查找指点符号的声明
+ *Ctrl + / 在查找组合框中执行命令
