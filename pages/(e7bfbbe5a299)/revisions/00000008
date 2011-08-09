@@ -1,0 +1,20 @@
+= 翻墙 =
+ *[[http://www.chinagfw.org/]]
+ *[[http://blog.jianingy.com/category/tags/ssh]]翻墙原理
+ *[[http://blog.jianingy.com/content/ssh%E9%9A%A7%E9%81%93%E6%8A%80%E6%9C%AF%E7%AE%80%E4%BB%8B]]ssh隧道技术简介
+ *[[http://zh.wikipedia.org/zh-cn/%E7%A9%BF%E9%9A%A7%E5%8D%94%E8%AD%B0]]穿隧协议
+ *[[http://blog.cosrc.com/?action=show&id=21]]深入理解代理服务器
+ *[[http://omobox.com/memo/say-no-to-gfw.html]]SSL隧道翻墙 
+ *[[http://zhao.jinhai.de/post/1014.html|用VPN翻墙，却遭遇DNS污染]] 用google DNS 不过好像现在又被封锁了
+ *[[http://en.wikipedia.org/wiki/Tunneling_protocol]]
+ *[[http://www.crossthewall.net/]] 张生翻墙
+ *[[http://nipao.org/2009/12/post_892.html|Hotspot Shield + Google DNS，全球畅通无阻]] 用VPN翻墙
+ *[[http://blog.solrex.org/articles/remote-dns-lookup.html|关于 SOCKS 代理的远端 DNS 解析]] 解决DNS污染
+ *[[http://code.google.com/p/gappproxy/]] python写的用google app做HTTP代理
+ *[[http://code.google.com/p/dnsproxycn/]]
+ *[[http://dnrd.sourceforge.net/]] 域名解析缓存
+== 改hosts ==
+ *[[http://www.soleilneon.com/blog/2009/07/modify-hosts-for-youtube-twitter-facebook/]]
+ *[[http://orztech.com/softwares/hostsx]]
+ *[[http://qixinglu.com/archives/use_dnsmasq_replace_hosts]]
+ *[[http://mayakron.altervista.org/support/browse.php?path=Acrylic]] 本地DNS server
