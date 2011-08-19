@@ -1,1 +1,6 @@
 1294473694875000	00000001	SAVENEW	Google(20)Test	127.0.0.1	localhost			
+1313762724481505	00000002	SAVE	Google(20)Test	127.0.0.1	lian-Desktop			
+1313762741490000	99999999	ATTNEW	Google(20)Test	127.0.0.1	lian-Desktop		run_all_unittests.cc	
+1313762810172000	99999999	ATTDEL	Google(20)Test	127.0.0.1	lian-Desktop		run_all_unittests.cc	
+1313762810177000	99999999	ATTNEW	Google(20)Test	127.0.0.1	lian-Desktop		run_all_unittests.cc	
+1313762908076580	00000003	SAVE	Google(20)Test	127.0.0.1	lian-Desktop			
