@@ -1,0 +1,14 @@
+= GUI =
+ *计算机进制最快也是淘汰最快的领域
+ *[[http://en.wikipedia.org/wiki/Widget_toolkit]]
+ *[[http://blackboxwm.sourceforge.net/]]开源windows下的shell
+ *[[http://blog.csdn.net/kissqi]]
+ *[[http://www.rawmaterialsoftware.com/juce.php]] juce [[C++]]新界面框架 有潜力 可以看一下
+ *[[MiniGUI]]
+ *[[WxPython]]
+ *[[http://www.atai.org/guitool/]] GUI库大全
+ *[[http://www.cegui.org.uk]] CEGUI 游戏界常用的GUI框架，听说代码写得好
+== 记录 ==
+ *XFree86 是 Network Protocol
+ *XFree86,Window manager,Desktopmanager,Application software 是不同的程序
+ *整体化GUI 和 非整体化GUI 是否可以自己组合   

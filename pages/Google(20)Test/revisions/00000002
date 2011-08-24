@@ -1,0 +1,6 @@
+= Google Test =
+ *[[http://code.google.com/p/googletest/]]
+ *[[http://www.cnblogs.com/coderzh/archive/2009/04/06/1426755.html|玩转Google开源C++单元测试框架Google Test系列(gtest)]]
+ *测试工程的属性要和编译gtest时使用参数一样
+ *用TEST宏来开始测试案例
+ *用RUN_ALL_TEST()宏来运行测试案例
