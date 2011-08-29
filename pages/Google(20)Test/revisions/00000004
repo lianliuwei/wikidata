@@ -1,0 +1,24 @@
+= Google Test =
+ *[[http://code.google.com/p/googletest/]]
+ *[[http://www.cnblogs.com/coderzh/archive/2009/04/06/1426755.html|玩转Google开源C++单元测试框架Google Test系列(gtest)]]
+ *测试工程的属性要和编译gtest时使用参数一样
+ *用TEST宏来开始测试案例
+ *用RUN_ALL_TEST()宏来运行测试案例
+ *使用下列代码开启测试
+{{attachment:run_all_unittests.cc}}
+ *Google Test会在每次测试之前保存这个标记并在测试完成后恢复
+ *设置测试案例无效的方法为：在测试案例名称或测试名称中添加DISABLED前缀
+ *在TEST等宏中定义的测试案例名称(testcase_name)在xml测试报告中其实是一个testsuite name，而宏中的测试名称(test_name)在xml测试报告中是一个testcase name
+== 运行参数 ==
+ *gtest提供了一系列的运行参数（环境变量、命令行参数或代码里指定）
+ *比如相对于命令行参数--gtest_output，可以使用testing::GTEST_FLAG(output) = "xml:";来设置
+ *推荐将代码参数设置语句放置InitGoogleTest之前，这样就可以使得对于同样的参数，命令行参数优先级高于代码中指定。
+ *系统环境变量全大写，比如对于--gtest_output，响应的系统环境变量为：GTEST_OUTPUT
+ *参数类型分为
+  1. 测试案例集合
+  1. 测试案例输出
+  1. 对案例的异常处理
+  ||命令行参数||说明||
+  ||gtest_break_on_failure||调试模式下，当案例失败时停止，方便调试||
+  ||gtest_throw_on_failure||当案例失败时以C++异常的方式抛出||
+  ||gtest_catch_exceptions||组织Windows下异常弹窗||
