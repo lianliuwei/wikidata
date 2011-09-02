@@ -1,0 +1,31 @@
+## page was renamed from testing
+= Testing =
+ *测试
+ *和调试是不一样的概念
+ *[[http://en.wikipedia.org/wiki/Category:Software_testing]]软件测试内容
+ *[[http://www.51testing.com/index/index.htm]]
+ *[[http://ctrace.sourceforge.net/]]ctrace
+ *[[http://blog.chinaunix.net/u1/34831/showart_1096079.html]]C单元测试
+ *[[http://sourceforge.net/projects/cppunit/]]
+ *[[http://en.wikipedia.org/wiki/Dbx_debugger]]dbx已经被GDB代替了
+ *[[http://blog.csdn.net/xy365/archive/2008/08/07/2784416.aspx]] 代码静态检查工具PC-LINT
+ *工具
+  *[[http://en.wikipedia.org/wiki/Category:Program_testing_tools]]
+  *DejaGnu
+  *xvfb
+ *Windows窗口自动化测试还没有什么开源的
+ *UI Automation 用于.net的UI测试
+== QTP ==
+ *好像是自动化GUI测试工具
+ *[[http://blog.csdn.net/zzxxbb112]]
+== 资源 ==
+ *[[http://blog.csdn.net/kerryzhu/archive/2006/12/25/1460633.aspx|开源测试工具的完整解决方案]]
+ *[[http://blog.csdn.net/Testing_is_believing]]
+ *[[http://www.qaliber.net/index.php]] 还带开发环境 不知道这东西怎么样
+ *[[http://code.google.com/p/autoit-cn/]] autoit好像只能当快捷键工具
+ *[[http://crossdoor.cublog.cn/]]AutoIt 入门与提高教程(已完成)
+ *[[http://www.cnblogs.com/stbchina/archive/2010/01/25/Tech-Trend-of-Microsoft-UI-Automation-Testing-Part-1.html|微软UI自动化测试的技术演变(上)]]
+ *[[http://blog.benhall.me.uk/2008/02/project-white-automated-ui-testing.html|Project White: Automated UI Testing]]
+ *[[http://www.cnblogs.com/coderzh/archive/2010/08/27/python-testing.html|Python测试开发分享感悟]]
+ *[[https://www.ibm.com/developerworks/cn/linux/l-cn-cppunittest|轻松编写 C++ 单元测试]] 介绍单元测试框架组合： [[google test|googletest]] 与 [[google mock|googlemock]]
+ *[[http://www.ibm.com/developerworks/cn/java/j-lo-testpartten|应用设计模式编写易于单元测试的代码]] [[Java]]的

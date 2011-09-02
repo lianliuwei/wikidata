@@ -1,0 +1,43 @@
+= google mock =
+ *[[http://code.google.com/p/googlemock]]
+ *[[http://code.google.com/p/googlemock/wiki/ForDummies]]
+ *Google Mock有三个（主要的）指导文档，其难度由低到高分别为：ForDummies，CheatSheet，CookBook。
+ *模拟的函数都要是纯虚函数。
+ *用于模拟调用对象，和[[google test]]配合使用。
+ *在单元测试、模块的接口测试时，当这个模块需要依赖另外一个/几个类，而这时这些个类还没有开发好，这时可以定义Mock对象来模拟那些类的行为。
+ *自己实现一个假的依赖类，对这个类的方法你想要什么行为就可以有什么行为，你想让这个方法返回什么结果就可以返回怎么样的结果。
+ *[[http://heuristic-cookbook.appspot.com/Google-Mock-%E5%85%A5%E9%97%A8]]
+ *可以对调用参数进行限制和不符合的调用进行侦测
+ *典型的流程
+  1. 引入你要用到的Google Mock名称. 除宏或其它特别提到的之外所有Google Mock名称都位于*testing*命名空间之下.
+  1. 建立模拟对象(Mock Objects).
+  1. 可选的,设置模拟对象的默认动作.
+  1. 在模拟对象上设置你的预期(它们怎样被调用,应该怎样回应?).
+ *对方法期望行为的定义的语法格式如下：
+{{attachment:mock.cpp}}
+== 匹配器（Matcher） ==
+ *通配符
+ *一般比较
+ *浮点数的比较
+ *字符串匹配
+ *容器的匹配
+ *成员匹配器
+ *匹配函数或函数对象的返回值
+ *指针匹配器
+ *复合匹配器
+== 基数（Cardinalities） ==
+== 行为（Actions） ==
+ *Actions（行为）用于指定Mock类的方法所期望模拟的行为：比如返回什么样的值、对引用、指针赋上怎么样个值。
+ *值的返回
+ *另一面的作用（Side Effects）
+ *使用函数或者函数对象（Functor）作为行为
+ *复合动作
+== 序列（Sequences） ==
+ *无序（Unordered）
+ *有序的（Ordered）
+== Google Mock Cookbook ==
+ *Google Mock也可以模拟protected和private方法
+ *Google Mock可以Mock模版类，只要在宏MOCK*的后面加上T。
+ *NiceMock<>通过所有没有设置EXPECT_CALL的调用，StrictMock<>相反
+ *Google Mock对象在析构的时候会检查mock函数的执行结果是否与预期相符，如果mock对象一直存在，最终的检查就不会发生。因此，如果你在堆（heap）中创建mock对象的话，最好使用内存泄漏检查工具来确定你的test是否做好了mock对象销毁工作。
+ *主动进行检验：Mock::VerifyAndClearExpectations(&mock_object):
