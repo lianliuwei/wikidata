@@ -1,0 +1,53 @@
+= Chrome =
+ *[[Google]]最新的浏览器
+ *chrome使用的技术变化很快
+ *[[http://www.xiaohui.com/dev/vccool/internet/google-chrome-source-code-download.htm]]
+ *[[http://dev.chromium.org/developers/how-tos/get-the-code]]如何获得源代码 代码量相当的大
+ *[[http://www.chromium.org/]]官网
+ *[[http://dev.chromium.org/developers/how-tos/depottools]] 使用的版本库的工具
+ *[[http://dev.chromium.org/developers/how-tos/depottools/presubmit-scripts]] 提交前审查工具
+ *使用[[buitbot]]进行构建
+ *[[http://blog.sunchrome.com/]]
+ *depot_tools是用于版本管理的工具，使用了DEP配置文件
+ *有很多代码是在别的版本库中
+ *gyp是构建工具用于生成各种本地构建文件，使用.gyp .gypi文件进行配置
+ *[[http://blog.csdn.net/ciml]]有扩展教程
+ *[[http://dev.chromium.org/developers/how-tos/build-instructions-windows]]
+ *[[http://code.google.com/chrome/extensions/index.html|Google Chrome Extensions]] 扩展官方程序
+ *[[http://code.google.com/p/rlz/|rlz]] 用于推广分析
+ *[[http://dev.chromium.org/developers/testing/pyauto]]用于测试界面的库
+ *chromium是一组软件的统称 最大的是chrome
+ *Chromium和Chromium OS是两个分离的项目
+ *[[http://site.icu-project.org/]] 使用的国际化和本地化的库
+ *[[http://blog.csdn.net/chief1985/archive/2011/06/13/6540496.aspx|chrome使用的开源工程介绍]]
+ *[[http://code.google.com/p/chromiumembedded/]] 在别的程序中嵌入chorme的工程
+ *Callback system 用来替代 NewRunnableMethod, NewRunnableFunction, CreateFunctor, 和 CreateCallback systems 统一回调方法代码
+ *[[http://www.techvivo.com/google-chrome-shortcuts/|Top 46 Google Chrome Shortcuts That Save Time]]
+ *GFX是graphics的同音缩写，只是为了写起来方便。
+== 启动流程 ==
+ *参考[[http://blog.csdn.net/ciml/article/details/5730209|chrome源码学习之启动流程简介]]
+ *chrome启动流程 chrome.exe chrome.dll chrome.dll中中包含了所有角色的代码
+ *chrome.dll的入口函数是ChromeMain，会根据运行的不同类型运行不同的main，比如RendererMain，PluginMain等
+ *BrowserMain入口的实现在browser工程的browser_main.cc中browser_process负责资源的管理browser/ui中的browser_init负责启动浏览器主UI界面
+== UI ==
+ *类似工具栏和地址栏的东西叫omnibox
+ *隐身模式显示的图像加OTRAvatar
+ *[[http://code.google.com/p/x-framework/]] 抽取chrome UI代码
+ *[[http://www.cppblog.com/wlwlxj/]] 上面工程作者blog
+== Git库 ==
+ *[[http://git.chromium.org/]]相关git库
+ *[[http://code.google.com/p/chromium/wiki/UsingGit]]
+ *[[http://code.google.com/p/chromium/wiki/GitCookbook]]
+ *[[http://git.chromium.org/chromium.git]] 主git库
+== /MT与/MD方式 ==
+ *chrome编译库一般都用/MT方式的,减少在Windows下库的问题
+ *[[http://code.google.com/p/chromiumembedded/wiki/LinkingDifferentRunTimeLibraries]] 可以使用相似的方法解决提取代码和库使用的问题
+ *[[http://magpcss.org/ceforum/viewtopic.php?f=6&t=72|/MD /MDd builds?]] 相关的讨论
+== 代码分析 ==
+ *[[http://www.cnblogs.com/duguguiyu/]]
+ *[[http://blog.csdn.net/bzero1982]]
+ *[[http://blog.csdn.net/caimouse/category/458770.aspx|谷歌浏览器的源码分析]]
+ *[[http://blog.csdn.net/ciml/archive/2010/04/28/5538276.aspx|chrome源代码目录结构简介（版本4.1.249.1059）]]
+ *[[http://blog.csdn.net/xingtian713]]
+ *[[http://blog.csdn.net/chief1985]]
+ *[[http://blogold.chinaunix.net/u2/76055/]] chrome UI笔记
