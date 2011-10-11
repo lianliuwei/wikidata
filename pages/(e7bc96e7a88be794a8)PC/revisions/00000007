@@ -1,0 +1,44 @@
+= 编程用PC =
+ *[[http://www.tomshardware.com/forum/266568-31-gaming-work-build]]视频编程用
+ *[[http://www.tomshardware.com/forum/276340-31-desktop-build-program-help]]正宗编程用PC
+ *[[http://www.pcpop.com/doc/0/566/566942.shtml|多屏装机推荐]]
+ *[[http://www.ruanyifeng.com/blog/2009/02/fog_creek_s_new_office.html|美国的软件公司是什么样？---- 以Fog Creek为例]]
+ *[[http://www.joelonsoftware.com/items/2008/12/29.html|The new Fog Creek office]]
+ *[[http://mouse.zol.com.cn/142/1429425.html|微软人体工学键盘4000]]
+ *[[http://club.chinaren.com/bbs/index.jsp?boardid=317&hotmsgid=78295277|Google中国的办公室]]
+ *[[http://www.xixik.com/content/21986dff10fc6664|探访微软、google、网易等IT巨头办公室]]
+ *[[http://lifehacker.com/5159194/before-and-after-barren-attic-to-programmers-paradise|before-and-after-barren-attic-to-programmers-paradise]]
+== CPU ==
+ *用Intel 高频率 多核心
+ *投资应该最多的部分
+ *SMP一般的Windows系统支持不是很好，主板也不好找
+== 显卡 ==
+ *要支持多屏幕
+== 显示器 ==
+ *16:10 这样点距大，竖屏幕不会太高
+ *黑色要纯 减少辐射
+ *功率小 减少辐射
+ *色彩准确，响应时间倒是不重要
+ *支持多种输入端口 利于用单显卡组合
+ *双24竖屏幕，是一种好的选择
+ *[[http://auction1.paipai.com/5AE7460000000000005A3823047FE415|液晶支架,Ergotron,艾格升]]
+ *[[http://hi.baidu.com/cleochan/blog/item/03eecc35829e4e83a71e125a.html|HP w2228h]]
+== 多显示器 ==
+ *[[https://bbs.et8.net/bbs/showthread.php?t=1000094]]双显示器
+ *[[http://news.zol.com.cn/52/527031.html|看微软员工奢侈的Vista配置：24寸LCD×4]]
+ *[[http://www.tzwhx.com/newOperate/html/1/11/114/20303.html|Visual Studio 2010中的多显示器支持]]
+ *[[http://www.samsal.com/2009/04/den-programmer-home-office.html]]
+ *[[http://successfulsoftware.net/tag/programmer/|多显示器工作室图片]]
+ *[[http://en.w3support.net/index.php?db=sv&id=1782|Exclusive of cost, what is the ideal monitor set up for a team of programmers?]]
+ *[[http://stackoverflow.com/questions/6231/whats-your-ideal-multiple-monitor-setup-for-programming]]
+ *[[http://thedude.com/archives/2008/03/coworkers_and_f.html|双显示器使用图片]]
+== SSD ==
+ *用SSD能提高多少编译速度？
+ *[[http://www.fatlemon.co.uk/2010/02/ssd-visual-studio-and-improving-developer-productivity/]]
+ *[[http://jeffreypalermo.com/blog/speeding-up-the-build-ndash-ditch-the-ssd-and-go-for-the-ram-drive/]]
+ *[[http://stackoverflow.com/questions/499889/ssd-and-programming]]
+ *[[http://stackoverflow.com/questions/4557934/would-and-ssd-vs-fast-hdd-drive-make-my-eclipse-run-compile-faster]] 对java好像是有效的
+ *[[http://social.msdn.microsoft.com/Forums/en-AU/vstsstart/thread/9fcd9d38-dfee-4e54-b86b-8190dc38fff7]]  随机写入相当重要
+ *[[http://exdream.com/Blog/post/2009/05/03/Visual-Studio-compile-times-on-different-disk-drives-and-SSDs.aspx]] 有的SSD的确帮不了忙
+ *[[http://exdream.com/Blog/post/2009/03/20/Experiences-with-the-Intels-X25-M-80GB-SSD-and-compiling-native-code-in-Visual-Studio.aspx]] X25-M就可以提高很多性能
+ *[[http://stackoverflow.com/questions/867741/ssd-drives-and-visual-studio-ide-big-improvements-real-usage-stories-no-theor]] 加CPU和加SSD之争
