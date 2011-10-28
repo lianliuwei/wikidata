@@ -1,0 +1,14 @@
+= gyp =
+ *生成个平台的project文件
+ *[[http://code.google.com/p/gyp/]] 官网
+ *和CMake相同
+ *[[http://groups.google.com/group/gyp-developer/browse_thread/thread/897021689971acf9/c7d7d1551eb0e639?lnk=gst&q=cygwin#c7d7d1551eb0e639|gyp advantages over CMake?]]
+ *[[http://groups.google.com/group/gyp-developer]] 论坛
+ *基本就是变量 条件，根据不同的条件设置不同的变量 再根据变量设置对应的工程文件需要的变量。到最后就是一堆相关的变量
+ *conditions是早发生 target_conditions是迟发生
+ *字典中的变量对应变量名值_开头的变量名
+ *主要解决了依赖的问题
+ *依赖问题和目标类型有关
+ *默认两个静态库依赖会并行编译 去除依赖。特殊情况用hard_dependency强制
+ *gyp gypi 第一个{}后面一定不要加,
+ *使用gypi合并相同配置
