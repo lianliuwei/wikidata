@@ -46,11 +46,7 @@
  *[[http://google-opensource.blogspot.com/2008/05/export-git-project-to-google-code.html|Export a Git Project to Google Code]] 使用主Git中心库 导出到SVN库中
  *[[http://google-opensource.blogspot.com/2008/05/develop-with-git-on-google-code-project.html|Develop with Git on a Google Code Project]]使用SVN中心库 
  *“/svn/!svn/vcc/default”: 200 错误是SVN服务器引起的[[http://stackoverflow.com/questions/4824478/cant-get-guava-using-git-svn|暂时解决办法]]checkout出错的版本 branch出master
-<<<<<<< HEAD
- *git-svn有时候在提交完版本后失败，这时候重新开始，又会提交，导致重复提交，可以使用 git svn set tree 某一版本 命令先svn提交一个特定版本，这个特定版本不使用diff，所以不会出错。
-=======
- *git-svn有时候在提交完版本后失败，这时候重新开始，又会提交，导致重复提交，可以使用 git svn-set tree 某一版本 命令先svn提交一个特定版本，这个特定版本不使用diff，所以不会出错。
->>>>>>> dd019c78f9756f65425b04b619ed42767463ea09
+ *git-svn有时候在提交完版本后失败，这时候重新开始，又会提交，导致重复提交，可以使用 git svn set-tree 某一版本 命令先svn提交一个特定版本，这个特定版本不使用diff，所以不会出错。
  *问题git svn dcommit后会修改当前的版本历史吗？这样导致stash失败？
 == 资料 ==
  *[[http://book.git-scm.com/]]git书籍
@@ -127,7 +123,3 @@
  *git-revert把补丁作为另一个commit反向打入tree中
  *warning: no common commits提示你导入的没有公共的版本，可能是不小心导入了不同的没有关系的两个库
  *[[http://jasonkarns.com/blog/merge-two-git-repositories-into-one/]] 使用subtree功能
-<<<<<<< HEAD
- *http(s)://用户名:密码@网址  可以用于向http和https git服务器提交。省掉很多输入SSH密钥和公钥的问题
-=======
->>>>>>> dd019c78f9756f65425b04b619ed42767463ea09
