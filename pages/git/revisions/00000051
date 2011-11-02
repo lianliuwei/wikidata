@@ -1,0 +1,132 @@
+= Git =
+ *为[[http://en.wikipedia.org/wiki/Source_Code_Management|SCM]] 源代码管理的一种
+ *用SHA计算 代表Object
+ *Objects
+  *blob
+  *tree
+  *commit某种状态
+  *tag
+ *在现有的文件系统上面构建新的文件系统 适合于版本控制
+ *git show SHA号 显示对应的文件内容
+ *git ls-tree SHA号 显示对应的文件目录内容
+ *这东西设计得很好呀
+ *commit可以有多个parent
+ *HEAD是当前tree
+ *正式开发要使用密钥
+ *[[http://book.git-scm.com/1_git_directory_and_working_directory.html]] git项目文件树介绍
+ *Working Directory 是正在工作的目录
+ *分支与合并
+  *
+ *.git后缀为git库
+ *Index为你想要提交的预备
+ *git-status 查看工作目录什么提交了 什么没有提交 什么根本没有记录
+ *提交的不是工作目录
+== 代理 ==
+ *可以使用http代理和Sock5代理
+ *[[http://thilo.cestona.ro/?p=23|Finally; git via ssh SOCKS proxy on windows]]使用这个方法可以
+ *[[http://bent.latency.net/bent/darcs/goto-san-connect-1.85/src/connect.html]]Sock5方法 使用的代理软件 Connect
+ *[[http://www.patthoyts.tk/blog/using-git-with-socks-proxy.html|Using Git with a SOCKS proxy]] 没有详细讲明在Windows上怎么做
+ *[[http://twopenguins.org/tips/git-through-proxy.php|Using GIT through a SOCKS proxy]] Linux上方法
+ *[[http://yegle.net/2008/08/06/git-via-a-http-proxy/|通过http代理git]]
+ *[[http://refractalize.blogspot.com/2010/09/git-over-socks-on-windows.html|Git over SOCKS on Windows]] 没试验成功 原理没有搞清楚
+ *[[http://www.mail-archive.com/msysgit@googlegroups.com/msg00745.html|git-svn and http proxy?]] 在$HOME/.subversion/servers 的 [global]段中添加代理信息
+== submodule ==
+ *submodule的问题是他不是无缝的操作 而且退回到以前的版本不会跟着相应的退回 不如google的gclient
+ *[[http://www.josephj.com/entry.php?id=342|Git Submodule 的認識與正確使用！]]
+ *[[http://johnleach.co.uk/words/323/git-submodules-in-n-easy-steps]]
+ *[[http://progit.org/book/ch6-6.html|Submodules]]
+ *[[http://progit.org/book/ch6-7.html|Subtree Merging]] 可以用于一些使用Submodules不方便的场所
+== bare库 ==
+ *对于bare库的操作都要特殊对待
+ *git --git-dir=<path> 相应的命令 这样就能操作bare库了
+ *[[http://www.bitflop.com/document/111|Git bare vs. non-bare repositories]]
+== Windows 7下命令行启动很慢 ==
+ *[[http://stackoverflow.com/questions/5851611/git-sh-exe-process-forking-issue-on-windows-xp-slow]] 使用这个方法将命令行里面的PS1设置改变就可以了
+ *[[http://stackoverflow.com/questions/2004286/git-is-slow-on-startup]]
+ *[[http://stackoverflow.com/questions/4485059/git-bash-is-extremely-slow-in-windows-7-x64]]
+ *[[http://stackoverflow.com/questions/2835775/msysgit-bash-is-horrendously-slow-in-windows-7]]
+== 更新方式 ==
+ *
+== Git和SVN互操作 ==
+ *[[http://google-opensource.blogspot.com/2008/05/export-git-project-to-google-code.html|Export a Git Project to Google Code]] 使用主Git中心库 导出到SVN库中
+ *[[http://google-opensource.blogspot.com/2008/05/develop-with-git-on-google-code-project.html|Develop with Git on a Google Code Project]]使用SVN中心库 
+ *“/svn/!svn/vcc/default”: 200 错误是SVN服务器引起的[[http://stackoverflow.com/questions/4824478/cant-get-guava-using-git-svn|暂时解决办法]]checkout出错的版本 branch出master
+ *git-svn有时候在提交完版本后失败，这时候重新开始，又会提交，导致重复提交，可以使用 git svn set-tree 某一版本 命令先svn提交一个特定版本，这个特定版本不使用diff，所以不会出错。
+ *问题git svn dcommit后会修改当前的版本历史吗？这样导致stash失败？
+== 资料 ==
+ *[[http://book.git-scm.com/]]git书籍
+ *[[http://www.git-scm.com/documentation]]书籍
+ *[[http://www-cs-students.stanford.edu/~blynn/gitmagic/]] gitmagic git好书
+ *[[http://www.bitsun.com/documents/GitUserManualChinese.html]]中文手册
+ *[[http://en.wikipedia.org/wiki/Git_(software)]]
+ *[[http://www.china-pub.com/196738|版本控制之道——使用Git]]
+ *[[http://bbs.scmlife.com/index.php]]
+ *[[http://pragprog.com/|出版社]]
+ *[[Pragmatic Version Control_Using Git]]书籍阅读记录
+ *[[http://www.robinlu.com/blog/archives/194|如何在svn系统中使用git]]
+ *[[http://code.google.com/p/tortoisegit/]] 乌龟Git 还有待开发
+ *[[http://code.google.com/p/msysgit/]] Windows上Git版本 有再开发用的 一般使用的
+ *[[http://samba.org/~jelmer/dulwich/]] 用Python实现的Git
+ *[[http://blog.ossxp.com/2010/11/2166/|Git 工作区、暂存区和版本库]]
+ *[[http://debuggable.com/posts/git-fake-submodules:4b563ee4-f3cc-4061-967e-0e48cbdd56cb|Git Fake Submodules]]
+ *[[http://www.infoq.com/cn/news/2011/01/git-adventures-1]] Git历险记 教程
+ *[[https://git.wiki.kernel.org/index.php/WindowsInstall]] git官网Windows安装建议
+ *[[http://whygitisbetterthanx.com/]]
+ *[[http://progit.org/]]
+== 文字编码 ==
+ *[[http://wangcongming.info/2010/07/windows-%E4%B8%8B-git-%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E9%80%89%E6%8B%A9%EF%BC%8C%E5%8F%8A-msysgit-%E5%90%84%E7%A7%8D%E4%B8%AD%E6%96%87%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3/|Git 系列之二：Windows 下 Git 客户端的选择，及 msysGit 各种中文问题的解决]]
+ *最好不要使用中文 特别是Windows下
+ *[[http://wancw.posterous.com/msysgit|讓 msysGit 正確處理中文]]
+ *路径的编码是不会转换的，路径是作为二进制数组存储的
+ *和SVN进行交互时要注意路径字符编码 设置svn.pathnameencoding [[http://www.cnblogs.com/ly4cn/archive/2011/07/04/2097611.html|git+svn 中文文件名乱码的处理]]
+ *[[http://topic.csdn.net/u/20110113/19/b0d5d506-4307-428b-a61d-7974aa66a2da.html|搞定Git中文乱码、用TortoiseMerge实现Diff/Merge]] 可用脚本
+ *现在能支持中文内容 中文log 不支持中文路径名创建 中文路径下文件修改支持
+ *1.7.0版本导出中文路径名不支持
+=== Bug ===
+ *git svn中文路径的bug用[[http://oznyang.iteye.com/blog/993195|msysgit中文乱码问题大全]]的方法修改，中文路径下文件修改支持，但是不支持中文路径名创建
+ *相关讨论[[http://git.661346.n2.nabble.com/PATCH-1-3-Fixes-bug-git-diff-class-methods-are-not-detected-in-hunk-headers-for-Pascal-td5865814.html]]
+ *用代理fetch后不用代理fetch为什么要求全部重新下载？
+== gitignore ==
+ *[[http://www.kernel.org/pub/software/scm/git/docs/gitignore.html]]
+ *有多种来源, 可以适合各种场合
+ *带/项只会在文件名，文件夹中匹配 相当于用/隔开来匹配
+ *开头带/项表示绝对路径
+ *末尾带/项表示文件夹和其里面的文件夹文件名
+ *[[http://mactruecolor.blogspot.com/2011/01/git-ignore.html]] 有点特殊的技巧
+ *[[http://hi.baidu.com/orangejackylee/blog/item/dd1bc005afd66995e950cd3b.html|git 创建 .gitignore 文件 建立项目过滤规则]] 这个解释不错
+== 服务器 ==
+ *[[http://progit.org/2010/03/04/smart-http.html|Smart HTTP Transport]] 用git-http-backend做后台是主流
+ *git-http-backend要设置GIT_HTTP_EXPORT_ALL环境变量时默认目录都导出
+ *[[http://www.kernel.org/pub/software/scm/git/docs/git-http-backend.html|git-http-backend(1) Manual Page]]
+ *[[http://huan-lin.blogspot.com/2011/05/install-git-server-and-apache-on.html|Git Server on Windows 安裝手記]] Windows下apache git-http-backend配置git服务器
+ *[[http://www.jedi.be/blog/2009/05/06/8-ways-to-share-your-git-repository/]] 多种方法
+ *[[http://blog.teepark.net/git-smart-http-support-through-nginx]]
+ *[[http://www.xiaoka.com/blog/2008/04/13/git-repository-over-http-webdav-with-nginx/]] 很低效的方式
+ *[[https://git.wiki.kernel.org/index.php/Interfaces,_frontends,_and_tools]] 完整的方法工具集合介绍
+ *[[http://blog.rebill.info/archives/install-and-config-git-server-on-ubuntu.html|Ubuntu下Git服务器安装与配置]] gitosis方式
+ *[[http://fallenlord.blogbus.com/logs/71173948.html|Git私服搭建]] 有不同协议对比分析 不过不是最全的
+ *[[http://norbu09.org/2009/08/02/git-via-HTTP-(startup-automation-3).html]] 低效http方式
+ *[[http://stackoverflow.com/questions/3817478/setting-up-git-server-on-windows-with-git-http-backend-exe]] 设置http.receivepack = true 才能接受数据
+ *git-htttp-server 的上传功能还不够强大 受限很多
+ *error: RPC failed; result=56, HTTP code = 0 直接重新来过就行了
+ *error: RPC failed; result=22, HTTP code = 411 设置本地的http.postBuffer大一点 好像是先在本地保存完再上传
+ *error: RPC failed; result=22, code=413 可能是上传文件太大超出了http服务器的设定值
+== 心得 ==
+ *[[http://plog.longwin.com.tw/my_note-app-setting/2010/01/26/git-ignore-howto-set-zim-2010|Git .gitignore 設定 與 注意事項 - 以 Zim 操作為範例]] 使用Git的常用忽略功能
+ *[[http://dwfeng.net/blog/2008/10/27/how-to-cancel-them-after-git-add.html|代码在git add之后如何取消]] 如何重置cache Git rm --cache -r .
+ *git checkout 使用-f选项不管cache和本地文件是否有更新，都强制更新
+ *git clone不支持断点续传 使用git fetch 和 git pull进行断点续传
+ *git rebase可以用来修改版本 [[http://www-cs-students.stanford.edu/~blynn/gitmagic/intl/zh_cn/ch05.html|参考]]
+ *使用git ls-files -z | args -0 git rm - f -r 删除工作目录下有添加到版本中的文件 类似TortoiseGit的delete local
+ *使用git repack -a -d 打包减少文件数
+ *[[https://launchpad.net/~git-core/+archive/ppa]] ubuntu 最新版git
+ *git的配置信息好像是从global拷贝到本地 system信息和global有什么区别？
+ *在Windows下要最好设置core.fileMode = false 因为[[Windows]]上权限支持不好 参考[[http://stackoverflow.com/questions/1580596/how-do-i-make-git-ignore-mode-changes-chmod|How do I make git ignore mode changes (chmod)?]]
+ *清除掉git库中除.git库文件以外的所有文件 包括子.git目录
+  *find . -not -path "*/.git/*" -type f | xargs rm   清楚文件项
+  *find . -not -path "*/.git*" -type d | xargs rmdir -p --ignore-fail-on-non-empty 清楚文件夹
+ *git reset 用来撤消版本
+ *git-revert把补丁作为另一个commit反向打入tree中
+ *warning: no common commits提示你导入的没有公共的版本，可能是不小心导入了不同的没有关系的两个库
+ *[[http://jasonkarns.com/blog/merge-two-git-repositories-into-one/]] 使用subtree功能
+ *git commit --amend 修改上次提交的log
