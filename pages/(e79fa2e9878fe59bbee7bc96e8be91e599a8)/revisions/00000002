@@ -1,0 +1,10 @@
+= 矢量图编辑器 =
+ *[[http://en.wikipedia.org/wiki/Vector_graphics_editor]] 就是点图，而非图片
+ *[[http://inkscape.org/]] C++ 开源 完成度高
+ *[[http://www.codeproject.com/KB/graphics/SVGArtiste.aspx]] .net的
+ *[[http://www.codeproject.com/KB/graphics/OpenS-CAD.aspx]] .net的 CAD
+ *[[http://www.codeproject.com/KB/graphics/2d_poligon_drawer-animato.aspx]] .net的2D动画
+ *[[http://www.codeproject.com/KB/WPF/UniPolygon.aspx]] .net多边形控件
+ *[[http://www.codeproject.com/KB/GDI-plus/PolygonCollision.aspx]] 检测多边形碰撞
+ *[[http://code.google.com/p/svg-edit/]] Javascript SVG编辑器 完成度很高
+ *SVG是矢量图格式中的一种

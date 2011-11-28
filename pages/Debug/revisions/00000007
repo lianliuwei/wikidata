@@ -1,0 +1,33 @@
+= Debug =
+ *调试器运行的时候需要修改代码
+ *[[http://stackoverflow.com/questions/216819/how-does-a-debugger-work|How does a debugger work?]] [[Windows]]平台调试支持简介
+ *{{{__asm}}}{int 3} 可以人为制造中断，用于需要在Release中中断 可以用来测试不是由调试器启动的软件
+ *[[http://en.wikipedia.org/wiki/Debugger]]
+ *[[http://www.xfocus.net/articles/200412/765.html|Windows内核调试器原理浅析]]
+ *[[http://www.cnblogs.com/killmyday/tag/%E8%B0%83%E8%AF%95/|调试相关博文]] Visual Studio Windbg JavaScirpt
+ *[[http://eli.thegreenplace.net/2011/01/23/how-debuggers-work-part-1/]] 如何实现以调试器
+== 内存泄漏 ==
+ *[[http://blog.csdn.net/wind_xu/archive/2010/07/25/5764528.aspx|C++内存调试技术]] 如何调内存泄露
+ *如果是固定的分配号，可以根据分配号来调试
+ *如果是特殊的大小，可以根据大小来下断点，在dbgmalloc.c中的malloc中可以设置断点
+ *使用{,,msvcr90d.dll}_crtBreakAlloc设置需要中断的断点号
+ *使用{,,msvcr90d.dll}_lRequestCurr可以看当前的分配号
+ *使用CRT类型的内存调试，需要改代码，重新编译程序，没有生成堆栈信息。
+ *[[http://www.chromium.org/developers/how-tos/using-drmemory]] chrome用 Dr.Memory进行内存泄漏调试
+ *[[http://code.google.com/p/drmemory/]]
+ *[[http://msdn.microsoft.com/en-us/library/x98tx3cf.aspx|Finding Memory Leaks Using the CRT Library]] 介绍了很多CRT调试方法
+ *[[http://blog.vckbase.com/bruceteen/archive/2004/10/28/1130.aspx|VC++6.0中内存泄漏检测]]
+ *置换new代码
+{{attachment:new.c}}
+=== Virutal Leak Detected ===
+ *这类的工具，改动代码量小，生成信息全，但是要嵌入到程序的运行环境中，可能造成系统DLL报错，对性能影响也比较大。
+ *[[http://vld.codeplex.com/]]
+=== UMDH ===
+ *UMDH 是windows debug tools 下的一款命令行工具，它的全名是User-Mode Dump Heap
+ *是在操作系统层次做的工作，有可能因为malloc是一次获取大量内存，多次使用内存，所以侦测准确。
+ *对程序影响最小
+= 链接 =
+ *[[http://en.wikipedia.org/wiki/Category:Debugging]]
+ *工具
+  *[[GDB]]
+  *[[http://en.wikipedia.org/wiki/Category:Debuggers]]
