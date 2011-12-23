@@ -1,0 +1,25 @@
+= Build automation =
+ *自动构造工具
+ *[[http://en.wikipedia.org/wiki/Build_automation]]综述
+ *[[http://en.wikipedia.org/wiki/Category:Build_automation]]工具大全
+ *[[http://en.wikipedia.org/wiki/List_of_build_automation_software]]工具列表
+ *[[http://en.wikipedia.org/wiki/GNU_Build_Tools]]
+ *[[http://en.wikipedia.org/wiki/Waf]]
+ *[[http://en.wikipedia.org/wiki/SCons]]
+ *[[http://en.wikipedia.org/wiki/CMake]]
+ *[[http://en.wikipedia.org/wiki/Premake]]
+ *[[http://sourceware.org/autobook/]][[GNU Autoconf, Automake, and Libtool]]官网
+ *[[http://www.lrde.epita.fr/~adl/autotools.html]] autotools教程
+ *[[http://www.cnblogs.com/dirlt/archive/2011/05/29/2061937.html]]  构建系统对比 很好的文章，说明了几大主流的构建系统，和基础用法。对于什么是好的构建系统有思考。
+== 任务 ==
+ *看GNU build tools
+== GNU构建过程 ==
+{{{
+./configure
+make
+make install
+}}}
+ *选项enalbe-x disable with without
+== 工具 ==
+ *[[make]]
+ *[[gyp]]
